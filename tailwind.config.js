@@ -1,0 +1,35 @@
+export default {
+  content: ["./index.html","./src/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        "primary-fixed":     "#00fd87",
+        "primary-dim":       "#00ed7e",
+        "primary":           "#a4ffb9",
+        "on-primary":        "#003919",
+        "on-primary-container": "#005b2c",
+        "secondary":         "#ffb4ab",
+        "secondary-dim":     "#ff7169",
+        "secondary-container":"#8d1d1e",
+        "surface-lowest":    "#000000",
+        "surface-dim":       "#0e0e0e",
+        "surface":           "#131313",
+        "surface-low":       "#1c1b1b",
+        "surface-container": "#201f1f",
+        "surface-high":      "#2a2a2a",
+        "surface-highest":   "#353534",
+        "on-surface":        "#e5e2e1",
+        "on-surface-variant":"#b9cbb9",
+        "outline":           "#849585",
+        "outline-variant":   "#3b4b3d",
+      },
+      fontFamily: {
+        mono: ['"JetBrains Mono"','monospace'],
+        sg:   ['"Space Grotesk"','sans-serif'],
+        body: ['Inter','sans-serif'],
+      },
+      borderRadius: { DEFAULT:"0px", lg:"0px", xl:"0px", full:"9999px" },
+    },
+  },
+  plugins: [],
+}

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>POLYSCAN — Design System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          /* ── Primary (Green) ── */
+          "primary":                   "#a4ffb9",
+          "primary-dim":               "#00ed7e",
+          "primary-fixed":             "#00fd87",   /* ← Main CTA green */
+          "primary-container":         "#00fd87",
+          "on-primary":                "#003919",
+          "on-primary-container":      "#005b2c",
+
+          /* ── Secondary (Red) ── */
+          "secondary":                 "#ffb4ab",   /* ← Unified: desktop red (softer) */
+          "secondary-dim":             "#ff7169",   /* ← Mobile red accent */
+          "secondary-container":       "#8d1d1e",
+          "on-secondary":              "#680009",
+          "on-secondary-container":    "#ff9e97",
+
+          /* ── Surface Layers ── */
+          "surface-container-lowest":  "#000000",
+          "surface-dim":               "#0e0e0e",
+          "surface":                   "#131313",
+          "surface-container-low":     "#1c1b1b",
+          "surface-container":         "#201f1f",
+          "surface-container-high":    "#2a2a2a",
+          "surface-container-highest": "#353534",
+          "surface-bright":            "#3a3939",
+          "surface-variant":           "#353534",
+
+          /* ── Text ── */
+          "on-surface":                "#e5e2e1",
+          "on-surface-variant":        "#b9cbb9",
+          "on-background":             "#e5e2e1",
+          "background":                "#131313",
+
+          /* ── Outline ── */
+          "outline":                   "#849585",
+          "outline-variant":           "#3b4b3d",
+        },
+        fontFamily: {
+          "headline": ["Space Grotesk"],
+          "body":     ["Inter"],
+          "label":    ["Space Grotesk"],
+          "mono":     ["JetBrains Mono", "Space Grotesk"],
+        },
+        borderRadius: { DEFAULT: "0px", lg: "0px", xl: "0px", full: "9999px" },
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block; line-height: 1;
+  }
+  body {
+    background-color: #131313;
+    color: #e5e2e1;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono  { font-family: 'JetBrains Mono', monospace; }
+  .sg    { font-family: 'Space Grotesk', sans-serif; }
+  .section-title {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.15em; color: #849585;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #353534;
+  }
+  .chip {
+    display: inline-flex; align-items: center;
+    padding: 2px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+  }
+  .active-glow { box-shadow: 0 0 10px rgba(0,253,135,0.2); }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: #131313; }
+  ::-webkit-scrollbar-thumb { background: #353534; }
+</style>
+</head>
+<body class="p-8 space-y-16 max-w-5xl mx-auto">
+
+<!-- HEADER -->
+<header class="border-b border-[#353534] pb-6">
+  <div class="flex items-center gap-3 mb-2">
+    <span class="material-symbols-outlined text-[#00fd87]">terminal</span>
+    <h1 class="mono text-[#00fd87] text-2xl font-bold tracking-widest uppercase">POLYSCAN</h1>
+    <span class="chip bg-[#201f1f] text-[#849585]">Design System v1.0</span>
+  </div>
+  <p class="text-[#849585] text-sm mono">Unified tokens · Mobile + Desktop · Responsive breakpoints</p>
+</header>
+
+<!-- ─────────────────────────────── -->
+<!-- 1. COLOR TOKENS                 -->
+<!-- ─────────────────────────────── -->
+<section>
+  <p class="section-title">1 · Color Tokens</p>
+
+  <!-- Primary -->
+  <div class="mb-6">
+    <p class="text-[10px] mono text-[#849585] uppercase mb-3">Primary — Green (Positive / UNDER / Active)</p>
+    <div class="flex flex-wrap gap-3">
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#00fd87"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">primary-fixed</span>
+        <span class="text-[8px] mono text-[#849585]">#00fd87</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#00ed7e"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">primary-dim</span>
+        <span class="text-[8px] mono text-[#849585]">#00ed7e</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#a4ffb9"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">primary</span>
+        <span class="text-[8px] mono text-[#849585]">#a4ffb9</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#005b2c"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">on-primary-container</span>
+        <span class="text-[8px] mono text-[#849585]">#005b2c</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secondary -->
+  <div class="mb-6">
+    <p class="text-[10px] mono text-[#849585] uppercase mb-3">Secondary — Red (Negative / OVER / Alert)</p>
+    <div class="flex flex-wrap gap-3">
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#ffb4ab"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">secondary</span>
+        <span class="text-[8px] mono text-[#849585]">#ffb4ab</span>
+        <span class="text-[8px] mono text-[#3b4b3d]">desktop</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#ff7169"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">secondary-dim</span>
+        <span class="text-[8px] mono text-[#849585]">#ff7169</span>
+        <span class="text-[8px] mono text-[#3b4b3d]">mobile</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#8d1d1e"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">secondary-container</span>
+        <span class="text-[8px] mono text-[#849585]">#8d1d1e</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Surface -->
+  <div class="mb-6">
+    <p class="text-[10px] mono text-[#849585] uppercase mb-3">Surface — Dark Layers (dark → light)</p>
+    <div class="flex flex-wrap gap-3">
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#000000"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">lowest</span>
+        <span class="text-[8px] mono text-[#849585]">#000000</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#0e0e0e"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">dim</span>
+        <span class="text-[8px] mono text-[#849585]">#0e0e0e</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#131313"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">surface</span>
+        <span class="text-[8px] mono text-[#849585]">#131313</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#1c1b1b"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">low</span>
+        <span class="text-[8px] mono text-[#849585]">#1c1b1b</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#201f1f"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">container</span>
+        <span class="text-[8px] mono text-[#849585]">#201f1f</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#2a2a2a"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">high</span>
+        <span class="text-[8px] mono text-[#849585]">#2a2a2a</span>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="w-14 h-14 border border-[#353534]" style="background:#353534"></div>
+        <span class="text-[8px] mono text-[#b9cbb9]">highest</span>
+        <span class="text-[8px] mono text-[#849585]">#353534</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Text -->
+  <div>
+    <p class="text-[10px] mono text-[#849585] uppercase mb-3">Text</p>
+    <div class="flex flex-wrap gap-6">
+      <span class="text-sm" style="color:#e5e2e1">on-surface <code class="text-[10px] text-[#849585]">#e5e2e1</code></span>
+      <span class="text-sm" style="color:#b9cbb9">on-surface-variant <code class="text-[10px] text-[#849585]">#b9cbb9</code></span>
+      <span class="text-sm" style="color:#849585">outline <code class="text-[10px] text-[#3b4b3d]">#849585</code></span>
+      <span class="text-sm" style="color:#3b4b3d">outline-variant <code class="text-[10px]">#3b4b3d</code></span>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────── -->
+<!-- 2. TYPOGRAPHY                   -->
+<!-- ─────────────────────────────── -->
+<section>
+  <p class="section-title">2 · Typography</p>
+  <div class="space-y-4">
+
+    <div class="flex items-baseline gap-4 border-b border-[#201f1f] pb-3">
+      <span class="w-36 text-[10px] mono text-[#849585]">App Logo</span>
+      <span class="sg text-2xl font-black tracking-tighter text-[#00fd87] uppercase">POLYSCAN</span>
+      <span class="text-[10px] mono text-[#353534]">Space Grotesk · 24px · black · tracking-tighter</span>
+    </div>
+
+    <div class="flex items-baseline gap-4 border-b border-[#201f1f] pb-3">
+      <span class="w-36 text-[10px] mono text-[#849585]">Section Label</span>
+      <span class="sg text-[10px] font-bold uppercase tracking-widest text-[#849585]">ACTIVE_ARBITRAGE_SIGNALS</span>
+      <span class="text-[10px] mono text-[#353534]">Space Grotesk · 10px · bold · tracking-widest · uppercase</span>
+    </div>
+
+    <div class="flex items-baseline gap-4 border-b border-[#201f1f] pb-3">
+      <span class="w-36 text-[10px] mono text-[#849585]">Stat Value</span>
+      <span class="mono text-4xl font-bold text-[#e5e2e1]">1,243</span>
+      <span class="text-[10px] mono text-[#353534]">JetBrains Mono · 36px · bold</span>
+    </div>
+
+    <div class="flex items-baseline gap-4 border-b border-[#201f1f] pb-3">
+      <span class="w-36 text-[10px] mono text-[#849585]">Table Number</span>
+      <span class="mono text-xs text-[#e5e2e1]">0.452</span>
+      <span class="text-[10px] mono text-[#353534]">JetBrains Mono · 11px · regular</span>
+    </div>
+
+    <div class="flex items-baseline gap-4 border-b border-[#201f1f] pb-3">
+      <span class="w-36 text-[10px] mono text-[#849585]">Body / Market Name</span>
+      <span class="text-sm text-[#e5e2e1]">Will BTC hit $100k by EOY?</span>
+      <span class="text-[10px] mono text-[#353534]">Inter · 14px · regular</span>
+    </div>
+
+    <div class="flex items-baseline gap-4 border-b border-[#201f1f] pb-3">
+      <span class="w-36 text-[10px] mono text-[#849585]">Nav Item</span>
+      <span class="mono text-sm font-bold uppercase tracking-tight text-[#00fd87]">TERMINAL</span>
+      <span class="text-[10px] mono text-[#353534]">JetBrains Mono · 14px · bold · uppercase</span>
+    </div>
+
+    <div class="flex items-baseline gap-4">
+      <span class="w-36 text-[10px] mono text-[#849585]">Badge</span>
+      <span class="mono text-[9px] font-bold uppercase">UNDER</span>
+      <span class="text-[10px] mono text-[#353534]">JetBrains Mono · 9px · bold · uppercase</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────────────────────── -->
+<!-- 3. RESPONSIVE LAYOUT            -->
+<!-- ─────────────────────────────── -->
+<section>
+  <p class="section-title">3 · Responsive Layout</p>
+
+  <div class="space-y-4 mono text-[10px]">
+
+    <!-- Mobile -->
+    <div class="border border-[#353534] p-4">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-sm text-[#00fd87]">smartphone</span>
+        <span class="text-[#00fd87] font-bold uppercase">Mobile — &lt; 768px (md)</span>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-[#b9cbb9]">
+        <div>Navigation: <span class="text-[#e5e2e1]">Fixed Bottom Nav</span></div>
+        <div>Layout: <span class="text-[#e5e2e1]">Single column</span></div>
+        <div>Stats: <span class="text-[#e5e2e1]">3-col grid (compact)</span></div>
+        <div>Chart: <span class="text-[#e5e2e1]">Full width</span></div>
+        <div>Table: <span class="text-[#e5e2e1]">Horizontal scroll</span></div>
+        <div>Filters: <span class="text-[#e5e2e1]">Stacked vertical</span></div>
+      </div>
+    </div>
+
+    <!-- Tablet -->
+    <div class="border border-[#353534] p-4">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-sm text-[#849585]">tablet</span>
+        <span class="text-[#849585] font-bold uppercase">Tablet — 768px–1024px (md → lg)</span>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-[#b9cbb9]">
+        <div>Navigation: <span class="text-[#e5e2e1]">Icon-only Sidebar (w-16)</span></div>
+        <div>Layout: <span class="text-[#e5e2e1]">2-col grid</span></div>
+        <div>Stats: <span class="text-[#e5e2e1]">3-col grid</span></div>
+        <div>Chart: <span class="text-[#e5e2e1]">Full width</span></div>
+        <div>Table: <span class="text-[#e5e2e1]">Full width</span></div>
+        <div>Filters: <span class="text-[#e5e2e1]">Side-by-side</span></div>
+      </div>
+    </div>
+
+    <!-- Desktop -->
+    <div class="border border-[#353534] p-4">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-sm text-[#e5e2e1]">computer</span>
+        <span class="text-[#e5e2e1] font-bold uppercase">Desktop — &gt; 1024px (lg)</span>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-[#b9cbb9]">
+        <div>Navigation: <span class="text-[#e5e2e1]">Full Sidebar (w-64)</span></div>
+        <div>Layout: <span class="text-[#e5e2e1]">ml-64 main content</span></div>
+        <div>Stats: <span class="text-[#e5e2e1]">3-col grid (large cards)</span></div>
+        <div>Chart: <span class="text-[#e5e2e1]">lg:col-span-8 (right)</span></div>
+        <div>Filters: <span class="text-[#e5e2e1]">lg:col-span-4 (left)</span></div>
+        <div>Table: <span class="text-[#e5e2e1]">Full width + action column</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────────────────────── -->
+<!-- 4. COMPONENTS                   -->
+<!-- ─────────────────────────────── -->
+<section>
+  <p class="section-title">4 · Components</p>
+  <div class="space-y-10">
+
+    <!-- Buttons -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Buttons</p>
+      <div class="flex flex-wrap gap-4 items-center">
+        <button class="bg-[#00fd87] text-black sg text-xs font-bold uppercase tracking-widest px-4 py-2 hover:bg-[#00ed7e] transition-colors">
+          SCAN NOW
+        </button>
+        <button class="border border-[#353534] text-[#b9cbb9] mono text-[10px] font-bold uppercase tracking-widest px-4 py-2 hover:border-[#00fd87] hover:text-[#00fd87] transition-colors">
+          EXPORT CSV
+        </button>
+        <button class="bg-[#201f1f] text-[#849585] mono text-[10px] font-bold uppercase px-4 py-2 opacity-50 cursor-not-allowed">
+          DISABLED
+        </button>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Direction Badges</p>
+      <div class="flex gap-3 items-center flex-wrap">
+        <span class="chip bg-[#00fd87] text-black">UNDER</span>
+        <span class="chip bg-[#ffb4ab] text-black">OVER</span>
+        <span class="chip bg-[#353534] text-[#849585]">FAIR</span>
+        <span class="text-[10px] mono text-[#353534] ml-2">UNDER = sum &lt; 1.0 · OVER = sum &gt; 1.0 · FAIR ≈ 1.0</span>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Stat Cards (Responsive: compact mobile → large desktop)</p>
+      <div class="grid grid-cols-3 gap-3 max-w-xl">
+        <div class="bg-[#1c1b1b] border border-[#2a2a2a] p-4 flex flex-col justify-between">
+          <div class="text-[10px] mono text-[#849585] uppercase">Markets Scanned</div>
+          <div class="text-3xl mono font-bold text-[#e5e2e1] mt-2">1,243</div>
+          <div class="mt-2 flex items-center gap-2">
+            <span class="text-[10px] mono text-[#00fd87]">+14.2%</span>
+            <div class="h-px flex-grow bg-[#353534]"></div>
+          </div>
+        </div>
+        <div class="bg-[#1c1b1b] border border-[#2a2a2a] p-4 flex flex-col justify-between">
+          <div class="text-[10px] mono text-[#849585] uppercase">Gaps Found</div>
+          <div class="text-3xl mono font-bold text-[#00fd87] mt-2">07</div>
+          <div class="text-[10px] mono text-[#849585] mt-2">$1,420.44 potential</div>
+        </div>
+        <div class="bg-[#1c1b1b] border border-[#2a2a2a] p-4 flex flex-col justify-between">
+          <div class="text-[10px] mono text-[#849585] uppercase">Last Scan</div>
+          <div class="text-3xl mono font-bold text-[#e5e2e1] mt-2">06:45<span class="text-sm font-normal text-[#849585] ml-1">UTC</span></div>
+          <div class="mt-2 w-full h-1 bg-[#2a2a2a]"><div class="w-2/3 h-full bg-[#00fd87]"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Toggle -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Filter Toggle</p>
+      <div class="flex bg-[#000000] border border-[#2a2a2a] max-w-xs">
+        <button class="flex-1 py-2 text-[10px] mono font-bold bg-[#00fd87] text-black">ALL</button>
+        <button class="flex-1 py-2 text-[10px] mono font-bold bg-[#0e0e0e] text-[#849585] hover:text-[#e5e2e1]">OVER</button>
+        <button class="flex-1 py-2 text-[10px] mono font-bold bg-[#0e0e0e] text-[#849585] hover:text-[#e5e2e1]">UNDER</button>
+      </div>
+    </div>
+
+    <!-- Slider -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Gap Threshold Slider</p>
+      <div class="bg-[#1c1b1b] border border-[#2a2a2a] p-4 max-w-xs space-y-3">
+        <div class="flex justify-between">
+          <span class="text-[10px] mono text-[#849585] uppercase">Min Gap Threshold</span>
+          <span class="text-[10px] mono text-[#00fd87]">1.24%</span>
+        </div>
+        <input class="w-full h-1 bg-[#353534] appearance-none cursor-pointer accent-[#00fd87]" max="5" min="0" step="0.01" type="range" value="1.24"/>
+      </div>
+    </div>
+
+    <!-- Bar Chart -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Gap Distribution Chart</p>
+      <div class="bg-[#1c1b1b] border border-[#2a2a2a] p-5 max-w-lg">
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-[10px] mono text-[#849585] uppercase tracking-widest">Real-Time Gap Distribution</span>
+          <div class="flex gap-4 text-[8px] mono">
+            <div class="flex items-center gap-1"><span class="w-2 h-2 bg-[#00fd87]"></span>UNDER</div>
+            <div class="flex items-center gap-1"><span class="w-2 h-2 bg-[#ffb4ab]"></span>OVER</div>
+          </div>
+        </div>
+        <div class="flex items-end justify-between gap-1 h-24">
+          <div class="w-full bg-[#ffb4ab]/40" style="height:30%"></div>
+          <div class="w-full bg-[#00fd87]/60" style="height:55%"></div>
+          <div class="w-full bg-[#ffb4ab]/60" style="height:70%"></div>
+          <div class="w-full bg-[#00fd87]/30" style="height:25%"></div>
+          <div class="w-full bg-[#ffb4ab]/80" style="height:90%"></div>
+          <div class="w-full bg-[#00fd87]"    style="height:100%"></div>
+          <div class="w-full bg-[#ffb4ab]/50" style="height:50%"></div>
+          <div class="w-full bg-[#00fd87]/80" style="height:80%"></div>
+          <div class="w-full bg-[#ffb4ab]/30" style="height:40%"></div>
+          <div class="w-full bg-[#00fd87]/50" style="height:60%"></div>
+        </div>
+        <div class="flex justify-between mt-2 border-t border-[#353534] pt-2 text-[9px] mono text-[#849585]">
+          <span>-5.0%</span><span>-2.5%</span><span>0.0%</span><span>+2.5%</span><span>+5.0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Table -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Results Table</p>
+      <div class="overflow-x-auto border border-[#2a2a2a]">
+        <div class="px-5 py-3 border-b border-[#2a2a2a] flex justify-between items-center bg-[#0e0e0e]">
+          <span class="text-[10px] mono text-[#849585] uppercase tracking-widest">ACTIVE_ARBITRAGE_SIGNALS</span>
+          <div class="flex gap-2">
+            <button class="text-[#849585] hover:text-[#00fd87]"><span class="material-symbols-outlined text-sm">filter_list</span></button>
+            <button class="text-[#849585] hover:text-[#00fd87]"><span class="material-symbols-outlined text-sm">download</span></button>
+          </div>
+        </div>
+        <table class="w-full text-left mono text-[11px]">
+          <thead>
+            <tr class="bg-[#201f1f] text-[#849585] uppercase tracking-widest border-b border-[#353534]">
+              <th class="px-5 py-3 font-normal">Market / Question</th>
+              <th class="px-5 py-3 font-normal">YES</th>
+              <th class="px-5 py-3 font-normal">NO</th>
+              <th class="px-5 py-3 font-normal text-right">SUM</th>
+              <th class="px-5 py-3 font-normal text-right">GAP</th>
+              <th class="px-5 py-3 font-normal text-center">DIR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bg-[#1c1b1b] border-b border-[#131313] hover:bg-[#2a2a2a] transition-colors">
+              <td class="px-5 py-3 text-[#e5e2e1] max-w-[200px] truncate">BTC/USDT Above $75k by May 24?</td>
+              <td class="px-5 py-3 text-[#b9cbb9]">0.452</td>
+              <td class="px-5 py-3 text-[#b9cbb9]">0.528</td>
+              <td class="px-5 py-3 text-right text-[#b9cbb9]">0.980</td>
+              <td class="px-5 py-3 text-right text-[#00fd87] font-bold">-2.00%</td>
+              <td class="px-5 py-3 text-center"><span class="chip bg-[#00fd87] text-black">UNDER</span></td>
+            </tr>
+            <tr class="bg-[#201f1f] border-b border-[#131313] hover:bg-[#2a2a2a] transition-colors">
+              <td class="px-5 py-3 text-[#e5e2e1] max-w-[200px] truncate">ETH ETF Approved by August 31st?</td>
+              <td class="px-5 py-3 text-[#b9cbb9]">0.681</td>
+              <td class="px-5 py-3 text-[#b9cbb9]">0.344</td>
+              <td class="px-5 py-3 text-right text-[#b9cbb9]">1.025</td>
+              <td class="px-5 py-3 text-right text-[#ffb4ab] font-bold">+2.50%</td>
+              <td class="px-5 py-3 text-center"><span class="chip bg-[#ffb4ab] text-black">OVER</span></td>
+            </tr>
+            <tr class="bg-[#1c1b1b] border-b border-[#131313] hover:bg-[#2a2a2a] transition-colors">
+              <td class="px-5 py-3 text-[#e5e2e1] max-w-[200px] truncate">Fed Rate Hike Sept 2024?</td>
+              <td class="px-5 py-3 text-[#b9cbb9]">0.490</td>
+              <td class="px-5 py-3 text-[#b9cbb9]">0.492</td>
+              <td class="px-5 py-3 text-right text-[#b9cbb9]">0.982</td>
+              <td class="px-5 py-3 text-right text-[#00fd87] font-bold">-1.80%</td>
+              <td class="px-5 py-3 text-center"><span class="chip bg-[#00fd87] text-black">UNDER</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sidebar Nav (Desktop) -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Sidebar Navigation (Desktop lg+)</p>
+      <div class="w-64 bg-[#0e0e0e] border border-[#353534]">
+        <div class="p-5 border-b border-[#201f1f]">
+          <div class="sg text-lg font-black tracking-tighter text-[#00fd87] uppercase">POLYSCAN</div>
+          <div class="mono text-[9px] text-[#849585] tracking-widest mt-1">v4.0.2-ALPHA</div>
+        </div>
+        <nav>
+          <a class="flex items-center gap-3 px-4 py-3 bg-[#201f1f] text-[#00fd87] border-r-2 border-[#00fd87] mono active-glow" href="#">
+            <span class="material-symbols-outlined text-xl">terminal</span>
+            <span class="text-sm font-bold tracking-tight">TERMINAL</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-3 text-[#849585] hover:text-[#e5e2e1] mono transition-colors" href="#">
+            <span class="material-symbols-outlined text-xl">troubleshoot</span>
+            <span class="text-sm font-bold tracking-tight">SCANNERS</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-3 text-[#849585] hover:text-[#e5e2e1] mono transition-colors" href="#">
+            <span class="material-symbols-outlined text-xl">history</span>
+            <span class="text-sm font-bold tracking-tight">HISTORY</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-3 text-[#849585] hover:text-[#e5e2e1] mono transition-colors" href="#">
+            <span class="material-symbols-outlined text-xl">settings</span>
+            <span class="text-sm font-bold tracking-tight">SETTINGS</span>
+          </a>
+        </nav>
+        <div class="p-4 border-t border-[#201f1f] mt-4">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-[#00fd87] animate-pulse"></div>
+              <span class="text-[10px] mono text-[#b9cbb9]">LIVE FEED</span>
+            </div>
+            <span class="text-[10px] mono text-[#00fd87]">14MS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Nav (Mobile) -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Bottom Navigation (Mobile &lt;md)</p>
+      <div class="flex max-w-xs border-t border-[#201f1f] bg-[#0e0e0e]">
+        <a class="flex flex-col items-center justify-center text-[#00fd87] bg-[#1c1b1b] p-3 flex-1" href="#">
+          <span class="material-symbols-outlined text-xl mb-1" style="font-variation-settings:'FILL' 1">grid_view</span>
+          <span class="sg text-[10px] uppercase">Terminal</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-[#353534] p-3 flex-1 hover:text-[#00fd87]" href="#">
+          <span class="material-symbols-outlined text-xl mb-1">radar</span>
+          <span class="sg text-[10px] uppercase">Scanners</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-[#353534] p-3 flex-1 hover:text-[#00fd87]" href="#">
+          <span class="material-symbols-outlined text-xl mb-1">history</span>
+          <span class="sg text-[10px] uppercase">History</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-[#353534] p-3 flex-1 hover:text-[#00fd87]" href="#">
+          <span class="material-symbols-outlined text-xl mb-1">settings</span>
+          <span class="sg text-[10px] uppercase">Settings</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Live Feed HUD -->
+    <div>
+      <p class="text-[10px] mono text-[#849585] uppercase mb-3">Live Feed HUD</p>
+      <div class="bg-[#201f1f] border border-[#353534] p-2 inline-flex flex-col items-end">
+        <div class="flex items-center gap-1 text-[9px] mono text-[#00fd87]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#00fd87] animate-pulse"></span>
+          LIVE FEED
+        </div>
+        <div class="text-[9px] mono text-[#849585]">LATENCY: 14ms</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────────────────────── -->
+<!-- 5. SPACING & EFFECTS            -->
+<!-- ─────────────────────────────── -->
+<section>
+  <p class="section-title">5 · Spacing, Borders & Effects</p>
+  <div class="space-y-2 mono text-[10px]">
+    <div class="flex gap-6 border-b border-[#201f1f] pb-2">
+      <span class="w-40 text-[#849585]">Page padding</span>
+      <code class="text-[#e5e2e1]">p-4 mobile → p-6 desktop</code>
+    </div>
+    <div class="flex gap-6 border-b border-[#201f1f] pb-2">
+      <span class="w-40 text-[#849585]">Section gap</span>
+      <code class="text-[#e5e2e1]">space-y-4 → space-y-6</code>
+    </div>
+    <div class="flex gap-6 border-b border-[#201f1f] pb-2">
+      <span class="w-40 text-[#849585]">Border radius</span>
+      <code class="text-[#e5e2e1]">0px — Sharp edges everywhere</code>
+    </div>
+    <div class="flex gap-6 border-b border-[#201f1f] pb-2">
+      <span class="w-40 text-[#849585]">Active nav glow</span>
+      <code class="text-[#e5e2e1]">box-shadow: 0 0 10px rgba(0,253,135,0.2)</code>
+    </div>
+    <div class="flex gap-6 border-b border-[#201f1f] pb-2">
+      <span class="w-40 text-[#849585]">Card border</span>
+      <code class="text-[#e5e2e1]">border border-[#2a2a2a]</code>
+    </div>
+    <div class="flex gap-6">
+      <span class="w-40 text-[#849585]">Scanline overlay</span>
+      <code class="text-[#e5e2e1]">fixed, pointer-events:none, z-50 (desktop only)</code>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────── -->
+<!-- 6. ICONS                        -->
+<!-- ─────────────────────────────── -->
+<section>
+  <p class="section-title">6 · Icons (Material Symbols Outlined)</p>
+  <div class="flex flex-wrap gap-6">
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#00fd87]">terminal</span>
+      <span class="text-[8px] mono text-[#849585]">terminal</span>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#b9cbb9]">grid_view</span>
+      <span class="text-[8px] mono text-[#849585]">grid_view</span>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#b9cbb9]">troubleshoot</span>
+      <span class="text-[8px] mono text-[#849585]">troubleshoot</span>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#b9cbb9]">radar</span>
+      <span class="text-[8px] mono text-[#849585]">radar</span>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#b9cbb9]">history</span>
+      <span class="text-[8px] mono text-[#849585]">history</span>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#b9cbb9]">settings</span>
+      <span class="text-[8px] mono text-[#849585]">settings</span>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#b9cbb9]">monitoring</span>
+      <span class="text-[8px] mono text-[#849585]">monitoring</span>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#b9cbb9]">filter_list</span>
+      <span class="text-[8px] mono text-[#849585]">filter_list</span>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#b9cbb9]">download</span>
+      <span class="text-[8px] mono text-[#849585]">download</span>
+    </div>
+    <div class="flex flex-col items-center gap-1">
+      <span class="material-symbols-outlined text-[#b9cbb9]">sensors</span>
+      <span class="text-[8px] mono text-[#849585]">sensors</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────── -->
+<!-- 7. STATE PATTERNS               -->
+<!-- ─────────────────────────────── -->
+<section>
+  <p class="section-title">7 · State Patterns</p>
+  <div class="space-y-2 mono text-[10px]">
+    <div class="flex items-center gap-3 p-3 bg-[#1c1b1b] border border-[#2a2a2a]">
+      <div class="w-2 h-2 rounded-full bg-[#00fd87] animate-pulse"></div>
+      <span class="text-[#b9cbb9]">Scanning…</span>
+      <span class="text-[#353534]">green pulse dot + SCAN NOW button disabled</span>
+    </div>
+    <div class="flex items-center gap-3 p-3 bg-[#1c1b1b] border border-[#2a2a2a]">
+      <div class="w-2 h-2 rounded-full bg-[#353534]"></div>
+      <span class="text-[#b9cbb9]">Idle / Ready</span>
+      <span class="text-[#353534]">grey dot + SCAN NOW button active</span>
+    </div>
+    <div class="flex items-center gap-3 p-3 bg-[#1c1b1b] border border-[#2a2a2a]">
+      <div class="w-2 h-2 rounded-full bg-[#ffb4ab]"></div>
+      <span class="text-[#b9cbb9]">Error / No results</span>
+      <span class="text-[#353534]">red dot + error message in table area</span>
+    </div>
+    <div class="flex items-center gap-3 p-3 bg-[#1c1b1b] border border-[#2a2a2a]">
+      <div class="w-2 h-2 rounded-full bg-[#849585]"></div>
+      <span class="text-[#b9cbb9]">System Standby</span>
+      <span class="text-[#353534]">grey dot + SYSTEM STANDBY - READY label</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-[#353534] pt-4 pb-12 mono text-[9px] text-[#353534] flex justify-between">
+  <span>POLYSCAN Design System · v1.0 · Merged from mobile + desktop Stitch screens</span>
+  <span>Fonts: Space Grotesk · JetBrains Mono · Inter</span>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>POLYSCAN Terminal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#006532",
+              "on-primary-container": "#005b2c",
+              "outline": "#767575",
+              "on-tertiary-fixed-variant": "#005361",
+              "inverse-on-surface": "#565555",
+              "on-error": "#490006",
+              "on-tertiary-container": "#004956",
+              "error-dim": "#d7383b",
+              "on-primary-fixed": "#004621",
+              "on-secondary-fixed": "#70000b",
+              "secondary-dim": "#df2b31",
+              "primary": "#a4ffb9",
+              "on-tertiary": "#005361",
+              "on-surface": "#ffffff",
+              "on-secondary-fixed-variant": "#a60016",
+              "tertiary-dim": "#00cdee",
+              "surface-dim": "#0e0e0e",
+              "tertiary": "#7ee6ff",
+              "inverse-surface": "#fcf9f8",
+              "surface-container": "#1a1919",
+              "surface-container-lowest": "#000000",
+              "background": "#0e0e0e",
+              "on-background": "#ffffff",
+              "primary-dim": "#00ed7e",
+              "surface": "#0e0e0e",
+              "surface-container-highest": "#262626",
+              "surface-variant": "#262626",
+              "secondary": "#ff7169",
+              "surface-container-low": "#131313",
+              "primary-fixed-dim": "#00ed7e",
+              "on-surface-variant": "#adaaaa",
+              "secondary-fixed-dim": "#ffafa9",
+              "primary-container": "#00fd87",
+              "primary-fixed": "#00fd87",
+              "on-secondary-container": "#fff6f4",
+              "error": "#ff716c",
+              "error-container": "#9f0519",
+              "on-tertiary-fixed": "#00333d",
+              "tertiary-fixed-dim": "#00cdee",
+              "on-error-container": "#ffa8a3",
+              "inverse-primary": "#006e37",
+              "surface-container-high": "#201f1f",
+              "surface-tint": "#a4ffb9",
+              "on-primary-fixed-variant": "#006632",
+              "surface-bright": "#2c2c2c",
+              "secondary-fixed": "#ffc3be",
+              "tertiary-container": "#00dcff",
+              "tertiary-fixed": "#00dcff",
+              "outline-variant": "#484847",
+              "secondary-container": "#be0b1d",
+              "on-secondary": "#490005"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        body {
+            background-color: #0e0e0e;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .mono {
+            font-family: 'Space Grotesk', monospace;
+        }
+        /* Custom scrollbar for high-density tables */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0e0e0e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #201f1f;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-4 py-3 w-full bg-[#0e0e0e] border-b border-[#201f1f] sticky top-0 z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#00ff88]" data-icon="terminal">terminal</span>
+<h1 class="text-xl font-bold tracking-tighter text-[#00ff88] font-mono uppercase tracking-widest text-sm">POLYSCAN</h1>
+</div>
+<button class="bg-[#00fd87] text-[#005b2c] font-['Space_Grotesk'] uppercase tracking-widest text-[10px] font-bold px-3 py-1.5 hover:opacity-80 transition-opacity flex items-center gap-1">
+            Scan Now
+        </button>
+</header>
+<main class="flex-grow p-4 space-y-4">
+<!-- Stats Row -->
+<div class="grid grid-cols-3 gap-1">
+<div class="bg-surface-container-low p-3 border-l-2 border-primary">
+<p class="text-[10px] uppercase font-label text-on-surface-variant leading-none mb-1">Markets Scanned</p>
+<p class="text-xl font-bold mono text-on-surface">1243</p>
+</div>
+<div class="bg-surface-container-low p-3 border-l-2 border-primary">
+<p class="text-[10px] uppercase font-label text-on-surface-variant leading-none mb-1">Gaps Found</p>
+<p class="text-xl font-bold mono text-primary">7</p>
+</div>
+<div class="bg-surface-container-low p-3 border-l-2 border-outline-variant">
+<p class="text-[10px] uppercase font-label text-on-surface-variant leading-none mb-1">Last Scan</p>
+<p class="text-xl font-bold mono text-on-surface">06:45<span class="text-xs ml-1 text-on-surface-variant">UTC</span></p>
+</div>
+</div>
+<!-- Filter Bar -->
+<section class="bg-surface-container p-4 space-y-4">
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center">
+<label class="text-[10px] uppercase font-label text-on-surface-variant">Min gap threshold</label>
+<span class="text-xs mono text-primary">3¢ minimum</span>
+</div>
+<input class="w-full h-1 bg-surface-container-highest appearance-none cursor-pointer accent-primary" max="50" min="1" type="range" value="3"/>
+</div>
+<div class="flex bg-surface-container-lowest p-1">
+<button class="flex-1 py-2 text-[10px] uppercase font-label bg-surface-container-highest text-primary font-bold">ALL</button>
+<button class="flex-1 py-2 text-[10px] uppercase font-label text-on-surface-variant hover:text-on-surface">OVER</button>
+<button class="flex-1 py-2 text-[10px] uppercase font-label text-on-surface-variant hover:text-on-surface">UNDER</button>
+</div>
+</section>
+<!-- Bar Chart Visualizer -->
+<section class="bg-surface-container p-4">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-[10px] uppercase font-label tracking-widest text-on-surface-variant">Real-time Gap Distribution</h3>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant" data-icon="monitoring">monitoring</span>
+</div>
+<div class="flex items-end justify-between h-24 gap-1">
+<div class="w-full bg-secondary opacity-80" style="height: 40%" title="OVER"></div>
+<div class="w-full bg-primary opacity-80" style="height: 65%" title="UNDER"></div>
+<div class="w-full bg-primary opacity-80" style="height: 25%" title="UNDER"></div>
+<div class="w-full bg-secondary opacity-80" style="height: 90%" title="OVER"></div>
+<div class="w-full bg-primary opacity-80" style="height: 55%" title="UNDER"></div>
+<div class="w-full bg-primary opacity-80" style="height: 15%" title="UNDER"></div>
+<div class="w-full bg-secondary opacity-80" style="height: 45%" title="OVER"></div>
+<div class="w-full bg-primary opacity-80" style="height: 75%" title="UNDER"></div>
+<div class="w-full bg-secondary opacity-80" style="height: 35%" title="OVER"></div>
+<div class="w-full bg-primary opacity-80" style="height: 60%" title="UNDER"></div>
+</div>
+<div class="flex justify-between mt-2 text-[8px] mono text-on-surface-variant">
+<span>00:00</span>
+<span>SCAN FLOW</span>
+<span>CURRENT</span>
+</div>
+</section>
+<!-- Results Table -->
+<section class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container-highest text-left">
+<th class="p-2 text-[10px] uppercase font-label text-on-surface-variant whitespace-nowrap">Market / Question</th>
+<th class="p-2 text-[10px] uppercase font-label text-on-surface-variant text-right">Yes</th>
+<th class="p-2 text-[10px] uppercase font-label text-on-surface-variant text-right">No</th>
+<th class="p-2 text-[10px] uppercase font-label text-on-surface-variant text-right">Sum</th>
+<th class="p-2 text-[10px] uppercase font-label text-on-surface-variant text-right">Gap</th>
+</tr>
+</thead>
+<tbody class="text-xs">
+<!-- Row 1: Under -->
+<tr class="bg-surface-container-low border-b border-[#0e0e0e]">
+<td class="p-2 max-w-[120px]">
+<div class="flex items-center gap-1 mb-1">
+<span class="px-1 bg-on-primary-container text-[8px] mono text-primary">UNDER</span>
+</div>
+<div class="truncate text-on-surface font-medium">Will BTC hit 100k by EOY?</div>
+</td>
+<td class="p-2 text-right mono">0.45</td>
+<td class="p-2 text-right mono">0.52</td>
+<td class="p-2 text-right mono">0.97</td>
+<td class="p-2 text-right mono text-primary font-bold">-0.03</td>
+</tr>
+<!-- Row 2: Over -->
+<tr class="bg-surface-container border-b border-[#0e0e0e]">
+<td class="p-2 max-w-[120px]">
+<div class="flex items-center gap-1 mb-1">
+<span class="px-1 bg-secondary-container text-[8px] mono text-secondary">OVER</span>
+</div>
+<div class="truncate text-on-surface font-medium">Ethereum ETF Approval...</div>
+</td>
+<td class="p-2 text-right mono">0.58</td>
+<td class="p-2 text-right mono">0.47</td>
+<td class="p-2 text-right mono">1.05</td>
+<td class="p-2 text-right mono text-secondary font-bold">+0.05</td>
+</tr>
+<!-- Row 3: Under -->
+<tr class="bg-surface-container-low border-b border-[#0e0e0e]">
+<td class="p-2 max-w-[120px]">
+<div class="flex items-center gap-1 mb-1">
+<span class="px-1 bg-on-primary-container text-[8px] mono text-primary">UNDER</span>
+</div>
+<div class="truncate text-on-surface font-medium">Solana Breakpoint Anno...</div>
+</td>
+<td class="p-2 text-right mono">0.22</td>
+<td class="p-2 text-right mono">0.74</td>
+<td class="p-2 text-right mono">0.96</td>
+<td class="p-2 text-right mono text-primary font-bold">-0.04</td>
+</tr>
+<!-- Row 4: Over -->
+<tr class="bg-surface-container border-b border-[#0e0e0e]">
+<td class="p-2 max-w-[120px]">
+<div class="flex items-center gap-1 mb-1">
+<span class="px-1 bg-secondary-container text-[8px] mono text-secondary">OVER</span>
+</div>
+<div class="truncate text-on-surface font-medium">Fed Rate Hike Sept 2024</div>
+</td>
+<td class="p-2 text-right mono">0.89</td>
+<td class="p-2 text-right mono">0.18</td>
+<td class="p-2 text-right mono">1.07</td>
+<td class="p-2 text-right mono text-secondary font-bold">+0.07</td>
+</tr>
+<!-- Row 5: Under -->
+<tr class="bg-surface-container-low border-b border-[#0e0e0e]">
+<td class="p-2 max-w-[120px]">
+<div class="flex items-center gap-1 mb-1">
+<span class="px-1 bg-on-primary-container text-[8px] mono text-primary">UNDER</span>
+</div>
+<div class="truncate text-on-surface font-medium">GOP Nominee Prediction</div>
+</td>
+<td class="p-2 text-right mono">0.48</td>
+<td class="p-2 text-right mono">0.48</td>
+<td class="p-2 text-right mono">0.96</td>
+<td class="p-2 text-right mono text-primary font-bold">-0.04</td>
+</tr>
+</tbody>
+</table>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center bg-[#0e0e0e] h-16 border-t border-[#201f1f] z-50">
+<a class="flex flex-col items-center justify-center text-[#00ff88] bg-[#131313] p-2 flex-1 h-full" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase">Terminal</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-600 p-2 flex-1 h-full hover:text-[#00ff88]" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="radar">radar</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase">Scanners</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-600 p-2 flex-1 h-full hover:text-[#00ff88]" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="history">history</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-600 p-2 flex-1 h-full hover:text-[#00ff88]" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase">Settings</span>
+</a>
+</nav>
+<!-- Floating HUD Elements (Purely Aesthetic) -->
+<div class="fixed bottom-20 right-4 pointer-events-none">
+<div class="bg-surface-container-high border border-outline-variant p-2 flex flex-col items-end">
+<div class="flex items-center gap-1 text-[8px] mono text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                LIVE FEED
+            </div>
+<div class="text-[10px] mono text-on-surface-variant">LATENCY: 14ms</div>
+</div>
+</div>
+</body></html>
