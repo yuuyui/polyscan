@@ -78,3 +78,107 @@ Closes #5
 
 > **สำคัญ:** Jasmine ต้องปฏิบัติตาม workflow นี้ทุก task
 > ไม่มีข้อยกเว้น — แม้แต่ fix เล็กน้อย
+
+---
+
+## 🧪 Tester Flow
+
+Tester ทำหน้าที่ตรวจสอบ quality ก่อน merge เข้า main เสมอ
+
+### ขั้นตอน
+
+#### 1. ดู Issues ทั้งหมด (Open + Closed)
+```bash
+# ดู open issues
+gh issue list --state open
+
+# ดู closed issues
+gh issue list --state closed
+
+# ดูทั้งหมดพร้อมกัน
+gh issue list --state all
+```
+
+#### 2. Group เป็น Epic
+
+จัด issues เป็น epic ตามกลุ่ม feature/domain:
+
+| Epic | ชื่อ Epic | ตัวอย่าง Issues |
+|------|-----------|----------------|
+| `epic/core-scan` | Core Scan | gap calculation, API fetch, pagination |
+| `epic/ui-ux` | UI/UX | design, components, responsive layout |
+| `epic/dx` | Developer Experience | workflow, tooling, docs |
+| `epic/performance` | Performance | speed, caching, batching |
+
+> ตั้งชื่อ Epic ให้สื่อถึง domain ชัดเจน เช่น `epic/core-scan`, `epic/ui-ux`
+
+#### 3. Analyze Acceptance Criteria ของแต่ละ Epic
+
+รวบรวม acceptance criteria จากทุก issue ในแต่ละ epic:
+
+```
+Epic: core-scan
+├── Issue #X — calcGaps logic
+│   AC: OVER/UNDER/FAIR detection ✓, no-liquidity filter ✓
+├── Issue #Y — fetchAllMarkets pagination
+│   AC: stops at LTE= ✓, handles empty cursor ✓
+└── Issue #Z — fetchMidpoints batching
+    AC: batch size 500 ✓, merges results ✓
+
+Coverage: 3/3 issues · 6/6 criteria
+```
+
+#### 4. Test
+
+ทำตามลำดับ:
+
+**4.1 Unit Tests**
+```bash
+npm run test
+# → ต้องผ่าน 100% ก่อนเสมอ
+```
+
+**4.2 Build Check**
+```bash
+npm run build
+# → ต้องไม่มี TypeScript error
+```
+
+**4.3 Manual / Integration Test**
+- เปิด dev server: `npm run dev`
+- ทดสอบตาม acceptance criteria ของแต่ละ epic ทีละข้อ
+- บันทึกผล pass/fail
+
+**4.4 รายงานผล**
+
+```
+## Test Report — Epic: core-scan
+
+| Criteria                       | Status    | Notes |
+|--------------------------------|-----------|-------|
+| UNDER detected when sum < 1    | ✅ Pass   |       |
+| OVER detected when sum > 1     | ✅ Pass   |       |
+| no-liquidity rows filtered     | ✅ Pass   |       |
+| pagination stops at LTE=       | ✅ Pass   |       |
+| batch size 500 enforced        | ✅ Pass   |       |
+
+Result: 5/5 Pass ✅
+```
+
+---
+
+## สรุป Flow ทั้งหมด (Dev + Tester + Owner)
+
+```
+[Dev]    สร้าง Issue
+              ↓
+[Dev]    แจ้ง Owner → รอ Approve
+              ↓
+[Dev]    สร้าง Branch → Implement + Tests → Push
+              ↓
+[Dev]    สร้าง Pull Request
+              ↓
+[Tester] ดู Issues → Group Epic → Analyze AC → Test → รายงานผล
+              ↓
+[Owner]  Review PR + Test Report → Merge
+```
