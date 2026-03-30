@@ -1,95 +1,160 @@
 import { useState } from "react"
 import { ScannerPage } from "./components/ScannerPage"
+import { StatsBar } from "./components/StatsBar"
+import { FilterBar } from "./components/FilterBar"
 import { useScan } from "./hooks/useScan"
+import type { FilterDirection } from "./types"
 
-type NavItem = "terminal" | "scanners" | "history" | "settings"
+type NavItem = "terminal" | "history" | "settings"
+
 const navItems = [
   { id: "terminal" as NavItem, icon: "terminal", label: "TERMINAL" },
-  { id: "scanners" as NavItem, icon: "troubleshoot", label: "SCANNERS" },
   { id: "history" as NavItem, icon: "history", label: "HISTORY" },
   { id: "settings" as NavItem, icon: "settings", label: "SETTINGS" },
 ]
 
 export default function App() {
   const [active, setActive] = useState<NavItem>("terminal")
-  const { isScanning, scan } = useScan(0.03)
+  const [minGap, setMinGap] = useState(0.03)
+  const [direction, setDirection] = useState<FilterDirection>("ALL")
+  const { results, isScanning, lastScanAt, totalScanned, error, scan } = useScan(minGap)
+  const filtered = results.filter(r => direction === "ALL" ? true : r.direction === direction)
+
   return (
-    <div className="min-h-screen bg-surface text-on-surface flex">
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-full w-64 bg-surface-dim border-r border-surface-high z-40">
-        <div className="p-6 border-b border-surface-container">
-          <div className="font-sg text-xl font-black tracking-tighter text-primary-fixed uppercase">POLYSCAN</div>
-          <div className="font-mono text-[9px] text-outline tracking-widest mt-1">v1.0.0-ALPHA</div>
-        </div>
-        <nav className="flex-1 mt-2">
-          {navItems.map(item => (
-            <button key={item.id} onClick={() => setActive(item.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3 font-mono text-sm font-bold uppercase tracking-tight transition-colors ${
-                active===item.id ? "bg-surface-container text-primary-fixed border-r-2 border-primary-fixed" : "text-outline hover:text-on-surface"
-              }`}
-              style={active===item.id ? { boxShadow:"0 0 10px rgba(0,253,135,0.2)" } : {}}>
-              <span className="material-symbols-outlined">{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
-        </nav>
-        <div className="p-4 border-t border-surface-container">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-bg-base text-text-primary flex flex-col">
+
+      {/* Desktop layout */}
+      <div className="hidden lg:flex flex-1">
+
+        {/* Sidebar 240px */}
+        <aside className="w-60 flex-shrink-0 bg-bg-sidebar border-r border-border-default flex flex-col fixed top-0 left-0 h-full z-40">
+          {/* Brand */}
+          <div className="px-5 py-5 border-b border-border-default">
             <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${isScanning ? "bg-primary-fixed animate-pulse" : "bg-outline"}`}></div>
-              <span className="text-[10px] font-mono text-on-surface-variant">LIVE FEED</span>
+              <span className="material-symbols-outlined text-primary text-lg">terminal</span>
+              <span className="font-mono font-bold text-primary tracking-widest text-sm uppercase">POLYSCAN</span>
             </div>
-            <span className="text-[10px] font-mono text-primary-fixed">14MS</span>
+            <div className="text-[9px] font-mono text-text-muted mt-1">v1.0.0 &middot; Arbitrage Scanner</div>
           </div>
-        </div>
-      </aside>
 
-      {/* Tablet Sidebar */}
-      <aside className="hidden md:flex lg:hidden flex-col fixed left-0 top-0 h-full w-16 bg-surface-dim border-r border-surface-high z-40">
-        <div className="p-4 border-b border-surface-container flex justify-center">
-          <span className="material-symbols-outlined text-primary-fixed">terminal</span>
-        </div>
-        <nav className="flex-1 mt-2">
-          {navItems.map(item => (
-            <button key={item.id} onClick={() => setActive(item.id)}
-              className={`w-full flex justify-center py-3 transition-colors ${active===item.id?"text-primary-fixed":"text-outline hover:text-on-surface"}`}>
-              <span className="material-symbols-outlined">{item.icon}</span>
-            </button>
-          ))}
-        </nav>
-      </aside>
+          {/* Nav */}
+          <nav className="py-2">
+            {navItems.map(item => (
+              <button key={item.id} onClick={() => setActive(item.id)}
+                className={`w-full flex items-center gap-3 px-5 py-2.5 text-xs font-mono uppercase transition-colors ${
+                  active === item.id
+                    ? "text-primary border-r-2 border-primary bg-bg-card"
+                    : "text-text-muted hover:text-text-primary"
+                }`}>
+                <span className="material-symbols-outlined text-base">{item.icon}</span>
+                {item.label}
+              </button>
+            ))}
+          </nav>
 
-      {/* Main */}
-      <main className="flex-1 lg:ml-64 md:ml-16 flex flex-col min-h-screen pb-16 md:pb-0">
-        <header className="flex items-center justify-between px-4 lg:px-6 h-14 bg-surface-dim border-b border-surface-high sticky top-0 z-30">
-          <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-primary-fixed">terminal</span>
-            <h1 className="font-sg font-black tracking-tighter text-primary-fixed uppercase text-lg lg:hidden">POLYSCAN</h1>
-            <span className="hidden lg:block text-[10px] font-mono text-outline uppercase tracking-widest">TERMINAL_CORE</span>
+          <div className="flex-1" />
+
+          {/* Stats + Filter in sidebar */}
+          <div className="px-4 pb-4 space-y-5 border-t border-border-default pt-4">
+            <StatsBar
+              totalScanned={totalScanned}
+              found={filtered.length}
+              lastScanAt={lastScanAt}
+              isScanning={isScanning}
+            />
+            <FilterBar
+              minGap={minGap}
+              direction={direction}
+              onMinGapChange={setMinGap}
+              onDirectionChange={setDirection}
+            />
           </div>
-          <button onClick={scan} disabled={isScanning}
-            className="bg-primary-fixed text-black text-xs font-mono font-bold px-4 py-2 uppercase hover:bg-primary-dim transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-            {isScanning ? "SCANNING\u2026" : "SCAN NOW"}
+        </aside>
+
+        {/* Main content */}
+        <main className="ml-60 flex-1 flex flex-col min-h-screen">
+          {/* Top bar */}
+          <header className="flex items-center justify-between px-6 h-12 bg-bg-sidebar border-b border-border-default sticky top-0 z-30">
+            <div className="flex items-center gap-6">
+              <span className="text-[10px] font-mono text-text-muted uppercase tracking-widest">TERMINAL_CORE</span>
+              <button className="text-[10px] font-mono text-primary border-b border-primary pb-0.5">Live Arbitrage Feed</button>
+            </div>
+            <div className="flex items-center gap-3">
+              {lastScanAt && (
+                <span className="text-[9px] font-mono text-text-muted">
+                  {lastScanAt.toUTCString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")} UTC
+                </span>
+              )}
+              <button
+                onClick={scan}
+                disabled={isScanning}
+                className="px-4 py-1.5 text-xs font-mono font-bold uppercase rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  background: "#33ff99",
+                  color: "#000",
+                }}
+                onMouseEnter={e => { if (!isScanning) (e.target as HTMLElement).style.background = "#00ccc9" }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.background = "#33ff99" }}
+              >
+                {isScanning ? "SCANNING\u2026" : "SCAN NOW"}
+              </button>
+            </div>
+          </header>
+
+          {/* Page */}
+          {active === "terminal" && <ScannerPage results={filtered} error={error} />}
+          {active !== "terminal" && (
+            <div className="flex-1 flex items-center justify-center">
+              <span className="font-mono text-text-muted text-sm uppercase">Coming Soon \u2014 {active}</span>
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* Mobile layout */}
+      <div className="lg:hidden flex flex-col flex-1">
+        {/* Mobile header */}
+        <header className="flex items-center justify-between px-4 h-12 bg-bg-sidebar border-b border-border-default sticky top-0 z-30">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary">terminal</span>
+            <span className="font-mono font-bold text-primary tracking-widest text-sm uppercase">POLYSCAN</span>
+          </div>
+          <button
+            onClick={scan}
+            disabled={isScanning}
+            className="px-3 py-1.5 text-xs font-mono font-bold uppercase rounded-sm disabled:opacity-50"
+            style={{ background: "#33ff99", color: "#000" }}
+          >
+            {isScanning ? "\u2026" : "SCAN"}
           </button>
         </header>
-        {active==="terminal" && <ScannerPage />}
-        {active!=="terminal" && (
-          <div className="flex-1 flex items-center justify-center">
-            <span className="font-mono text-outline text-sm uppercase">Coming Soon \u2014 {active}</span>
-          </div>
-        )}
-      </main>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 flex bg-surface-dim border-t border-surface-high z-40">
-        {navItems.map(item => (
-          <button key={item.id} onClick={() => setActive(item.id)}
-            className={`flex-1 flex flex-col items-center justify-center py-3 transition-colors ${active===item.id?"text-primary-fixed bg-surface-low":"text-outline hover:text-on-surface"}`}>
-            <span className="material-symbols-outlined">{item.icon}</span>
-            <span className="font-sg text-[9px] uppercase mt-1">{item.label}</span>
-          </button>
-        ))}
-      </nav>
+        {/* Mobile stats */}
+        <div className="px-4 pt-4 pb-2">
+          <StatsBar totalScanned={totalScanned} found={filtered.length} lastScanAt={lastScanAt} isScanning={isScanning} />
+        </div>
+        <div className="px-4 pb-4">
+          <FilterBar minGap={minGap} direction={direction} onMinGapChange={setMinGap} onDirectionChange={setDirection} />
+        </div>
+
+        {/* Mobile content */}
+        <main className="flex-1 pb-16">
+          {active === "terminal" && <ScannerPage results={filtered} error={error} />}
+        </main>
+
+        {/* Mobile bottom nav */}
+        <nav className="fixed bottom-0 left-0 right-0 flex bg-bg-sidebar border-t border-border-default z-40">
+          {navItems.map(item => (
+            <button key={item.id} onClick={() => setActive(item.id)}
+              className={`flex-1 flex flex-col items-center justify-center py-3 transition-colors ${
+                active === item.id ? "text-primary" : "text-text-muted hover:text-text-primary"
+              }`}>
+              <span className="material-symbols-outlined text-xl">{item.icon}</span>
+              <span className="font-mono text-[8px] uppercase mt-0.5">{item.label}</span>
+            </button>
+          ))}
+        </nav>
+      </div>
     </div>
   )
 }

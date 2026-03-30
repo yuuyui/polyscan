@@ -1,27 +1,63 @@
 import { useState } from "react"
-import { useScan } from "../hooks/useScan"
-import { StatsBar } from "./StatsBar"
-import { FilterBar } from "./FilterBar"
 import { GapBarChart } from "./GapBarChart"
 import { ResultTable } from "./ResultTable"
-import type { FilterDirection } from "../types"
+import { SignalCard } from "./SignalCard"
+import type { GapResult } from "../types"
 
-export function ScannerPage() {
-  const [minGap, setMinGap] = useState(0.03)
-  const [direction, setDirection] = useState<FilterDirection>("ALL")
-  const { results, isScanning, lastScanAt, totalScanned, error } = useScan(minGap)
-  const filtered = results.filter(r => direction === "ALL" ? true : r.direction === direction)
+interface Props {
+  results: GapResult[]
+  error: string | null
+}
+
+export function ScannerPage({ results, error }: Props) {
+  const [view, setView] = useState<"cards" | "table">("cards")
+
   return (
-    <div className="p-4 lg:p-6 space-y-4 lg:space-y-6">
+    <div className="p-4 lg:p-6 space-y-4">
       {error && (
-        <div className="bg-secondary-container border border-secondary p-3 text-secondary font-mono text-xs">{"\u26A0"} {error}</div>
+        <div className="bg-over-bg border border-over-text/30 p-3 text-over-text font-mono text-xs rounded-sm">
+          {"\u26A0"} {error}
+        </div>
       )}
-      <StatsBar totalScanned={totalScanned} found={filtered.length} lastScanAt={lastScanAt} isScanning={isScanning} />
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
-        <div className="lg:col-span-4"><FilterBar minGap={minGap} direction={direction} onMinGapChange={setMinGap} onDirectionChange={setDirection} /></div>
-        <div className="lg:col-span-8"><GapBarChart results={filtered} /></div>
+
+      {/* Chart */}
+      <GapBarChart results={results} />
+
+      {/* View toggle + count */}
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-mono text-text-muted uppercase">
+          {results.length} signals
+        </span>
+        <div className="flex gap-1">
+          <button
+            onClick={() => setView("cards")}
+            className={`px-3 py-1 text-[9px] font-mono uppercase rounded-sm transition-colors ${
+              view === "cards" ? "bg-primary text-on-primary" : "bg-bg-card border border-border-default text-text-muted hover:text-text-primary"
+            }`}
+          >Cards</button>
+          <button
+            onClick={() => setView("table")}
+            className={`px-3 py-1 text-[9px] font-mono uppercase rounded-sm transition-colors ${
+              view === "table" ? "bg-primary text-on-primary" : "bg-bg-card border border-border-default text-text-muted hover:text-text-primary"
+            }`}
+          >Table</button>
+        </div>
       </div>
-      <ResultTable results={filtered} />
+
+      {/* Content */}
+      {view === "cards" ? (
+        results.length === 0 ? (
+          <div className="bg-bg-card border border-border-default rounded-sm p-8 text-center">
+            <p className="text-text-muted font-mono text-xs uppercase">No signals found {"\u2014"} try lowering threshold or run a scan</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+            {results.map((r, i) => <SignalCard key={i} result={r} />)}
+          </div>
+        )
+      ) : (
+        <ResultTable results={results} />
+      )}
     </div>
   )
 }

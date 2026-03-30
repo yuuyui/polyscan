@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>POLYSCAN — Layout 5: Minimal Command</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing:border-box; }
+body { background:#0a0a0a; color:#c8c8c8; font-family:'JetBrains Mono',monospace; -webkit-font-smoothing:antialiased; margin:0; font-size:12px; }
+.material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display:inline-block; line-height:1; }
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:#0a0a0a; }
+::-webkit-scrollbar-thumb { background:#2a2a2a; }
+a, button { cursor:pointer; }
+.green { color:#00fd87; }
+.red { color:#ff6b6b; }
+.dim { color:#555; }
+.row:hover td { background:#111 !important; }
+.sort-active { color:#00fd87; }
+input[type=range] { accent-color:#00fd87; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ONE-LINE HEADER -->
+<div class="flex items-center justify-between px-4 py-2 border-b border-[#1a1a1a] bg-[#050505]">
+  <div class="flex items-center gap-4">
+    <span class="green font-bold tracking-wider">POLYSCAN</span>
+    <span class="dim">|</span>
+    <span class="dim">arbitrage scanner</span>
+    <span class="dim">|</span>
+    <span class="green">● LIVE</span>
+  </div>
+  <div class="flex items-center gap-6 dim text-[11px]">
+    <span>1,243 markets</span>
+    <span class="green">7 signals</span>
+    <span>last: 06:45 UTC</span>
+    <button onclick="runScan()" id="scanbtn" class="green border border-[#00fd8755] px-3 py-1 hover:bg-[#00fd8711] transition-colors uppercase tracking-widest text-[10px]">
+      [scan]
+    </button>
+  </div>
+</div>
+
+<!-- INLINE FILTER — one line, keyboard friendly -->
+<div class="flex items-center gap-6 px-4 py-2 border-b border-[#151515] bg-[#080808] flex-wrap gap-y-2">
+  <span class="dim">&gt;</span>
+  <div class="flex items-center gap-2">
+    <label class="dim text-[10px] uppercase">gap≥</label>
+    <input type="range" min="1" max="20" value="3" class="w-24 h-px cursor-pointer"
+      oninput="document.getElementById('gv5').textContent=this.value+'%';filterTable(this.value,'gv5')"/>
+    <span class="green text-[10px]" id="gv5">3%</span>
+  </div>
+  <div class="flex items-center gap-1 text-[10px]">
+    <span class="dim">dir:</span>
+    <button onclick="setDir5('ALL',this)" class="dir5 green px-1" data-dir="ALL">[ALL]</button>
+    <button onclick="setDir5('OVER',this)" class="dir5 dim px-1 hover:text-[#c8c8c8]" data-dir="OVER">[OVER]</button>
+    <button onclick="setDir5('UNDER',this)" class="dir5 dim px-1 hover:text-[#c8c8c8]" data-dir="UNDER">[UNDER]</button>
+  </div>
+  <div class="ml-auto flex items-center gap-4 dim text-[10px]">
+    <button class="hover:text-[#c8c8c8] transition-colors" onclick="sortToggle('gap')">[sort: gap ↓]</button>
+    <button class="hover:text-[#c8c8c8] transition-colors">[export csv]</button>
+    <span id="result-count-5" class="green">5 results</span>
+  </div>
+</div>
+
+<!-- FULL-WIDTH TABLE — no decorations, maximum data density -->
+<div class="overflow-x-auto">
+  <table class="w-full border-collapse text-[11px]" id="main-table-5">
+    <thead>
+      <tr class="border-b border-[#1a1a1a] bg-[#080808]">
+        <th class="px-4 py-2 text-left font-normal dim uppercase text-[9px] tracking-widest cursor-pointer hover:text-[#c8c8c8]" onclick="sortToggle('market')"># MARKET</th>
+        <th class="px-4 py-2 text-right font-normal dim uppercase text-[9px] tracking-widest cursor-pointer hover:text-[#c8c8c8] sort-active" onclick="sortToggle('gap')">GAP ↓</th>
+        <th class="px-4 py-2 text-right font-normal dim uppercase text-[9px] tracking-widest cursor-pointer hover:text-[#c8c8c8]" onclick="sortToggle('net')">NET</th>
+        <th class="px-4 py-2 text-right font-normal dim uppercase text-[9px] tracking-widest hidden sm:table-cell">YES</th>
+        <th class="px-4 py-2 text-right font-normal dim uppercase text-[9px] tracking-widest hidden sm:table-cell">NO</th>
+        <th class="px-4 py-2 text-right font-normal dim uppercase text-[9px] tracking-widest hidden sm:table-cell">SUM</th>
+        <th class="px-4 py-2 text-center font-normal dim uppercase text-[9px] tracking-widest">DIR</th>
+        <th class="px-4 py-2 text-right font-normal dim uppercase text-[9px] tracking-widest hidden md:table-cell">LINK</th>
+      </tr>
+    </thead>
+    <tbody id="tbody5">
+      <!-- rows -->
+      <tr class="row border-b border-[#111] cursor-pointer" data-dir="UNDER" data-gap="7" data-net="5" onclick="openMkt(this)">
+        <td class="px-4 py-2.5"><span class="dim mr-3">01</span><span class="text-[#e0e0e0]">Fed Rate Hike Sept 2024</span></td>
+        <td class="px-4 py-2.5 text-right green font-bold">-7.0%</td>
+        <td class="px-4 py-2.5 text-right green font-bold">+5.0%</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.890</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.040</td>
+        <td class="px-4 py-2.5 text-right green hidden sm:table-cell">0.930</td>
+        <td class="px-4 py-2.5 text-center"><span class="green">[UNDER]</span></td>
+        <td class="px-4 py-2.5 text-right hidden md:table-cell"><a class="dim hover:green transition-colors" href="#" onclick="event.stopPropagation()">[open ↗]</a></td>
+      </tr>
+      <tr class="row border-b border-[#111] cursor-pointer" data-dir="OVER" data-gap="8" data-net="6" onclick="openMkt(this)">
+        <td class="px-4 py-2.5"><span class="dim mr-3">02</span><span class="text-[#e0e0e0]">DOGE hits $1 before halving?</span></td>
+        <td class="px-4 py-2.5 text-right red font-bold">+8.0%</td>
+        <td class="px-4 py-2.5 text-right green font-bold">+6.0%</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.550</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.530</td>
+        <td class="px-4 py-2.5 text-right red hidden sm:table-cell">1.080</td>
+        <td class="px-4 py-2.5 text-center"><span class="red">[OVER]</span></td>
+        <td class="px-4 py-2.5 text-right hidden md:table-cell"><a class="dim hover:green transition-colors" href="#" onclick="event.stopPropagation()">[open ↗]</a></td>
+      </tr>
+      <tr class="row border-b border-[#111] cursor-pointer" data-dir="OVER" data-gap="5" data-net="3" onclick="openMkt(this)">
+        <td class="px-4 py-2.5"><span class="dim mr-3">03</span><span class="text-[#e0e0e0]">ETH ETF Approved by August?</span></td>
+        <td class="px-4 py-2.5 text-right red font-bold">+5.0%</td>
+        <td class="px-4 py-2.5 text-right green font-bold">+3.0%</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.681</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.344</td>
+        <td class="px-4 py-2.5 text-right red hidden sm:table-cell">1.025</td>
+        <td class="px-4 py-2.5 text-center"><span class="red">[OVER]</span></td>
+        <td class="px-4 py-2.5 text-right hidden md:table-cell"><a class="dim hover:green transition-colors" href="#" onclick="event.stopPropagation()">[open ↗]</a></td>
+      </tr>
+      <tr class="row border-b border-[#111] cursor-pointer" data-dir="UNDER" data-gap="4" data-net="2" onclick="openMkt(this)">
+        <td class="px-4 py-2.5"><span class="dim mr-3">04</span><span class="text-[#e0e0e0]">Solana Breakpoint Announcement?</span></td>
+        <td class="px-4 py-2.5 text-right green font-bold">-4.0%</td>
+        <td class="px-4 py-2.5 text-right green font-bold">+2.0%</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.220</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.740</td>
+        <td class="px-4 py-2.5 text-right green hidden sm:table-cell">0.960</td>
+        <td class="px-4 py-2.5 text-center"><span class="green">[UNDER]</span></td>
+        <td class="px-4 py-2.5 text-right hidden md:table-cell"><a class="dim hover:green transition-colors" href="#" onclick="event.stopPropagation()">[open ↗]</a></td>
+      </tr>
+      <tr class="row border-b border-[#111] cursor-pointer" data-dir="UNDER" data-gap="3" data-net="1" onclick="openMkt(this)">
+        <td class="px-4 py-2.5"><span class="dim mr-3">05</span><span class="text-[#e0e0e0]">Will BTC hit 100k by EOY?</span></td>
+        <td class="px-4 py-2.5 text-right green font-bold">-3.0%</td>
+        <td class="px-4 py-2.5 text-right dim">+1.0%</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.450</td>
+        <td class="px-4 py-2.5 text-right dim hidden sm:table-cell">0.520</td>
+        <td class="px-4 py-2.5 text-right green hidden sm:table-cell">0.970</td>
+        <td class="px-4 py-2.5 text-center"><span class="green">[UNDER]</span></td>
+        <td class="px-4 py-2.5 text-right hidden md:table-cell"><a class="dim hover:green transition-colors" href="#" onclick="event.stopPropagation()">[open ↗]</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- MINIMAL STATUS BAR -->
+<div class="fixed bottom-0 left-0 right-0 flex justify-between items-center px-4 py-1.5 bg-[#050505] border-t border-[#151515] text-[9px] dim">
+  <span>polyscan v1.0-alpha · polymarket clob api</span>
+  <span class="flex items-center gap-3">
+    <span>fee: 2%/side</span>
+    <span>threshold: 3%</span>
+    <span class="green">● connected</span>
+  </span>
+</div>
+
+<script>
+var activeDir5 = 'ALL';
+var minGap5 = 3;
+
+function filterTable(){
+  minGap5 = parseInt(document.getElementById('gv5').textContent);
+  var rows = document.querySelectorAll('#tbody5 tr');
+  var shown = 0;
+  rows.forEach(function(row, i){
+    var dir = row.dataset.dir;
+    var gap = parseInt(row.dataset.gap);
+    var ok = (activeDir5==='ALL' || dir===activeDir5) && gap >= minGap5;
+    row.style.display = ok ? '' : 'none';
+    if(ok){ row.querySelector('.dim').textContent = String(++shown).padStart(2,'0') + ' '; }
+  });
+  document.getElementById('result-count-5').textContent = shown + ' results';
+}
+
+function setDir5(dir, btn){
+  activeDir5 = dir;
+  document.querySelectorAll('.dir5').forEach(function(b){
+    b.className = 'dir5 dim px-1 hover:text-[#c8c8c8]';
+  });
+  btn.className = 'dir5 green px-1';
+  filterTable();
+}
+
+document.querySelector('input[type=range]').addEventListener('input', function(){
+  minGap5 = parseInt(this.value);
+  filterTable();
+});
+
+function sortToggle(key){ /* demo only */ }
+function openMkt(row){ window.open('#','_blank'); }
+function runScan(){
+  var btn = document.getElementById('scanbtn');
+  btn.textContent = '[scanning...]';
+  btn.classList.add('animate-pulse');
+  setTimeout(function(){
+    btn.textContent = '[scan]';
+    btn.classList.remove('animate-pulse');
+  }, 2000);
+}
+</script>
+</body>
+</html>
