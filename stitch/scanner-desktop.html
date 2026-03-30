@@ -1,383 +1,587 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="en"><head>
+<html class="dark" lang="en">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>POLYSCAN // TERMINAL_CORE</title>
+<title>POLYSCAN — Desktop</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <style>
-        body {
-            background-color: #0e0e0e;
-            color: #e5e2e1;
-            font-family: 'Space Grotesk', sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-        }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .font-space-grotesk { font-family: 'Space Grotesk', sans-serif; }
-        
-        /* Scanline Effect */
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 50;
-        }
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  background:#0e0d14;
+  color:#e5e2e1;
+  font-family:'JetBrains Mono',monospace;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+.material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display:inline-block; line-height:1; }
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:#0e0d14; }
+::-webkit-scrollbar-thumb { background:#3d3b50; border-radius:2px; }
 
-        /* Kinetic Glow for Active Elements */
-        .active-glow {
-            box-shadow: 0 0 10px rgba(0, 253, 135, 0.2);
-        }
+/* Ticker animation */
+@keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.ticker-inner { animation:ticker 30s linear infinite; display:inline-flex; gap:3rem; white-space:nowrap; }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0e0e0e; }
-        ::-webkit-scrollbar-thumb { background: #353534; }
-    </style>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "secondary-fixed-dim": "#ffb3ad",
-                        "surface-container-lowest": "#0e0e0e",
-                        "on-secondary-fixed-variant": "#8a1b1c",
-                        "secondary-fixed": "#ffdad6",
-                        "surface-container-high": "#2a2a2a",
-                        "inverse-primary": "#006d37",
-                        "on-primary-fixed": "#00210c",
-                        "secondary": "#ffb3ad",
-                        "on-secondary-fixed": "#410003",
-                        "tertiary-fixed-dim": "#e7c267",
-                        "surface-variant": "#353534",
-                        "on-tertiary": "#3e2e00",
-                        "on-tertiary-container": "#795d05",
-                        "on-tertiary-fixed-variant": "#5a4400",
-                        "tertiary-container": "#ffd87a",
-                        "surface-tint": "#00e479",
-                        "on-surface": "#e5e2e1",
-                        "surface-container-highest": "#353534",
-                        "on-secondary": "#680009",
-                        "on-primary-fixed-variant": "#005228",
-                        "surface-container": "#201f1f",
-                        "surface-container-low": "#1c1b1b",
-                        "primary-fixed": "#60ff99",
-                        "surface-bright": "#3a3939",
-                        "outline-variant": "#3b4b3d",
-                        "primary-container": "#00fd87",
-                        "on-secondary-container": "#ff9e97",
-                        "primary-fixed-dim": "#00e479",
-                        "on-primary": "#003919",
-                        "on-background": "#e5e2e1",
-                        "outline": "#849585",
-                        "inverse-surface": "#e5e2e1",
-                        "on-error": "#690005",
-                        "on-tertiary-fixed": "#251a00",
-                        "secondary-container": "#8d1d1e",
-                        "surface-dim": "#131313",
-                        "primary": "#eaffe9",
-                        "error-container": "#93000a",
-                        "on-surface-variant": "#b9cbb9",
-                        "tertiary": "#fff8f0",
-                        "surface": "#131313",
-                        "on-error-container": "#ffdad6",
-                        "inverse-on-surface": "#313030",
-                        "on-primary-container": "#007038",
-                        "error": "#ffb4ab",
-                        "background": "#131313",
-                        "tertiary-fixed": "#ffdf96"
-                    },
-                    fontFamily: {
-                        "headline": ["Space Grotesk"],
-                        "body": ["Inter"],
-                        "label": ["Space Grotesk"]
-                    },
-                    borderRadius: {"DEFAULT": "0px", "lg": "0px", "xl": "0px", "full": "9999px"},
-                },
-            },
-        }
-    </script>
+/* Card slide-in */
+@keyframes slideIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+.signal-card { animation:slideIn 0.2s ease-out; }
+
+/* Gap bar */
+.gap-bar { transition:width 0.6s ease; }
+
+/* Scan lines overlay */
+.scanlines {
+  position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+}
+
+/* Active nav item */
+.nav-active {
+  background: linear-gradient(90deg, rgba(252,114,255,0.12) 0%, transparent 100%);
+  border-left: 2px solid #fc72ff;
+  color: #fc72ff !important;
+}
+.nav-active .nav-icon { color:#fc72ff !important; }
+.nav-item:not(.nav-active):hover { background:#22202e; color:#e5e2e1 !important; }
+.nav-item:not(.nav-active):hover .nav-icon { color:#e5e2e1 !important; }
+</style>
 </head>
-<body class="bg-surface-lowest text-on-surface">
+<body class="flex flex-col" style="height:100vh;overflow:hidden">
 <div class="scanlines"></div>
-<!-- SideNavBar -->
-<aside class="fixed left-0 top-0 h-full flex flex-col justify-between bg-zinc-950 border-r border-zinc-800/40 w-64 z-40">
-<div>
-<div class="p-6">
-<div class="text-2xl font-black tracking-tighter text-[#00fd87] font-space-grotesk">POLYSCAN</div>
-<div class="text-[10px] text-zinc-500 font-mono tracking-widest mt-1">v4.0.2-ALPHA</div>
-</div>
-<nav class="mt-4">
-<!-- Active Nav Item -->
-<a class="flex items-center gap-3 px-4 py-3 bg-zinc-800 text-[#00fd87] border-r-2 border-[#00fd87] font-mono group active-glow" href="#">
-<span class="material-symbols-outlined text-xl" data-icon="terminal">terminal</span>
-<span class="text-sm font-bold tracking-tight">TERMINAL</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-zinc-200 font-mono transition-colors duration-100 group" href="#">
-<span class="material-symbols-outlined text-xl" data-icon="troubleshoot">troubleshoot</span>
-<span class="text-sm font-bold tracking-tight">SCANNERS</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-zinc-200 font-mono transition-colors duration-100 group" href="#">
-<span class="material-symbols-outlined text-xl" data-icon="history">history</span>
-<span class="text-sm font-bold tracking-tight">HISTORY</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-zinc-200 font-mono transition-colors duration-100 group" href="#">
-<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
-<span class="text-sm font-bold tracking-tight">SETTINGS</span>
-</a>
-</nav>
-</div>
-<div class="p-4 border-t border-zinc-900">
-<div class="flex items-center justify-between mb-4">
-<div class="flex items-center gap-2">
-<div class="w-2 h-2 rounded-full bg-[#00fd87] animate-pulse"></div>
-<span class="text-[10px] font-mono text-zinc-400">LIVE FEED</span>
-</div>
-<span class="text-[10px] font-mono text-[#00fd87]">14MS LATENCY</span>
-</div>
-<button class="w-full py-3 bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-mono flex items-center justify-center gap-2 hover:bg-zinc-800 transition-all">
-<span class="material-symbols-outlined text-sm" data-icon="sensors">sensors</span>
-                VIEW TELEMETRY
-            </button>
-</div>
-</aside>
-<!-- Main Content Area -->
-<main class="ml-64 min-h-screen bg-surface flex flex-col">
-<!-- TopAppBar -->
-<header class="flex items-center justify-between px-6 h-16 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800/40 sticky top-0 z-30">
-<div class="flex items-center gap-8">
-<div class="text-xs font-bold font-mono text-zinc-500 tracking-widest uppercase">TERMINAL_CORE</div>
-<nav class="hidden md:flex items-center gap-6">
-<a class="text-xs font-bold font-mono text-[#00fd87] border-b border-[#00fd87] py-5" href="#">GLOBAL_MARKETS</a>
-<a class="text-xs font-bold font-mono text-zinc-400 hover:text-[#00fd87] transition-all py-5" href="#">LIQUIDITY_MAP</a>
-</nav>
-</div>
-<div class="flex items-center gap-4">
-<div class="relative group">
-<input class="bg-surface-container-lowest border-b border-outline-variant focus:border-primary-container text-xs font-mono py-1 px-3 w-48 outline-none transition-all placeholder:text-zinc-600" placeholder="SEARCH_MARKETS..." type="text"/>
-</div>
-<div class="flex items-center gap-2 text-zinc-400">
-<button class="p-2 hover:text-[#00fd87] transition-colors">
-<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
-</button>
-<button class="p-2 hover:text-[#00fd87] transition-colors">
-<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
-</button>
-</div>
-<button class="bg-[#00fd87] text-black text-xs font-mono font-bold px-4 py-2 hover:bg-[#00e479] transition-all">
-                    SCAN NOW
-                </button>
-</div>
+
+<!-- HEADER / TOP BAR -->
+<header class="flex items-center justify-between flex-shrink-0" style="height:56px;padding:0 24px;background:#0e0d14;border-bottom:1px solid #2c2b3b;z-index:50">
+  <!-- Left: brand -->
+  <div style="width:240px">
+    <div style="font-size:20px;font-weight:900;color:#fc72ff;letter-spacing:2px;text-transform:uppercase;line-height:1.2">POLYSCAN</div>
+    <div style="font-size:9px;color:#5e5e6e;letter-spacing:0.5px;margin-top:2px">v1.0-ALPHA</div>
+  </div>
+  <!-- Center: tabs -->
+  <div class="flex items-center gap-4" style="font-size:12px;letter-spacing:1.5px">
+    <span style="color:#e5e2e1;font-weight:500;border-bottom:2px solid #fc72ff;padding-bottom:4px">TERMINAL_CORE</span>
+    <span style="color:#3d3b50">|</span>
+    <span style="color:#5e5e6e;font-weight:400">Live Arbitrage Feed</span>
+  </div>
+  <!-- Right: controls -->
+  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2">
+      <div style="width:8px;height:8px;border-radius:50%;background:#00fd87;animation:pulse 2s infinite"></div>
+      <span style="font-size:12px;color:#5e5e6e">06:45 UTC</span>
+    </div>
+    <button id="scan-btn" onclick="doScan()"
+      class="flex items-center gap-2"
+      style="background:#33ff99;color:#000000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:10px 20px;border:none;cursor:pointer;text-transform:uppercase;transition:background 0.15s,color 0.15s"
+      onmouseenter="this.style.background='#00ccc9'"
+      onmouseleave="this.style.background='#33ff99'">
+      <span class="material-symbols-outlined" style="font-size:16px">radar</span>
+      SCAN NOW
+    </button>
+  </div>
 </header>
-<!-- Dashboard Content -->
-<div class="p-6 space-y-6">
-<!-- TOP ROW: Stat Cards -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-<div class="bg-surface-container-low border border-zinc-800/60 p-5 flex flex-col justify-between">
-<div class="text-[10px] font-mono text-zinc-500 tracking-tighter uppercase">Markets Scanned</div>
-<div class="text-4xl font-mono font-bold text-on-surface mt-2">1,243</div>
-<div class="mt-2 flex items-center gap-2">
-<span class="text-[10px] font-mono text-[#00fd87]">+14.2%</span>
-<div class="h-[1px] flex-grow bg-zinc-800"></div>
+
+<!-- TICKER -->
+<div class="flex items-center flex-shrink-0 overflow-hidden" style="height:28px;background:#22202e;border-bottom:1px solid #2c2b3b">
+  <div class="flex items-center flex-shrink-0" style="padding:0 16px;height:100%;background:#0e0d14;border-right:1px solid #2c2b3b">
+    <span style="font-size:8px;color:#fc72ff;letter-spacing:1px">⚡ SIGNALS</span>
+  </div>
+  <div class="flex-1 overflow-hidden">
+    <div class="ticker-inner" style="font-size:11px;font-weight:500;letter-spacing:0.5px">
+      <span style="color:#ff5f52">FED HIKE ↓ −7.0%</span>
+      <span style="color:#00fd87">DOGE $1 ↑ +8.0%</span>
+      <span style="color:#00fd87">ETH ETF ↑ +5.0%</span>
+      <span style="color:#ff5f52">SOL BREAK ↓ −4.0%</span>
+      <span style="color:#ff5f52">BTC 100K ↓ −3.0%</span>
+      <span style="color:#5e5e6e">XRP SEC ↑ +3.5%</span>
+      <span style="color:#ff5f52">STABLE ↓ −4.5%</span>
+      <!-- duplicate for seamless loop -->
+      <span style="color:#ff5f52">FED HIKE ↓ −7.0%</span>
+      <span style="color:#00fd87">DOGE $1 ↑ +8.0%</span>
+      <span style="color:#00fd87">ETH ETF ↑ +5.0%</span>
+      <span style="color:#ff5f52">SOL BREAK ↓ −4.0%</span>
+      <span style="color:#ff5f52">BTC 100K ↓ −3.0%</span>
+      <span style="color:#5e5e6e">XRP SEC ↑ +3.5%</span>
+      <span style="color:#ff5f52">STABLE ↓ −4.5%</span>
+    </div>
+  </div>
 </div>
+
+<!-- BODY: SIDEBAR + MAIN -->
+<div class="flex flex-1 overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="flex flex-col flex-shrink-0 overflow-y-auto" style="width:240px;background:#0e0d14;border-right:1px solid #2c2b3b">
+
+    <!-- Navigation -->
+    <nav class="mt-4">
+      <a href="#" class="nav-item nav-active flex items-center gap-3" style="padding:12px 20px;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all 0.15s">
+        <span class="material-symbols-outlined nav-icon" style="font-size:18px;color:#fc72ff">terminal</span>
+        <span>TERMINAL</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-3" style="padding:12px 20px;font-size:13px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:#5e5e6e;cursor:pointer;transition:all 0.15s">
+        <span class="material-symbols-outlined nav-icon" style="font-size:18px;color:#5e5e6e">history</span>
+        <span>HISTORY</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-3" style="padding:12px 20px;font-size:13px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;color:#5e5e6e;cursor:pointer;transition:all 0.15s">
+        <span class="material-symbols-outlined nav-icon" style="font-size:18px;color:#5e5e6e">settings</span>
+        <span>SETTINGS</span>
+      </a>
+    </nav>
+
+    <!-- spacer -->
+    <div class="flex-1"></div>
+
+    <!-- Session Stats -->
+    <div style="padding:20px;border-top:1px solid #2c2b3b">
+      <div style="font-size:8px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:#5e5e6e;margin-bottom:12px">Session Stats</div>
+      <div class="grid grid-cols-2 gap-2 mb-3">
+        <div style="background:#22202e;border:1px solid #2c2b3b;border-radius:6px;padding:10px 12px">
+          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:4px">Scanned</div>
+          <div style="font-size:22px;font-weight:700;color:#e5e2e1;line-height:1">1,243</div>
+        </div>
+        <div style="background:#22202e;border:1px solid #2c2b3b;border-radius:6px;padding:10px 12px">
+          <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:4px">Signals</div>
+          <div id="sidebar-count" style="font-size:22px;font-weight:700;color:#00fd87;line-height:1">5</div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div style="width:6px;height:6px;border-radius:50%;background:#00fd87;animation:pulse 2s infinite"></div>
+          <span style="font-size:10px;font-weight:500;letter-spacing:1px;color:#5e5e6e">LIVE FEED</span>
+        </div>
+        <span style="font-size:10px;font-weight:500;color:#00fd87">14ms</span>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div style="padding:20px;border-top:1px solid #2c2b3b">
+      <div style="font-size:8px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:#5e5e6e;margin-bottom:12px">Filters</div>
+      <!-- Slider -->
+      <div class="flex justify-between items-center mb-2">
+        <span style="font-size:10px;color:#9b9ba0">Min Gap</span>
+        <span id="gap-label" style="font-size:10px;font-weight:600;color:#e5e2e1">3%</span>
+      </div>
+      <input type="range" min="1" max="20" value="3" id="gap-slider"
+        style="width:100%;height:2px;accent-color:#fc72ff;cursor:pointer;margin-bottom:12px"
+        oninput="document.getElementById('gap-label').textContent=this.value+'%';applyFilter()"/>
+      <!-- Direction toggle -->
+      <div id="dir-btns" class="flex" style="border:1px solid #2c2b3b;border-radius:6px;overflow:hidden;margin-bottom:8px">
+        <button onclick="setDir('ALL',this)" class="dir flex-1 py-1.5" style="background:#e566ff;color:#000000;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:none;cursor:pointer;transition:all 0.15s" data-dir="ALL">ALL</button>
+        <button onclick="setDir('OVER',this)" class="dir flex-1 py-1.5" style="background:transparent;color:#1a1a2e;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;border:none;cursor:pointer;transition:all 0.15s"
+          onmouseenter="this.style.color='#c0c0c0'" onmouseleave="if(!this.classList.contains('active-dir'))this.style.color='#1a1a2e'" data-dir="OVER">OVER</button>
+        <button onclick="setDir('UNDER',this)" class="dir flex-1 py-1.5" style="background:transparent;color:#1a1a2e;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;border:none;cursor:pointer;transition:all 0.15s"
+          onmouseenter="this.style.color='#c0c0c0'" onmouseleave="if(!this.classList.contains('active-dir'))this.style.color='#1a1a2e'" data-dir="UNDER">UNDER</button>
+      </div>
+      <div id="result-label" style="font-size:8px;color:#5e5e6e;letter-spacing:0.5px">5 signals</div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+    <!-- Card grid (scrollable) -->
+    <div id="card-grid" class="flex-1 overflow-y-auto" style="padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-content:start">
+
+      <!-- Card 1: UNDER high -->
+      <div class="signal-card" data-dir="UNDER" data-gap="7" style="background:#22202e;border:1px solid #3d3b50;cursor:pointer;transition:border-color 0.15s"
+        onmouseenter="this.style.borderColor='#00fd8766'" onmouseleave="this.style.borderColor='#3d3b50'"
+        onclick="window.open('https://polymarket.com','_blank')">
+        <div class="flex gap-4" style="padding:16px 16px 0">
+          <!-- Sparkline -->
+          <div class="flex items-end gap-0.5 flex-shrink-0 self-end" style="width:56px;height:52px">
+            <div class="flex-1 rounded-sm" style="height:20%;background:#00fd87;opacity:0.15"></div>
+            <div class="flex-1 rounded-sm" style="height:38%;background:#00fd87;opacity:0.3"></div>
+            <div class="flex-1 rounded-sm" style="height:54%;background:#00fd87;opacity:0.5"></div>
+            <div class="flex-1 rounded-sm" style="height:72%;background:#00fd87;opacity:0.7"></div>
+            <div class="flex-1 rounded-sm" style="height:88%;background:#00fd87;opacity:0.85"></div>
+            <div class="flex-1 rounded-sm" style="height:100%;background:#00fd87"></div>
+          </div>
+          <!-- Content -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span style="background:#0d2218;color:#00fd87;border:1px solid #00fd8444;font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px">UNDER</span>
+              <span style="font-size:9px;color:#5e5e6e">Scanned 06:45 UTC</span>
+              <span style="font-size:9px;color:#00fd87;margin-left:auto">↑ gap widening</span>
+            </div>
+            <div style="font-family:'Inter',sans-serif;font-size:17px;font-weight:700;color:#e5e2e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:12px">Fed Rate Hike Sept 2024</div>
+            <div class="grid grid-cols-3 gap-2">
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">YES</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.890</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">NO</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.040</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #00fd8444;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">SUM</div>
+                <div style="font-size:14px;font-weight:600;color:#00fd87">0.930</div>
+              </div>
+            </div>
+          </div>
+          <!-- Gap badge -->
+          <div class="flex-shrink-0 flex flex-col justify-between text-right" style="padding-top:2px">
+            <div>
+              <div style="font-size:44px;font-weight:700;color:#00fd87;line-height:1">7.0<span style="font-size:22px;font-weight:400">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e;margin-top:2px">raw gap</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:600;color:#00fd87;line-height:1">+5.0<span style="font-size:14px">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e">net (−2% fee)</div>
+            </div>
+          </div>
+        </div>
+        <!-- Gap bar -->
+        <div style="margin:12px 16px 0;height:2px;background:#3d3b50;border-radius:1px">
+          <div class="gap-bar" style="width:70%;height:100%;background:linear-gradient(90deg,#00fd8766,#00fd87);border-radius:1px"></div>
+        </div>
+        <div class="flex justify-between" style="padding:8px 16px 12px;font-size:9px;color:#5e5e6e">
+          <span>gap: 7.0¢ below fair value · buy YES + NO</span>
+          <span style="color:#00fd87;opacity:0">View on Polymarket →</span>
+        </div>
+      </div>
+
+      <!-- Card 2: OVER high -->
+      <div class="signal-card" data-dir="OVER" data-gap="8" style="background:#22202e;border:1px solid #3d3b50;cursor:pointer;transition:border-color 0.15s"
+        onmouseenter="this.style.borderColor='#ff5f5266'" onmouseleave="this.style.borderColor='#3d3b50'"
+        onclick="window.open('https://polymarket.com','_blank')">
+        <div class="flex gap-4" style="padding:16px 16px 0">
+          <div class="flex items-end gap-0.5 flex-shrink-0 self-end" style="width:56px;height:52px">
+            <div class="flex-1 rounded-sm" style="height:22%;background:#ff5f52;opacity:0.15"></div>
+            <div class="flex-1 rounded-sm" style="height:40%;background:#ff5f52;opacity:0.3"></div>
+            <div class="flex-1 rounded-sm" style="height:58%;background:#ff5f52;opacity:0.5"></div>
+            <div class="flex-1 rounded-sm" style="height:76%;background:#ff5f52;opacity:0.7"></div>
+            <div class="flex-1 rounded-sm" style="height:90%;background:#ff5f52;opacity:0.85"></div>
+            <div class="flex-1 rounded-sm" style="height:100%;background:#ff5f52"></div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span style="background:#2a1212;color:#ff5f52;border:1px solid #ff5f5244;font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px">OVER</span>
+              <span style="font-size:9px;color:#5e5e6e">Scanned 06:44 UTC</span>
+              <span style="font-size:9px;color:#ff5f52;margin-left:auto">⚠ new high</span>
+            </div>
+            <div style="font-family:'Inter',sans-serif;font-size:17px;font-weight:700;color:#e5e2e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:12px">DOGE hits $1 before halving?</div>
+            <div class="grid grid-cols-3 gap-2">
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">YES</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.550</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">NO</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.530</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #ff5f5244;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">SUM</div>
+                <div style="font-size:14px;font-weight:600;color:#ff5f52">1.080</div>
+              </div>
+            </div>
+          </div>
+          <div class="flex-shrink-0 flex flex-col justify-between text-right" style="padding-top:2px">
+            <div>
+              <div style="font-size:44px;font-weight:700;color:#ff5f52;line-height:1">8.0<span style="font-size:22px;font-weight:400">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e;margin-top:2px">raw gap</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:600;color:#00fd87;line-height:1">+6.0<span style="font-size:14px">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e">net (−2% fee)</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin:12px 16px 0;height:2px;background:#3d3b50;border-radius:1px">
+          <div class="gap-bar" style="width:80%;height:100%;background:linear-gradient(90deg,#ff5f5266,#ff5f52);border-radius:1px"></div>
+        </div>
+        <div class="flex justify-between" style="padding:8px 16px 12px;font-size:9px;color:#5e5e6e">
+          <span>gap: 8.0¢ above fair value · sell YES + NO</span>
+          <span style="color:#ff5f52;opacity:0">View on Polymarket →</span>
+        </div>
+      </div>
+
+      <!-- Card 3: OVER -->
+      <div class="signal-card" data-dir="OVER" data-gap="5" style="background:#22202e;border:1px solid #3d3b50;cursor:pointer;transition:border-color 0.15s"
+        onmouseenter="this.style.borderColor='#ff5f5266'" onmouseleave="this.style.borderColor='#3d3b50'"
+        onclick="window.open('https://polymarket.com','_blank')">
+        <div class="flex gap-4" style="padding:16px 16px 0">
+          <div class="flex items-end gap-0.5 flex-shrink-0 self-end" style="width:56px;height:52px">
+            <div class="flex-1 rounded-sm" style="height:28%;background:#ff5f52;opacity:0.2"></div>
+            <div class="flex-1 rounded-sm" style="height:45%;background:#ff5f52;opacity:0.38"></div>
+            <div class="flex-1 rounded-sm" style="height:60%;background:#ff5f52;opacity:0.55"></div>
+            <div class="flex-1 rounded-sm" style="height:78%;background:#ff5f52;opacity:0.72"></div>
+            <div class="flex-1 rounded-sm" style="height:90%;background:#ff5f52;opacity:0.86"></div>
+            <div class="flex-1 rounded-sm" style="height:100%;background:#ff5f52"></div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span style="background:#2a1212;color:#ff5f52;border:1px solid #ff5f5244;font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px">OVER</span>
+              <span style="font-size:9px;color:#5e5e6e">Scanned 06:44 UTC</span>
+            </div>
+            <div style="font-family:'Inter',sans-serif;font-size:17px;font-weight:700;color:#e5e2e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:12px">ETH ETF Approved by August?</div>
+            <div class="grid grid-cols-3 gap-2">
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">YES</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.681</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">NO</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.344</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #ff5f5244;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">SUM</div>
+                <div style="font-size:14px;font-weight:600;color:#ff5f52">1.025</div>
+              </div>
+            </div>
+          </div>
+          <div class="flex-shrink-0 flex flex-col justify-between text-right" style="padding-top:2px">
+            <div>
+              <div style="font-size:44px;font-weight:700;color:#ff5f52;line-height:1">5.0<span style="font-size:22px;font-weight:400">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e;margin-top:2px">raw gap</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:600;color:#00fd87;line-height:1">+3.0<span style="font-size:14px">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e">net (−2% fee)</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin:12px 16px 0;height:2px;background:#3d3b50;border-radius:1px">
+          <div class="gap-bar" style="width:50%;height:100%;background:linear-gradient(90deg,#ff5f5266,#ff5f52);border-radius:1px"></div>
+        </div>
+        <div style="padding:8px 16px 12px;font-size:9px;color:#5e5e6e">gap: 5.0¢ above fair value · sell YES + NO</div>
+      </div>
+
+      <!-- Card 4: UNDER -->
+      <div class="signal-card" data-dir="UNDER" data-gap="4" style="background:#22202e;border:1px solid #3d3b50;cursor:pointer;transition:border-color 0.15s"
+        onmouseenter="this.style.borderColor='#00fd8766'" onmouseleave="this.style.borderColor='#3d3b50'"
+        onclick="window.open('https://polymarket.com','_blank')">
+        <div class="flex gap-4" style="padding:16px 16px 0">
+          <div class="flex items-end gap-0.5 flex-shrink-0 self-end" style="width:56px;height:52px">
+            <div class="flex-1 rounded-sm" style="height:18%;background:#00fd87;opacity:0.15"></div>
+            <div class="flex-1 rounded-sm" style="height:36%;background:#00fd87;opacity:0.3"></div>
+            <div class="flex-1 rounded-sm" style="height:54%;background:#00fd87;opacity:0.5"></div>
+            <div class="flex-1 rounded-sm" style="height:72%;background:#00fd87;opacity:0.7"></div>
+            <div class="flex-1 rounded-sm" style="height:88%;background:#00fd87;opacity:0.85"></div>
+            <div class="flex-1 rounded-sm" style="height:100%;background:#00fd87"></div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span style="background:#0d2218;color:#00fd87;border:1px solid #00fd8444;font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px">UNDER</span>
+              <span style="font-size:9px;color:#5e5e6e">Scanned 06:43 UTC</span>
+            </div>
+            <div style="font-family:'Inter',sans-serif;font-size:17px;font-weight:700;color:#e5e2e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:12px">Solana Breakpoint Announcement?</div>
+            <div class="grid grid-cols-3 gap-2">
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">YES</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.220</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">NO</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.740</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #00fd8444;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">SUM</div>
+                <div style="font-size:14px;font-weight:600;color:#00fd87">0.960</div>
+              </div>
+            </div>
+          </div>
+          <div class="flex-shrink-0 flex flex-col justify-between text-right" style="padding-top:2px">
+            <div>
+              <div style="font-size:44px;font-weight:700;color:#00fd87;line-height:1">4.0<span style="font-size:22px;font-weight:400">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e;margin-top:2px">raw gap</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:600;color:#00fd87;line-height:1">+2.0<span style="font-size:14px">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e">net (−2% fee)</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin:12px 16px 0;height:2px;background:#3d3b50;border-radius:1px">
+          <div class="gap-bar" style="width:40%;height:100%;background:linear-gradient(90deg,#00fd8766,#00fd87);border-radius:1px"></div>
+        </div>
+        <div style="padding:8px 16px 12px;font-size:9px;color:#5e5e6e">gap: 4.0¢ below fair value · buy YES + NO</div>
+      </div>
+
+      <!-- Card 5: UNDER low priority -->
+      <div class="signal-card" data-dir="UNDER" data-gap="3" style="background:#22202e;border:1px solid #3d3b50;cursor:pointer;transition:border-color 0.15s;opacity:0.6"
+        onmouseenter="this.style.borderColor='#00fd8766';this.style.opacity='0.85'" onmouseleave="this.style.borderColor='#3d3b50';this.style.opacity='0.6'"
+        onclick="window.open('https://polymarket.com','_blank')">
+        <div class="flex gap-4" style="padding:16px 16px 0">
+          <div class="flex items-end gap-0.5 flex-shrink-0 self-end" style="width:56px;height:52px">
+            <div class="flex-1 rounded-sm" style="height:14%;background:#00fd87;opacity:0.12"></div>
+            <div class="flex-1 rounded-sm" style="height:28%;background:#00fd87;opacity:0.25"></div>
+            <div class="flex-1 rounded-sm" style="height:44%;background:#00fd87;opacity:0.4"></div>
+            <div class="flex-1 rounded-sm" style="height:62%;background:#00fd87;opacity:0.58"></div>
+            <div class="flex-1 rounded-sm" style="height:80%;background:#00fd87;opacity:0.75"></div>
+            <div class="flex-1 rounded-sm" style="height:100%;background:#00fd87"></div>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <span style="background:#0d2218;color:#00fd87;border:1px solid #00fd8444;font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px">UNDER</span>
+              <span style="font-size:9px;color:#5e5e6e">Scanned 06:42 UTC</span>
+              <span style="font-size:9px;color:#5e5e6e;margin-left:auto">low priority</span>
+            </div>
+            <div style="font-family:'Inter',sans-serif;font-size:17px;font-weight:700;color:#e5e2e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:12px">Will BTC hit 100k by EOY?</div>
+            <div class="grid grid-cols-3 gap-2">
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">YES</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.450</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">NO</div>
+                <div style="font-size:14px;font-weight:600;color:#e5e2e1">0.520</div>
+              </div>
+              <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px">
+                <div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">SUM</div>
+                <div style="font-size:14px;font-weight:600;color:#00fd87">0.970</div>
+              </div>
+            </div>
+          </div>
+          <div class="flex-shrink-0 flex flex-col justify-between text-right" style="padding-top:2px">
+            <div>
+              <div style="font-size:44px;font-weight:700;color:#00fd87;line-height:1">3.0<span style="font-size:22px;font-weight:400">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e;margin-top:2px">raw gap</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:600;color:#5e5e6e;line-height:1">+1.0<span style="font-size:14px">%</span></div>
+              <div style="font-size:9px;color:#5e5e6e">net (−2% fee)</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin:12px 16px 0;height:2px;background:#3d3b50;border-radius:1px">
+          <div class="gap-bar" style="width:30%;height:100%;background:#00fd8766;border-radius:1px"></div>
+        </div>
+        <div style="padding:8px 16px 12px;font-size:9px;color:#5e5e6e">gap: 3.0¢ · at minimum threshold</div>
+      </div>
+
+      <!-- No results -->
+      <div id="no-results" class="hidden col-span-2" style="padding:48px;text-align:center;font-size:11px;color:#5e5e6e">
+        No signals match filter — lower threshold or change direction
+      </div>
+
+    </div>
+
+    <!-- FOOTER BAR -->
+    <footer class="flex items-center justify-between flex-shrink-0" style="height:32px;padding:0 24px;background:#0e0d14;border-top:1px solid #2c2b3b">
+      <div class="flex gap-6" style="font-size:9px;color:#5e5e6e;letter-spacing:0.5px">
+        <span>Polymarket CLOB API</span>
+        <span>fee: 2%/side</span>
+        <span>batch: 500 tokens</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div style="width:6px;height:6px;border-radius:50%;background:#00fd87;animation:pulse 2s infinite"></div>
+        <span style="font-size:9px;color:#00fd87;letter-spacing:1px">CONNECTED</span>
+      </div>
+    </footer>
+  </main>
 </div>
-<div class="bg-surface-container-low border border-zinc-800/60 p-5 flex flex-col justify-between">
-<div class="text-[10px] font-mono text-zinc-500 tracking-tighter uppercase">Gaps Found</div>
-<div class="text-4xl font-mono font-bold text-[#00fd87] mt-2">07</div>
-<div class="mt-2 flex items-center gap-2 text-zinc-500 text-[10px] font-mono">
-                        POTENTIAL PROFIT: $1,420.44
-                    </div>
-</div>
-<div class="bg-surface-container-low border border-zinc-800/60 p-5 flex flex-col justify-between">
-<div class="text-[10px] font-mono text-zinc-500 tracking-tighter uppercase">Last Scan</div>
-<div class="text-4xl font-mono font-bold text-on-surface mt-2">06:45<span class="text-sm font-normal text-zinc-500 ml-1">UTC</span></div>
-<div class="mt-2 flex items-center gap-2">
-<div class="w-full h-1 bg-zinc-900 overflow-hidden">
-<div class="w-2/3 h-full bg-[#00fd87]"></div>
-</div>
-</div>
-</div>
-</div>
-<!-- SECOND ROW: Filters and Chart -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-<!-- Filter Controls -->
-<div class="lg:col-span-4 bg-surface-container-low p-6 border border-zinc-800/60">
-<h3 class="text-xs font-bold font-mono tracking-widest text-zinc-400 mb-6 uppercase">Control_Parameters</h3>
-<div class="space-y-8">
-<div>
-<div class="flex justify-between mb-3 text-[10px] font-mono">
-<span class="text-zinc-500">MIN GAP THRESHOLD</span>
-<span class="text-[#00fd87]">1.24%</span>
-</div>
-<input class="w-full h-1 bg-zinc-900 appearance-none cursor-pointer accent-[#00fd87]" max="5" min="0" step="0.01" type="range"/>
-</div>
-<div>
-<span class="text-[10px] font-mono text-zinc-500 block mb-3 uppercase">Directional Toggle</span>
-<div class="flex gap-px bg-zinc-900 border border-zinc-900">
-<button class="flex-1 py-2 text-[10px] font-mono font-bold bg-[#00fd87] text-black">ALL</button>
-<button class="flex-1 py-2 text-[10px] font-mono font-bold bg-zinc-950 text-zinc-500 hover:text-zinc-200">OVER</button>
-<button class="flex-1 py-2 text-[10px] font-mono font-bold bg-zinc-950 text-zinc-500 hover:text-zinc-200">UNDER</button>
-</div>
-</div>
-<div class="p-4 bg-zinc-950/50 border border-zinc-800/40">
-<div class="text-[10px] font-mono text-zinc-500 mb-2">AUTO_EXECUTE_STATUS</div>
-<div class="flex items-center gap-2">
-<span class="w-2 h-2 bg-zinc-700"></span>
-<span class="text-[10px] font-mono text-zinc-600 italic">SYSTEM STANDBY - READY</span>
-</div>
-</div>
-</div>
-</div>
-<!-- Bar Chart Distribution -->
-<div class="lg:col-span-8 bg-surface-container-low p-6 border border-zinc-800/60 flex flex-col">
-<div class="flex justify-between items-start mb-6">
-<h3 class="text-xs font-bold font-mono tracking-widest text-zinc-400 uppercase">Real-Time Gap Distribution</h3>
-<div class="flex gap-4 text-[10px] font-mono">
-<div class="flex items-center gap-1"><span class="w-2 h-2 bg-[#00fd87]"></span> UNDER</div>
-<div class="flex items-center gap-1"><span class="w-2 h-2 bg-[#ffb4ab]"></span> OVER</div>
-</div>
-</div>
-<div class="flex-grow flex items-end justify-between gap-1 min-h-[160px]">
-<!-- Chart Bars -->
-<div class="w-full bg-[#ffb4ab]/20 h-1/4"></div>
-<div class="w-full bg-[#00fd87]/40 h-1/2"></div>
-<div class="w-full bg-[#ffb4ab]/40 h-2/3"></div>
-<div class="w-full bg-[#00fd87]/20 h-1/3"></div>
-<div class="w-full bg-[#ffb4ab]/60 h-3/4"></div>
-<div class="w-full bg-[#00fd87]/80 h-full"></div>
-<div class="w-full bg-[#ffb4ab]/30 h-1/2"></div>
-<div class="w-full bg-[#00fd87]/50 h-3/5"></div>
-<div class="w-full bg-[#ffb4ab]/70 h-4/5"></div>
-<div class="w-full bg-[#00fd87]/30 h-1/4"></div>
-<div class="w-full bg-[#ffb4ab]/20 h-1/5"></div>
-<div class="w-full bg-[#00fd87]/90 h-[95%]"></div>
-<div class="w-full bg-[#ffb4ab]/50 h-1/2"></div>
-<div class="w-full bg-[#00fd87]/40 h-3/4"></div>
-<div class="w-full bg-[#ffb4ab]/40 h-2/3"></div>
-<div class="w-full bg-[#00fd87]/60 h-5/6"></div>
-<div class="w-full bg-[#ffb4ab]/30 h-1/2"></div>
-<div class="w-full bg-[#00fd87]/20 h-1/3"></div>
-<div class="w-full bg-[#ffb4ab]/60 h-3/4"></div>
-<div class="w-full bg-[#00fd87]/80 h-full"></div>
-</div>
-<div class="mt-4 border-t border-zinc-800 pt-2 flex justify-between font-mono text-[9px] text-zinc-600">
-<span>-5.0%</span>
-<span>-2.5%</span>
-<span>0.0%</span>
-<span>+2.5%</span>
-<span>+5.0%</span>
-</div>
-</div>
-</div>
-<!-- BOTTOM SECTION: Results Table -->
-<div class="bg-surface-container-low border border-zinc-800/60 overflow-hidden">
-<div class="px-6 py-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950/30">
-<h3 class="text-xs font-bold font-mono tracking-widest text-zinc-400 uppercase">ACTIVE_ARBITRAGE_SIGNALS</h3>
-<div class="flex gap-2">
-<button class="text-[10px] font-mono p-1 hover:text-[#00fd87]"><span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span></button>
-<button class="text-[10px] font-mono p-1 hover:text-[#00fd87]"><span class="material-symbols-outlined text-sm" data-icon="download">download</span></button>
-</div>
-</div>
-<div class="overflow-x-auto">
-<table class="w-full text-left font-mono text-[11px] leading-none">
-<thead>
-<tr class="bg-zinc-900/50 text-zinc-500 uppercase tracking-widest border-b border-zinc-800">
-<th class="px-6 py-4 font-normal">Market / Question</th>
-<th class="px-6 py-4 font-normal">YES</th>
-<th class="px-6 py-4 font-normal">NO</th>
-<th class="px-6 py-4 font-normal text-right">SUM</th>
-<th class="px-6 py-4 font-normal text-right">GAP</th>
-<th class="px-6 py-4 font-normal text-center">DIRECTION</th>
-<th class="px-6 py-4 font-normal text-right">ACTION</th>
-</tr>
-</thead>
-<tbody>
-<tr class="hover:bg-zinc-800/30 transition-colors border-b border-zinc-900/40">
-<td class="px-6 py-4 text-zinc-200">BTC/USDT Above $75k by May 24?</td>
-<td class="px-6 py-4 text-zinc-400">0.452</td>
-<td class="px-6 py-4 text-zinc-400">0.528</td>
-<td class="px-6 py-4 text-right">0.980</td>
-<td class="px-6 py-4 text-right text-[#00fd87] font-bold">-2.00%</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-block px-2 py-0.5 bg-[#00fd87] text-black text-[9px] font-black uppercase">UNDER</span>
-</td>
-<td class="px-6 py-4 text-right">
-<button class="text-[#00fd87] hover:underline uppercase text-[9px]">Trade</button>
-</td>
-</tr>
-<tr class="bg-zinc-900/20 hover:bg-zinc-800/30 transition-colors border-b border-zinc-900/40">
-<td class="px-6 py-4 text-zinc-200">ETH ETF Approved by August 31st?</td>
-<td class="px-6 py-4 text-zinc-400">0.681</td>
-<td class="px-6 py-4 text-zinc-400">0.344</td>
-<td class="px-6 py-4 text-right">1.025</td>
-<td class="px-6 py-4 text-right text-[#ffb4ab] font-bold">+2.50%</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-block px-2 py-0.5 bg-[#ffb4ab] text-black text-[9px] font-black uppercase">OVER</span>
-</td>
-<td class="px-6 py-4 text-right">
-<button class="text-[#00fd87] hover:underline uppercase text-[9px]">Trade</button>
-</td>
-</tr>
-<tr class="hover:bg-zinc-800/30 transition-colors border-b border-zinc-900/40">
-<td class="px-6 py-4 text-zinc-200">SOL Dominance &gt; 12% by EoW?</td>
-<td class="px-6 py-4 text-zinc-400">0.120</td>
-<td class="px-6 py-4 text-zinc-400">0.865</td>
-<td class="px-6 py-4 text-right">0.985</td>
-<td class="px-6 py-4 text-right text-[#00fd87] font-bold">-1.50%</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-block px-2 py-0.5 bg-[#00fd87] text-black text-[9px] font-black uppercase">UNDER</span>
-</td>
-<td class="px-6 py-4 text-right">
-<button class="text-[#00fd87] hover:underline uppercase text-[9px]">Trade</button>
-</td>
-</tr>
-<tr class="bg-zinc-900/20 hover:bg-zinc-800/30 transition-colors border-b border-zinc-900/40">
-<td class="px-6 py-4 text-zinc-200">L2 TVL Aggregated &gt; $45B?</td>
-<td class="px-6 py-4 text-zinc-400">0.550</td>
-<td class="px-6 py-4 text-zinc-400">0.458</td>
-<td class="px-6 py-4 text-right">1.008</td>
-<td class="px-6 py-4 text-right text-[#ffb4ab] font-bold">+0.80%</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-block px-2 py-0.5 bg-[#ffb4ab] text-black text-[9px] font-black uppercase">OVER</span>
-</td>
-<td class="px-6 py-4 text-right">
-<button class="text-[#00fd87] hover:underline uppercase text-[9px]">Trade</button>
-</td>
-</tr>
-<tr class="hover:bg-zinc-800/30 transition-colors border-b border-zinc-900/40">
-<td class="px-6 py-4 text-zinc-200">Stablecoin Market Cap &gt; $160B?</td>
-<td class="px-6 py-4 text-zinc-400">0.490</td>
-<td class="px-6 py-4 text-zinc-400">0.492</td>
-<td class="px-6 py-4 text-right">0.982</td>
-<td class="px-6 py-4 text-right text-[#00fd87] font-bold">-1.80%</td>
-<td class="px-6 py-4 text-center">
-<span class="inline-block px-2 py-0.5 bg-[#00fd87] text-black text-[9px] font-black uppercase">UNDER</span>
-</td>
-<td class="px-6 py-4 text-right">
-<button class="text-[#00fd87] hover:underline uppercase text-[9px]">Trade</button>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<!-- Footer / Telemetry -->
-<footer class="mt-auto p-4 border-t border-zinc-800/40 bg-zinc-950 flex justify-between items-center text-[9px] font-mono text-zinc-600 uppercase tracking-[0.2em]">
-<div class="flex gap-6">
-<span>Core_Uptime: 99.992%</span>
-<span>Sub_Clusters: 24/24 Online</span>
-<span>Sync_Delta: 0.000004s</span>
-</div>
-<div class="flex gap-4">
-<span class="text-zinc-400">POLYGON_POS_RPC_MAINNET</span>
-<span class="text-[#00fd87]">ACTIVE_LISTENING</span>
-</div>
-</footer>
-</main>
-</body></html>
+
+<style>
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+</style>
+
+<script>
+var activeDir = 'ALL';
+
+function setDir(dir, btn){
+  activeDir = dir;
+  document.querySelectorAll('.dir').forEach(function(b){
+    b.classList.remove('active-dir');
+    b.style.background = 'transparent';
+    b.style.color = '#1a1a2e';
+  });
+  btn.classList.add('active-dir');
+  btn.style.background = '#e566ff';
+  btn.style.color = '#000000';
+  applyFilter();
+}
+
+function applyFilter(){
+  var minGap = parseInt(document.getElementById('gap-slider').value);
+  var cards = document.querySelectorAll('[data-dir][data-gap]');
+  var shown = 0;
+  cards.forEach(function(card){
+    var dir = card.dataset.dir;
+    var gap = parseInt(card.dataset.gap);
+    var ok = (activeDir === 'ALL' || dir === activeDir) && gap >= minGap;
+    card.style.display = ok ? '' : 'none';
+    if(ok) shown++;
+  });
+  document.getElementById('sidebar-count').textContent = shown;
+  document.getElementById('result-label').textContent = shown + ' signals';
+  var noRes = document.getElementById('no-results');
+  if(noRes) noRes.classList.toggle('hidden', shown > 0);
+}
+
+var newSignals = [
+  { dir:'OVER', title:'ADA Vasil Fork Launch?', yes:'0.610', no:'0.440', sum:'1.050', gap:5, net:3, color:'#ff5f52', bg:'#2a1212', border:'#ff5f5244', label:'OVER' },
+  { dir:'UNDER', title:'XRP SEC Settled 2024?', yes:'0.380', no:'0.580', sum:'0.960', gap:4, net:2, color:'#00fd87', bg:'#0d2218', border:'#00fd8444', label:'UNDER' },
+];
+var ni = 0;
+
+function doScan(){
+  var btn = document.getElementById('scan-btn');
+  btn.style.opacity = '0.6';
+  btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">sync</span> SCANNING...';
+  btn.disabled = true;
+  setTimeout(function(){
+    btn.style.opacity = '1';
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">radar</span> SCAN NOW';
+    btn.disabled = false;
+    injectCard();
+  }, 1800);
+}
+
+function injectCard(){
+  var d = newSignals[ni % newSignals.length]; ni++;
+  var card = document.createElement('div');
+  card.className = 'signal-card';
+  card.dataset.dir = d.dir;
+  card.dataset.gap = d.gap;
+  card.style.cssText = 'background:#22202e;border:1px solid #3d3b50;cursor:pointer;transition:border-color 0.15s';
+  card.addEventListener('mouseenter', function(){ this.style.borderColor = d.color+'66'; });
+  card.addEventListener('mouseleave', function(){ this.style.borderColor = '#3d3b50'; });
+  card.addEventListener('click', function(){ window.open('https://polymarket.com','_blank'); });
+  card.innerHTML = `
+    <div class="flex gap-4" style="padding:16px 16px 0">
+      <div class="flex items-end gap-0.5 flex-shrink-0 self-end" style="width:56px;height:52px">
+        <div class="flex-1 rounded-sm" style="height:40%;background:${d.color};opacity:0.3"></div>
+        <div class="flex-1 rounded-sm" style="height:65%;background:${d.color};opacity:0.6"></div>
+        <div class="flex-1 rounded-sm" style="height:100%;background:${d.color}"></div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-2">
+          <span style="background:${d.bg};color:${d.color};border:1px solid ${d.border};font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:4px">${d.label}</span>
+          <span style="font-size:9px;color:#5e5e6e">just now</span>
+          <span style="font-size:9px;color:#fc72ff;margin-left:auto;animation:pulse 1s infinite">⚡ new signal</span>
+        </div>
+        <div style="font-family:'Inter',sans-serif;font-size:17px;font-weight:700;color:#e5e2e1;overflow:hidden;text-overflow:ellipsis;margin-bottom:12px">${d.title}</div>
+        <div class="grid grid-cols-3 gap-2">
+          <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px"><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">YES</div><div style="font-size:14px;font-weight:600;color:#e5e2e1">${d.yes}</div></div>
+          <div style="background:#1c1b1b;border:1px solid #2c2b3b;border-radius:4px;padding:8px 10px"><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">NO</div><div style="font-size:14px;font-weight:600;color:#e5e2e1">${d.no}</div></div>
+          <div style="background:#1c1b1b;border:1px solid ${d.border};border-radius:4px;padding:8px 10px"><div style="font-size:8px;letter-spacing:1px;text-transform:uppercase;color:#5e5e6e;margin-bottom:3px">SUM</div><div style="font-size:14px;font-weight:600;color:${d.color}">${d.sum}</div></div>
+        </div>
+      </div>
+      <div class="flex-shrink-0 flex flex-col justify-between text-right" style="padding-top:2px">
+        <div>
+          <div style="font-size:44px;font-weight:700;line-height:1;color:${d.color}">${d.gap}.0<span style="font-size:22px;font-weight:400">%</span></div>
+          <div style="font-size:9px;color:#5e5e6e;margin-top:2px">raw gap</div>
+        </div>
+        <div>
+          <div style="font-size:22px;font-weight:600;color:#00fd87;line-height:1">+${d.net}.0<span style="font-size:14px">%</span></div>
+          <div style="font-size:9px;color:#5e5e6e">net (−2% fee)</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin:12px 16px 0;height:2px;background:#3d3b50;border-radius:1px">
+      <div style="width:${d.gap*10}%;height:100%;background:${d.color};border-radius:1px"></div>
+    </div>
+    <div style="padding:8px 16px 12px;font-size:9px;color:#5e5e6e">gap: ${d.gap}.0¢</div>
+  `;
+  var grid = document.getElementById('card-grid');
+  grid.insertBefore(card, grid.firstChild);
+  var cnt = document.getElementById('sidebar-count');
+  cnt.textContent = parseInt(cnt.textContent) + 1;
+  document.getElementById('result-label').textContent = (parseInt(document.getElementById('result-label').textContent) + 1) + ' signals';
+}
+</script>
+</body>
+</html>

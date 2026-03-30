@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>POLYSCAN — Layout 4: Live Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode:"class",
+  theme:{ extend:{ colors:{
+    "primary-fixed":"#00fd87","primary-dim":"#00ed7e",
+    "surface":"#131313","surface-low":"#1c1b1b","surface-container":"#201f1f",
+    "surface-high":"#2a2a2a","surface-highest":"#353534","surface-dim":"#0e0e0e",
+    "on-surface":"#e5e2e1","on-surface-variant":"#b9cbb9",
+    "outline":"#849585","outline-variant":"#3b4b3d",
+    "secondary":"#ffb4ab","secondary-container":"#8d1d1e",
+  }, fontFamily:{ mono:['"JetBrains Mono"','monospace'], sg:['"Space Grotesk"','sans-serif'] },
+  borderRadius:{ DEFAULT:"0px", lg:"0px", xl:"0px", full:"9999px" } } }
+}
+</script>
+<style>
+* { box-sizing:border-box; }
+body { background:#131313; color:#e5e2e1; font-family:'Space Grotesk',sans-serif; -webkit-font-smoothing:antialiased; margin:0; }
+.material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display:inline-block; line-height:1; }
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:#131313; }
+::-webkit-scrollbar-thumb { background:#353534; }
+@keyframes slideIn {
+  from { opacity:0; transform:translateY(-12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.signal-card { animation: slideIn 0.3s ease-out; }
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.ticker-inner { animation: ticker 25s linear infinite; }
+.bar-fill { transition: height 0.8s ease; }
+</style>
+</head>
+<body class="min-h-screen pb-20">
+
+<!-- HEADER -->
+<header class="flex items-center justify-between px-4 h-12 bg-surface-dim border-b border-surface-high sticky top-0 z-50">
+  <div class="flex items-center gap-2">
+    <span class="material-symbols-outlined text-primary-fixed text-base">terminal</span>
+    <span class="font-sg font-black text-primary-fixed uppercase tracking-tighter">POLYSCAN</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="flex items-center gap-1.5">
+      <div class="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-pulse"></div>
+      <span class="font-mono text-[9px] text-primary-fixed">LIVE FEED</span>
+    </div>
+    <button onclick="addFakeSignal()" class="bg-primary-fixed text-black text-[9px] font-mono font-bold px-3 py-1.5 uppercase hover:bg-primary-dim transition-colors">
+      SCAN NOW
+    </button>
+  </div>
+</header>
+
+<!-- TICKER TAPE -->
+<div class="bg-surface-container border-b border-surface-high overflow-hidden h-7 flex items-center">
+  <div class="font-mono text-[9px] text-outline px-2 border-r border-surface-high h-full flex items-center bg-surface-dim whitespace-nowrap">⚡ SIGNALS</div>
+  <div class="flex-1 overflow-hidden relative">
+    <div class="ticker-inner whitespace-nowrap font-mono text-[9px] flex items-center gap-8">
+      <span class="text-primary-fixed">BTC 100k ↓ -3.0%</span>
+      <span class="text-secondary">ETH ETF ↑ +5.0%</span>
+      <span class="text-primary-fixed">FED HIKE ↓ -7.0%</span>
+      <span class="text-secondary">DOGE $1 ↑ +8.0%</span>
+      <span class="text-primary-fixed">SOL BREAK ↓ -4.0%</span>
+      <span class="text-outline">XRP SEC ↑ +3.5%</span>
+      <span class="text-primary-fixed">STABLE 160B ↓ -4.5%</span>
+    </div>
+  </div>
+</div>
+
+<!-- STATS ROW -->
+<div class="grid grid-cols-3 gap-px bg-surface-high">
+  <div class="bg-surface-dim px-4 py-3">
+    <div class="font-mono text-[8px] text-outline uppercase">Scanned</div>
+    <div class="font-mono text-xl font-bold text-on-surface">1,243</div>
+  </div>
+  <div class="bg-surface-dim px-4 py-3">
+    <div class="font-mono text-[8px] text-outline uppercase">Live Signals</div>
+    <div class="font-mono text-xl font-bold text-primary-fixed" id="signal-count">7</div>
+  </div>
+  <div class="bg-surface-dim px-4 py-3">
+    <div class="font-mono text-[8px] text-outline uppercase">Last Update</div>
+    <div class="font-mono text-xl font-bold text-on-surface">06:45<span class="text-xs text-outline ml-1">UTC</span></div>
+  </div>
+</div>
+
+<!-- FILTER ROW -->
+<div class="flex items-center gap-3 px-4 py-2 bg-surface-container border-b border-surface-high sticky top-12 z-40 flex-wrap gap-y-2">
+  <div class="flex bg-surface-highest font-mono text-[8px]">
+    <button class="px-3 py-1.5 bg-primary-fixed text-black font-bold uppercase">ALL</button>
+    <button class="px-3 py-1.5 text-outline hover:text-on-surface uppercase transition-colors">OVER</button>
+    <button class="px-3 py-1.5 text-outline hover:text-on-surface uppercase transition-colors">UNDER</button>
+  </div>
+  <div class="flex items-center gap-2">
+    <span class="font-mono text-[8px] text-outline">Min</span>
+    <input type="range" min="1" max="20" value="3" class="w-20 h-0.5 bg-surface-highest appearance-none cursor-pointer accent-[#00fd87]"
+      oninput="document.getElementById('gap-v4').textContent=this.value+'%'"/>
+    <span class="font-mono text-[9px] text-primary-fixed" id="gap-v4">3%</span>
+  </div>
+  <div class="flex gap-2 ml-auto font-mono text-[8px] text-outline">
+    <button class="flex items-center gap-1 hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-sm">sort</span>BY GAP</button>
+    <button class="flex items-center gap-1 hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-sm">schedule</span>BY TIME</button>
+  </div>
+</div>
+
+<!-- SIGNAL CARDS FEED -->
+<div class="p-4 space-y-3 max-w-2xl mx-auto lg:max-w-none" id="feed">
+
+  <!-- Card: UNDER (high gap) -->
+  <div class="signal-card bg-surface-container border border-surface-high hover:border-primary-fixed transition-colors cursor-pointer group" onclick="window.open('#','_blank')">
+    <div class="flex items-start gap-4 p-4">
+      <!-- Mini sparkline bars -->
+      <div class="flex items-end gap-px h-10 w-12 flex-shrink-0 self-end">
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-30" style="height:40%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-50" style="height:55%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-70" style="height:65%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed" style="height:85%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed" style="height:100%"></div>
+      </div>
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-1.5 py-0.5 bg-primary-fixed text-black font-mono text-[8px] font-black uppercase">UNDER</span>
+          <span class="font-mono text-[8px] text-outline">06:45 UTC</span>
+          <span class="font-mono text-[8px] text-outline ml-auto">↑ widening</span>
+        </div>
+        <div class="font-sg font-semibold text-on-surface text-sm truncate group-hover:text-primary-fixed transition-colors">
+          Fed Rate Hike Sept 2024
+        </div>
+        <div class="flex items-center gap-4 mt-2 font-mono text-[9px]">
+          <span class="text-outline">YES <span class="text-on-surface-variant">0.890</span></span>
+          <span class="text-outline">NO <span class="text-on-surface-variant">0.040</span></span>
+          <span class="text-outline">SUM <span class="text-primary-fixed font-bold">0.930</span></span>
+        </div>
+      </div>
+      <!-- Gap badge -->
+      <div class="flex-shrink-0 text-right">
+        <div class="font-mono text-2xl font-bold text-primary-fixed leading-none">7.0<span class="text-sm">%</span></div>
+        <div class="font-mono text-[8px] text-outline mt-0.5">net +5.0%</div>
+        <div class="font-mono text-[8px] text-primary-fixed mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Open →</div>
+      </div>
+    </div>
+    <!-- Bottom bar: gap visualizer -->
+    <div class="h-0.5 bg-surface-highest">
+      <div class="h-full bg-primary-fixed" style="width:70%"></div>
+    </div>
+  </div>
+
+  <!-- Card: OVER (high gap) -->
+  <div class="signal-card bg-surface-container border border-surface-high hover:border-secondary transition-colors cursor-pointer group" onclick="window.open('#','_blank')">
+    <div class="flex items-start gap-4 p-4">
+      <div class="flex items-end gap-px h-10 w-12 flex-shrink-0 self-end">
+        <div class="flex-1 bar-fill bg-secondary opacity-20" style="height:30%"></div>
+        <div class="flex-1 bar-fill bg-secondary opacity-40" style="height:60%"></div>
+        <div class="flex-1 bar-fill bg-secondary opacity-60" style="height:70%"></div>
+        <div class="flex-1 bar-fill bg-secondary opacity-80" style="height:85%"></div>
+        <div class="flex-1 bar-fill bg-secondary" style="height:100%"></div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-1.5 py-0.5 bg-secondary text-black font-mono text-[8px] font-black uppercase">OVER</span>
+          <span class="font-mono text-[8px] text-outline">06:44 UTC</span>
+          <span class="font-mono text-[8px] text-secondary ml-auto">↑ new high</span>
+        </div>
+        <div class="font-sg font-semibold text-on-surface text-sm truncate group-hover:text-secondary transition-colors">
+          DOGE hits $1 before halving?
+        </div>
+        <div class="flex items-center gap-4 mt-2 font-mono text-[9px]">
+          <span class="text-outline">YES <span class="text-on-surface-variant">0.550</span></span>
+          <span class="text-outline">NO <span class="text-on-surface-variant">0.530</span></span>
+          <span class="text-outline">SUM <span class="text-secondary font-bold">1.080</span></span>
+        </div>
+      </div>
+      <div class="flex-shrink-0 text-right">
+        <div class="font-mono text-2xl font-bold text-secondary leading-none">8.0<span class="text-sm">%</span></div>
+        <div class="font-mono text-[8px] text-outline mt-0.5">net +6.0%</div>
+        <div class="font-mono text-[8px] text-secondary mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Open →</div>
+      </div>
+    </div>
+    <div class="h-0.5 bg-surface-highest">
+      <div class="h-full bg-secondary" style="width:80%"></div>
+    </div>
+  </div>
+
+  <!-- Card: OVER -->
+  <div class="signal-card bg-surface-container border border-surface-high hover:border-secondary transition-colors cursor-pointer group" onclick="window.open('#','_blank')">
+    <div class="flex items-start gap-4 p-4">
+      <div class="flex items-end gap-px h-10 w-12 flex-shrink-0 self-end">
+        <div class="flex-1 bar-fill bg-secondary opacity-30" style="height:45%"></div>
+        <div class="flex-1 bar-fill bg-secondary opacity-50" style="height:55%"></div>
+        <div class="flex-1 bar-fill bg-secondary opacity-65" style="height:60%"></div>
+        <div class="flex-1 bar-fill bg-secondary opacity-80" style="height:70%"></div>
+        <div class="flex-1 bar-fill bg-secondary" style="height:100%"></div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-1.5 py-0.5 bg-secondary text-black font-mono text-[8px] font-black uppercase">OVER</span>
+          <span class="font-mono text-[8px] text-outline">06:44 UTC</span>
+        </div>
+        <div class="font-sg font-semibold text-on-surface text-sm truncate group-hover:text-secondary transition-colors">
+          ETH ETF Approved by August?
+        </div>
+        <div class="flex items-center gap-4 mt-2 font-mono text-[9px]">
+          <span class="text-outline">YES <span class="text-on-surface-variant">0.681</span></span>
+          <span class="text-outline">NO <span class="text-on-surface-variant">0.344</span></span>
+          <span class="text-outline">SUM <span class="text-secondary font-bold">1.025</span></span>
+        </div>
+      </div>
+      <div class="flex-shrink-0 text-right">
+        <div class="font-mono text-2xl font-bold text-secondary leading-none">5.0<span class="text-sm">%</span></div>
+        <div class="font-mono text-[8px] text-outline mt-0.5">net +3.0%</div>
+        <div class="font-mono text-[8px] text-secondary mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Open →</div>
+      </div>
+    </div>
+    <div class="h-0.5 bg-surface-highest"><div class="h-full bg-secondary" style="width:50%"></div></div>
+  </div>
+
+  <!-- Card: UNDER -->
+  <div class="signal-card bg-surface-container border border-surface-high hover:border-primary-fixed transition-colors cursor-pointer group" onclick="window.open('#','_blank')">
+    <div class="flex items-start gap-4 p-4">
+      <div class="flex items-end gap-px h-10 w-12 flex-shrink-0 self-end">
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-40" style="height:35%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-60" style="height:50%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-75" style="height:55%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-85" style="height:65%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed" style="height:100%"></div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-1.5 py-0.5 bg-primary-fixed text-black font-mono text-[8px] font-black uppercase">UNDER</span>
+          <span class="font-mono text-[8px] text-outline">06:43 UTC</span>
+        </div>
+        <div class="font-sg font-semibold text-on-surface text-sm truncate group-hover:text-primary-fixed transition-colors">
+          Solana Breakpoint Announcement?
+        </div>
+        <div class="flex items-center gap-4 mt-2 font-mono text-[9px]">
+          <span class="text-outline">YES <span class="text-on-surface-variant">0.220</span></span>
+          <span class="text-outline">NO <span class="text-on-surface-variant">0.740</span></span>
+          <span class="text-outline">SUM <span class="text-primary-fixed font-bold">0.960</span></span>
+        </div>
+      </div>
+      <div class="flex-shrink-0 text-right">
+        <div class="font-mono text-2xl font-bold text-primary-fixed leading-none">4.0<span class="text-sm">%</span></div>
+        <div class="font-mono text-[8px] text-outline mt-0.5">net +2.0%</div>
+        <div class="font-mono text-[8px] text-primary-fixed mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Open →</div>
+      </div>
+    </div>
+    <div class="h-0.5 bg-surface-highest"><div class="h-full bg-primary-fixed" style="width:40%"></div></div>
+  </div>
+
+  <!-- Card: UNDER (low gap) -->
+  <div class="signal-card bg-surface-container border border-surface-high hover:border-primary-fixed transition-colors cursor-pointer group opacity-70" onclick="window.open('#','_blank')">
+    <div class="flex items-start gap-4 p-4">
+      <div class="flex items-end gap-px h-10 w-12 flex-shrink-0 self-end">
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-20" style="height:25%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-30" style="height:30%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-40" style="height:35%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed opacity-55" style="height:40%"></div>
+        <div class="flex-1 bar-fill bg-primary-fixed" style="height:100%"></div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-1.5 py-0.5 bg-primary-fixed text-black font-mono text-[8px] font-black uppercase">UNDER</span>
+          <span class="font-mono text-[8px] text-outline">06:42 UTC</span>
+          <span class="font-mono text-[8px] text-outline ml-auto">low priority</span>
+        </div>
+        <div class="font-sg font-semibold text-on-surface text-sm truncate">Will BTC hit 100k by EOY?</div>
+        <div class="flex items-center gap-4 mt-2 font-mono text-[9px]">
+          <span class="text-outline">YES <span class="text-on-surface-variant">0.450</span></span>
+          <span class="text-outline">NO <span class="text-on-surface-variant">0.520</span></span>
+          <span class="text-outline">SUM <span class="text-primary-fixed font-bold">0.970</span></span>
+        </div>
+      </div>
+      <div class="flex-shrink-0 text-right">
+        <div class="font-mono text-2xl font-bold text-primary-fixed leading-none">3.0<span class="text-sm">%</span></div>
+        <div class="font-mono text-[8px] text-outline mt-0.5">net +1.0%</div>
+      </div>
+    </div>
+    <div class="h-0.5 bg-surface-highest"><div class="h-full bg-primary-fixed" style="width:30%"></div></div>
+  </div>
+
+</div>
+
+<!-- New signal injection -->
+<script>
+var fakeSignals = [
+  { dir:"OVER", title:"ADA Vasil Fork Launch?", yes:"0.610", no:"0.440", sum:"1.050", gap:"5.0", net:"3.0", color:"secondary" },
+  { dir:"UNDER", title:"XRP vs SEC Settled 2024?", yes:"0.380", no:"0.580", sum:"0.960", gap:"4.0", net:"2.0", color:"primary-fixed" },
+];
+var fi = 0;
+function addFakeSignal(){
+  var d = fakeSignals[fi % fakeSignals.length]; fi++;
+  var isUnder = d.dir==="UNDER";
+  var color = isUnder ? "#00fd87" : "#ffb4ab";
+  var card = document.createElement("div");
+  card.className = "signal-card bg-surface-container border border-surface-high hover:border-"+d.color+" transition-colors cursor-pointer group";
+  card.innerHTML = `
+    <div class="flex items-start gap-4 p-4">
+      <div class="flex items-end gap-px h-10 w-12 flex-shrink-0 self-end">
+        <div class="flex-1 bg-[${color}] opacity-50" style="height:50%"></div>
+        <div class="flex-1 bg-[${color}] opacity-70" style="height:70%"></div>
+        <div class="flex-1 bg-[${color}]" style="height:100%"></div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-1.5 py-0.5 font-mono text-[8px] font-black uppercase" style="background:${color};color:black">${d.dir}</span>
+          <span class="font-mono text-[8px] text-outline">NEW</span>
+          <span class="font-mono text-[8px] text-primary-fixed ml-auto animate-pulse">⚡ just now</span>
+        </div>
+        <div class="font-sg font-semibold text-on-surface text-sm truncate">${d.title}</div>
+        <div class="flex items-center gap-4 mt-2 font-mono text-[9px]">
+          <span class="text-outline">YES <span class="text-on-surface-variant">${d.yes}</span></span>
+          <span class="text-outline">NO <span class="text-on-surface-variant">${d.no}</span></span>
+          <span class="text-outline">SUM <span style="color:${color}" class="font-bold">${d.sum}</span></span>
+        </div>
+      </div>
+      <div class="flex-shrink-0 text-right">
+        <div class="font-mono text-2xl font-bold leading-none" style="color:${color}">${d.gap}<span class="text-sm">%</span></div>
+        <div class="font-mono text-[8px] text-outline mt-0.5">net +${d.net}%</div>
+      </div>
+    </div>
+    <div class="h-0.5 bg-surface-highest"><div class="h-full" style="background:${color};width:${d.gap*10}%"></div></div>
+  `;
+  var feed = document.getElementById('feed');
+  feed.insertBefore(card, feed.firstChild);
+  var cnt = document.getElementById('signal-count');
+  cnt.textContent = parseInt(cnt.textContent) + 1;
+}
+</script>
+</body>
+</html>

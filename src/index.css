@@ -4,8 +4,8 @@
 
 * { box-sizing: border-box; }
 body {
-  background-color: #131313;
-  color: #e5e2e1;
+  background-color: #0e0d14;
+  color: #ffffff;
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   margin: 0;
@@ -16,5 +16,5 @@ body {
   line-height: 1;
 }
 ::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: #131313; }
-::-webkit-scrollbar-thumb { background: #353534; }
+::-webkit-scrollbar-track { background: #0e0d14; }
+::-webkit-scrollbar-thumb { background: #2e2c3e; }

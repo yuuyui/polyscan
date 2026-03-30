@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>POLYSCAN — Layout 1: Signal-First</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode:"class",
+  theme:{ extend:{ colors:{
+    "primary-fixed":"#00fd87","primary-dim":"#00ed7e",
+    "surface":"#131313","surface-low":"#1c1b1b","surface-container":"#201f1f",
+    "surface-high":"#2a2a2a","surface-highest":"#353534","surface-dim":"#0e0e0e",
+    "on-surface":"#e5e2e1","on-surface-variant":"#b9cbb9",
+    "outline":"#849585","outline-variant":"#3b4b3d",
+    "secondary":"#ffb4ab","secondary-container":"#8d1d1e",
+  }, fontFamily:{ mono:['"JetBrains Mono"','monospace'], sg:['"Space Grotesk"','sans-serif'] },
+  borderRadius:{ DEFAULT:"0px", lg:"0px", xl:"0px", full:"9999px" } } }
+}
+</script>
+<style>
+* { box-sizing:border-box; }
+body { background:#131313; color:#e5e2e1; font-family:'Space Grotesk',sans-serif; -webkit-font-smoothing:antialiased; margin:0; }
+.material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display:inline-block; line-height:1; }
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:#131313; }
+::-webkit-scrollbar-thumb { background:#353534; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- STICKY STATS HEADER — สิ่งสำคัญอยู่บนสุดตลอดเวลา -->
+<header class="sticky top-0 z-50 bg-surface-dim border-b border-surface-high">
+  <!-- Brand + Scan button -->
+  <div class="flex items-center justify-between px-4 py-2 border-b border-surface-container">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary-fixed text-sm">terminal</span>
+      <span class="font-sg font-black text-primary-fixed uppercase tracking-tighter text-base">POLYSCAN</span>
+      <span class="font-mono text-[9px] text-outline ml-1">v1.0-ALPHA</span>
+    </div>
+    <button id="scan-btn" onclick="startScan()" class="bg-primary-fixed text-black text-[10px] font-mono font-bold px-4 py-2 uppercase hover:bg-primary-dim transition-colors flex items-center gap-1">
+      <span class="material-symbols-outlined text-sm">radar</span>
+      SCAN NOW
+    </button>
+  </div>
+  <!-- Inline stats — always visible -->
+  <div class="grid grid-cols-3 divide-x divide-surface-container">
+    <div class="px-4 py-2 flex items-center gap-3">
+      <span class="material-symbols-outlined text-outline text-sm">storage</span>
+      <div>
+        <div class="text-[9px] font-mono text-outline uppercase">Scanned</div>
+        <div class="text-lg font-mono font-bold text-on-surface leading-none">1,243</div>
+      </div>
+    </div>
+    <div class="px-4 py-2 flex items-center gap-3">
+      <span class="material-symbols-outlined text-primary-fixed text-sm">crisis_alert</span>
+      <div>
+        <div class="text-[9px] font-mono text-outline uppercase">Signals</div>
+        <div class="text-lg font-mono font-bold text-primary-fixed leading-none">07</div>
+      </div>
+    </div>
+    <div class="px-4 py-2 flex items-center gap-3">
+      <div class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></div>
+      <div>
+        <div class="text-[9px] font-mono text-outline uppercase">Last Scan</div>
+        <div class="text-lg font-mono font-bold text-on-surface leading-none">06:45<span class="text-xs font-normal text-outline ml-1">UTC</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-4 py-4 space-y-4 pb-20">
+
+  <!-- FILTER BAR — compact, inline -->
+  <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-surface-container border border-surface-high px-4 py-3">
+    <span class="font-mono text-[9px] text-outline uppercase whitespace-nowrap">Filter:</span>
+    <div class="flex items-center gap-3 flex-1 min-w-0">
+      <span class="font-mono text-[9px] text-outline uppercase whitespace-nowrap">Min Gap</span>
+      <input id="gap-slider" type="range" min="1" max="20" value="3"
+        class="flex-1 h-0.5 bg-surface-highest appearance-none cursor-pointer accent-[#00fd87]"
+        oninput="updateFilter()"/>
+      <span id="gap-val" class="font-mono text-[10px] text-primary-fixed whitespace-nowrap w-12">3¢</span>
+    </div>
+    <div class="flex bg-surface-highest" id="dir-btns">
+      <button onclick="setDir('ALL',this)" class="dir active px-3 py-1 text-[9px] font-mono font-bold uppercase bg-primary-fixed text-black transition-colors" data-dir="ALL">ALL</button>
+      <button onclick="setDir('OVER',this)" class="dir px-3 py-1 text-[9px] font-mono font-bold uppercase text-outline hover:text-on-surface transition-colors" data-dir="OVER">OVER</button>
+      <button onclick="setDir('UNDER',this)" class="dir px-3 py-1 text-[9px] font-mono font-bold uppercase text-outline hover:text-on-surface transition-colors" data-dir="UNDER">UNDER</button>
+    </div>
+    <span id="count-label" class="font-mono text-[9px] text-outline whitespace-nowrap">5 signals</span>
+  </div>
+
+  <!-- SIGNAL TABLE — primary content, front and center -->
+  <div class="border border-surface-high overflow-hidden">
+    <div class="bg-surface-container px-4 py-2 flex justify-between items-center border-b border-surface-high">
+      <span class="font-mono text-[9px] text-outline uppercase tracking-widest">⚡ ACTIVE ARBITRAGE SIGNALS</span>
+      <span class="font-mono text-[9px] text-primary-fixed">LIVE</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full font-mono text-xs" id="signal-table">
+        <thead>
+          <tr class="bg-surface-container border-b border-surface-highest text-[9px] uppercase text-outline">
+            <th class="px-4 py-3 text-left font-normal">Market</th>
+            <th class="px-4 py-3 text-right font-normal cursor-pointer hover:text-on-surface" onclick="sortBy('gap')">GAP ↕</th>
+            <th class="px-4 py-3 text-center font-normal">DIR</th>
+            <th class="px-4 py-3 text-right font-normal hidden sm:table-cell">YES</th>
+            <th class="px-4 py-3 text-right font-normal hidden sm:table-cell">NO</th>
+            <th class="px-4 py-3 text-right font-normal hidden sm:table-cell">NET</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr class="border-b border-surface-container hover:bg-surface-high transition-colors cursor-pointer" data-dir="UNDER" data-gap="7" onclick="window.open('#','_blank')">
+            <td class="px-4 py-3 text-on-surface max-w-[180px] truncate">Fed Rate Hike Sept 2024</td>
+            <td class="px-4 py-3 text-right font-bold text-primary-fixed">-7.0%</td>
+            <td class="px-4 py-3 text-center"><span class="px-1.5 py-0.5 bg-primary-fixed text-black text-[8px] font-black uppercase">UNDER</span></td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.89</td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.04</td>
+            <td class="px-4 py-3 text-right font-bold text-primary-fixed hidden sm:table-cell">+5.0%</td>
+          </tr>
+          <tr class="border-b border-surface-container bg-surface-low hover:bg-surface-high transition-colors cursor-pointer" data-dir="OVER" data-gap="5" onclick="window.open('#','_blank')">
+            <td class="px-4 py-3 text-on-surface max-w-[180px] truncate">ETH ETF Approved by August?</td>
+            <td class="px-4 py-3 text-right font-bold text-secondary">+5.0%</td>
+            <td class="px-4 py-3 text-center"><span class="px-1.5 py-0.5 bg-secondary text-black text-[8px] font-black uppercase">OVER</span></td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.681</td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.344</td>
+            <td class="px-4 py-3 text-right font-bold text-primary-fixed hidden sm:table-cell">+3.0%</td>
+          </tr>
+          <tr class="border-b border-surface-container hover:bg-surface-high transition-colors cursor-pointer" data-dir="UNDER" data-gap="4" onclick="window.open('#','_blank')">
+            <td class="px-4 py-3 text-on-surface max-w-[180px] truncate">Solana Breakpoint Announcement?</td>
+            <td class="px-4 py-3 text-right font-bold text-primary-fixed">-4.0%</td>
+            <td class="px-4 py-3 text-center"><span class="px-1.5 py-0.5 bg-primary-fixed text-black text-[8px] font-black uppercase">UNDER</span></td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.22</td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.74</td>
+            <td class="px-4 py-3 text-right font-bold text-primary-fixed hidden sm:table-cell">+2.0%</td>
+          </tr>
+          <tr class="border-b border-surface-container bg-surface-low hover:bg-surface-high transition-colors cursor-pointer" data-dir="UNDER" data-gap="3" onclick="window.open('#','_blank')">
+            <td class="px-4 py-3 text-on-surface max-w-[180px] truncate">Will BTC hit 100k by EOY?</td>
+            <td class="px-4 py-3 text-right font-bold text-primary-fixed">-3.0%</td>
+            <td class="px-4 py-3 text-center"><span class="px-1.5 py-0.5 bg-primary-fixed text-black text-[8px] font-black uppercase">UNDER</span></td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.45</td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.52</td>
+            <td class="px-4 py-3 text-right font-bold text-outline hidden sm:table-cell">+1.0%</td>
+          </tr>
+          <tr class="border-b border-surface-container hover:bg-surface-high transition-colors cursor-pointer" data-dir="OVER" data-gap="8" onclick="window.open('#','_blank')">
+            <td class="px-4 py-3 text-on-surface max-w-[180px] truncate">DOGE hits $1 before halving?</td>
+            <td class="px-4 py-3 text-right font-bold text-secondary">+8.0%</td>
+            <td class="px-4 py-3 text-center"><span class="px-1.5 py-0.5 bg-secondary text-black text-[8px] font-black uppercase">OVER</span></td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.55</td>
+            <td class="px-4 py-3 text-right text-on-surface-variant hidden sm:table-cell">0.53</td>
+            <td class="px-4 py-3 text-right font-bold text-primary-fixed hidden sm:table-cell">+6.0%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="no-results" class="hidden px-4 py-8 text-center font-mono text-outline text-xs">No signals match current filter — lower threshold or change direction</div>
+  </div>
+
+  <!-- MINI CHART — secondary, below the signals -->
+  <details class="group border border-surface-high">
+    <summary class="flex justify-between items-center px-4 py-3 cursor-pointer bg-surface-container font-mono text-[9px] text-outline uppercase tracking-widest hover:text-on-surface transition-colors">
+      <span>Gap Distribution Chart</span>
+      <span class="group-open:rotate-180 transition-transform material-symbols-outlined text-sm">expand_more</span>
+    </summary>
+    <div class="p-4 bg-surface-low">
+      <div class="flex items-end justify-between gap-1 h-20">
+        <div class="w-full bg-secondary rounded-t-none" style="height:40%" title="OVER +4%"></div>
+        <div class="w-full bg-primary-fixed" style="height:70%" title="UNDER -7%"></div>
+        <div class="w-full bg-primary-fixed" style="height:40%" title="UNDER -4%"></div>
+        <div class="w-full bg-secondary" style="height:50%" title="OVER +5%"></div>
+        <div class="w-full bg-primary-fixed" style="height:30%" title="UNDER -3%"></div>
+        <div class="w-full bg-secondary" style="height:80%" title="OVER +8%"></div>
+        <div class="w-full bg-primary-fixed" style="height:20%" title="UNDER -2%"></div>
+        <div class="w-full bg-secondary" style="height:35%" title="OVER +3.5%"></div>
+      </div>
+      <div class="flex justify-between mt-2 font-mono text-[8px] text-outline">
+        <span class="flex items-center gap-1"><span class="w-2 h-2 inline-block bg-primary-fixed"></span>UNDER</span>
+        <span class="flex items-center gap-1"><span class="w-2 h-2 inline-block bg-secondary"></span>OVER</span>
+      </div>
+    </div>
+  </details>
+</main>
+
+<!-- Mobile bottom nav -->
+<nav class="fixed bottom-0 left-0 right-0 flex bg-surface-dim border-t border-surface-high z-40">
+  <a href="#" class="flex-1 flex flex-col items-center py-3 text-primary-fixed bg-surface-container">
+    <span class="material-symbols-outlined text-sm">terminal</span>
+    <span class="font-sg text-[8px] uppercase mt-0.5">Terminal</span>
+  </a>
+  <a href="#" class="flex-1 flex flex-col items-center py-3 text-outline hover:text-on-surface">
+    <span class="material-symbols-outlined text-sm">history</span>
+    <span class="font-sg text-[8px] uppercase mt-0.5">History</span>
+  </a>
+  <a href="#" class="flex-1 flex flex-col items-center py-3 text-outline hover:text-on-surface">
+    <span class="material-symbols-outlined text-sm">settings</span>
+    <span class="font-sg text-[8px] uppercase mt-0.5">Settings</span>
+  </a>
+</nav>
+
+<script>
+var activeDir = 'ALL';
+function updateFilter(){
+  var v = document.getElementById('gap-slider').value;
+  document.getElementById('gap-val').textContent = v + '¢';
+  applyFilter();
+}
+function setDir(dir, btn){
+  activeDir = dir;
+  document.querySelectorAll('.dir').forEach(function(b){
+    b.classList.remove('bg-primary-fixed','text-black');
+    b.classList.add('text-outline');
+  });
+  btn.classList.add('bg-primary-fixed','text-black');
+  btn.classList.remove('text-outline');
+  applyFilter();
+}
+function applyFilter(){
+  var minGap = parseInt(document.getElementById('gap-slider').value);
+  var rows = document.querySelectorAll('#table-body tr');
+  var shown = 0;
+  rows.forEach(function(row){
+    var dir = row.dataset.dir;
+    var gap = parseInt(row.dataset.gap);
+    var ok = (activeDir==='ALL'||dir===activeDir) && gap>=minGap;
+    row.style.display = ok ? '' : 'none';
+    if(ok) shown++;
+  });
+  document.getElementById('count-label').textContent = shown + ' signals';
+  document.getElementById('no-results').classList.toggle('hidden', shown > 0);
+}
+function startScan(){
+  var btn = document.getElementById('scan-btn');
+  btn.textContent = 'SCANNING…';
+  btn.disabled = true;
+  setTimeout(function(){ btn.innerHTML = '<span class="material-symbols-outlined text-sm">radar</span> SCAN NOW'; btn.disabled=false; }, 2000);
+}
+</script>
+</body>
+</html>
