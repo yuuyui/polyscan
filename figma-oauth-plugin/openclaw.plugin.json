@@ -1,0 +1,28 @@
+{
+  "id": "figma-oauth",
+  "name": "Figma OAuth",
+  "description": "Figma OAuth integration — connect Figma ผ่าน OAuth ไม่ต้อง local plugin",
+  "version": "1.0.0",
+  "openclaw": {
+    "extensions": ["./index.ts"]
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["clientId", "clientSecret"],
+    "properties": {
+      "clientId":     { "type": "string" },
+      "clientSecret": { "type": "string" },
+      "accessToken":  { "type": "string" },
+      "refreshToken": { "type": "string" },
+      "fileKey":      { "type": "string", "description": "Default Figma file key" }
+    }
+  },
+  "uiHints": {
+    "clientId":     { "label": "Figma Client ID" },
+    "clientSecret": { "label": "Figma Client Secret", "sensitive": true },
+    "accessToken":  { "label": "Access Token (auto-filled after login)", "sensitive": true },
+    "refreshToken": { "label": "Refresh Token (auto-filled after login)", "sensitive": true },
+    "fileKey":      { "label": "Default File Key" }
+  }
+}
