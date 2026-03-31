@@ -1,0 +1,14 @@
+{
+  "name": "figma-bridge-server",
+  "version": "1.0.0",
+  "description": "WebSocket bridge between OpenClaw and Figma Plugin",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
