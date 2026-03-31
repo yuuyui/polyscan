@@ -103,32 +103,135 @@ STITCH_API_KEY=<key> node stitch.mjs download-html "<htmlUrl>" stitch/scanner-ma
 STITCH_API_KEY=<key> node stitch.mjs download-html "<htmlUrl>" stitch/scanner-desktop.html
 ```
 
+### UX Critique
+
+**Prompt:**
+> "คิดว่า UX/UI เป็นยังไงบ้าง"
+
+5 ปัญหาที่เจอ:
+1. **Bar chart** — hover ไม่บอกชื่อ market
+2. **Mobile table** — Gap, Direction ควรมาก่อน Yes/No
+3. **Slider filter** — เลื่อนแล้วต้อง scan ใหม่ ควร real-time
+4. **Error state** — ไม่ prominent พอ
+5. **FAIR direction** — ไม่ควรแสดงถ้า gap = 0
+
+**Prompt:**
+> "ขอ preview เป็น html หน่อย"
+
+```bash
+cd stitch && python3 -m http.server 8899
+cloudflared tunnel --protocol http2 --url http://localhost:8899
+```
+
+**Prompt:**
+> "แก้อะไรไปอะ ไม่เห็นมีอะไรเปลี่ยนเลย ลองบอกมา"
+
+link ที่ส่งไปคือ mockup เดิม ยังไม่ได้แก้อะไร
+
+**Prompt:**
+> "งั้นแก้ design mockup"
+
+แก้ 4 จุด:
+- เพิ่ม tooltip hover บน bar chart
+- จัดลำดับ column: Gap → Direction → Market → Yes/No
+- Slider filter real-time
+- Net Profit column (หลัง fee 2%) บน desktop
+
+### Layout Exploration
+
+**Prompt:**
+> "อยากปรับ layout คิดว่าควรปรับยังไงดี ขอ 5 แบบ"
+
+| Layout | แนวคิด | เหมาะกับ |
+|--------|--------|---------|
+| Signal-First | signal ขึ้นบนสุด, chart พับได้ | trader ที่ต้อง act ไว |
+| Dashboard Grid | stats + chart บน, table ล่าง | ต้องการ big picture ก่อน |
+| Split Pane | list ซ้าย + detail panel ขวา | วิเคราะห์ละเอียด |
+| Live Feed | card feed real-time + sparkline | trading floor feel |
+| Minimal Command | terminal สุด, ไม่มี chrome | power user |
+
+**Prompt:**
+> "ขอ html ทั้ง 5 แบบ"
+
+สร้าง 5 ไฟล์: `layout-1-signal-first.html` ถึง `layout-5-minimal-command.html`
+
+**Prompt:**
+> "ชอบ layout 4 จัดมา"
+
+Implement Layout 4 (Live Feed) ทั้ง mobile + desktop:
+- Card feed + sparkline 5 bars
+- Ticker tape scroll
+- Gap bar gradient
+- SCAN NOW → inject card ใหม่ real-time
+
 ---
 
 ## Phase 4: Design System
 
-**Prompt ที่ใช้:**
+**Prompt:**
 > "จากดีไซน์ ช่วยสร้าง Design systems.html เอาไว้ใน project ให้หน่อย"
 
-> "ใช้ design systems เดียวกันนะ" _(หลัง generate desktop แล้ว)_
+> "ใช้ design systems เดียวกันนะ"
 
-สร้าง `stitch/design-system.html` รวม unified tokens จากทั้ง 2 screens:
+### Uniswap Theme
 
-### Color Palette (V2 Final)
+**Prompt:**
+> "ขอเป็น theme color ให้เหมือน https://app.uniswap.org/"
+
+| Token | ก่อน | หลัง |
+|-------|------|------|
+| Background | `#131313` | `#13111A` |
+| Primary | `#00fd87` | `#FC72FF` |
+| UNDER | `#00fd87` | `#40B66B` |
+| OVER | `#ffb4ab` | `#FF5F52` |
+| Radius | `0px` | `12px` |
+| Font | Space Grotesk | Inter |
+
+### Figma Integration
+
+**Prompt:**
+> "อ่าน mcp figma ได้ไหม"
+
+OpenClaw ไม่รองรับ MCP — ใช้ Figma REST API แทน
+
+**Prompt:**
+> "อยากให้ช่วย"
+
+setup ต้องใช้ Personal Access Token จาก Figma → Settings → Account
+
+**Prompt:**
+> "figma-sync skill นี้ทำอะไรได้บ้าง"
+
+skill จาก clawhub ทำได้: Pull (Figma → code), Push (code → Figma), Diff, Preview
+
+**Prompt:**
+> "Pull อธิบายเพิ่ม ทำอะไรนะ"
+
+Pull = อ่าน Figma → สร้าง `designModel.json` + `tokens.json` + generate React components
+
+**Prompt:**
+> "เห็นยัง" (node 1-1762)
+
+อ่าน Figma ด้วย REST API โดยตรง:
+```bash
+curl -H "X-Figma-Token: <token>" \
+  "https://api.figma.com/v1/images/<fileId>?ids=1:1762&format=png"
+```
+
+ได้ V2 design spec ครบ: fills, bounds, text styles
+
+### Color Palette (V2 Final จาก Figma)
 ```js
 colors: {
-  "bg-base":       "#0e0d14",   // page background
-  "bg-card":       "#22202e",   // card background
-  "bg-sidebar":    "#13121e",   // sidebar
-  "primary":       "#33ff99",   // CTA, active state
-  "primary-hover": "#00ccc9",   // button hover
-  "filter-active": "#e566ff",   // direction filter active
-  "under-bg":      "#0d2218",   // UNDER badge background
-  "under-text":    "#00fd87",   // UNDER badge text
-  "over-bg":       "#2a1212",   // OVER badge background
-  "over-text":     "#ff5f52",   // OVER badge text
-  "text-muted":    "#6b6882",   // secondary text
-  "border-default":"#2e2c3e",   // border
+  "bg-base":       "#0e0d14",
+  "bg-card":       "#22202e",
+  "primary":       "#33ff99",   // จาก Figma component
+  "primary-hover": "#00ccc9",   // จาก Figma hover variant
+  "filter-active": "#e566ff",
+  "under-bg":      "#0d2218",
+  "under-text":    "#00fd87",
+  "over-bg":       "#2a1212",
+  "over-text":     "#ff5f52",
 }
 ```
 
@@ -337,10 +440,43 @@ npm run dev       # manual test ตาม AC
 
 ## Phase 10: V2 UI Overhaul (Figma)
 
-**Prompt ที่ใช้:**
-> _(Issue #7 จาก owner — ระบุ Figma URL + node IDs + color palette + component spec + AC ครบ)_
+**Prompt:**
+> "ปรับ html ตาม figma Version 2 (16:19) ที่แก้ไปได้ไหม"
 
-### สิ่งที่เปลี่ยนใน V2
+ดึง component spec จาก Figma JSON → fills, bounds, text styles → implement
+
+**Prompt:**
+> "รู้ไหม แก้อะไรไปบ้าง version 2 อะ"
+
+implement layout ใหม่ทั้งหมด ทั้งที่ V2 เปลี่ยนแค่สีปุ่มกับ hover
+
+**Prompt:**
+> "ฉันแก้แค่สีปุ่มและ hover ของ version 2 นะ"
+
+**Lesson learned:** ก่อน implement ต้องถามให้ชัดว่าเปลี่ยนอะไร อย่าสรุปเองจาก diff
+
+**Prompt:**
+> "ปรับแค่สีปุ่มกับ hover ใช้แค่ version 2 เท่านั้น"
+
+สิ่งที่เปลี่ยนจริง:
+
+| Element | V1 | V2 |
+|---------|----|----|
+| SCAN NOW default | `#00fd87` | `#33ff99` |
+| SCAN NOW hover | ไม่มี | `#00ccc9` |
+| Filter active | `#00fd87` | `#e566ff` |
+| Filter inactive hover | ไม่มี | `#c0c0c0` |
+
+```html
+<button
+  style="background:#33ff99"
+  onmouseenter="this.style.background='#00ccc9'"
+  onmouseleave="this.style.background='#33ff99'">
+  SCAN NOW
+</button>
+```
+
+### สิ่งที่เปลี่ยนใน V2 (ภาพรวม)
 | | V1 | V2 |
 |--|----|----|
 | Background | `#131313` | `#0e0d14` |
