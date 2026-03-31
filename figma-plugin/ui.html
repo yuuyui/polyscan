@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #0e0d14; color: #fff; padding: 12px; font-size: 11px; margin: 0; }
+    #status { padding: 8px; border-radius: 4px; margin-bottom: 8px; font-family: monospace; font-size: 10px; }
+    .connected { background: #0d2218; color: #00fd87; border: 1px solid #00fd87; }
+    .disconnected { background: #2a1212; color: #ff5f52; border: 1px solid #ff5f52; }
+    .waiting { background: #1a1826; color: #c0c0c0; border: 1px solid #2e2c3e; }
+    label { color: #6b6882; font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; }
+    input { width: 100%; box-sizing: border-box; background: #1a1826; border: 1px solid #2e2c3e; color: #fff; padding: 5px 8px; font-size: 11px; border-radius: 4px; margin-top: 3px; margin-bottom: 8px; }
+    button { background: #33ff99; color: #000; border: none; padding: 6px 14px; font-weight: 700; font-size: 10px; text-transform: uppercase; border-radius: 4px; cursor: pointer; width: 100%; }
+    button:hover { background: #00ccc9; }
+    button.disconnect { background: #2a1212; color: #ff5f52; border: 1px solid #ff5f52; margin-top: 4px; }
+    #log { background: #13121e; border: 1px solid #2e2c3e; border-radius: 4px; padding: 8px; height: 100px; overflow-y: auto; font-family: monospace; font-size: 9px; color: #c0c0c0; margin-top: 8px; }
+    .log-ok { color: #00fd87; }
+    .log-err { color: #ff5f52; }
+    .log-cmd { color: #e566ff; }
+  </style>
+</head>
+<body>
+  <div id="status" class="waiting">⏳ DISCONNECTED</div>
+
+  <label>Bridge Server URL</label>
+  <input id="url" type="text" value="ws://localhost:3333" placeholder="ws://localhost:3333" />
+
+  <button id="connectBtn" onclick="connect()">CONNECT</button>
+  <button class="disconnect" id="disconnectBtn" onclick="disconnect()" style="display:none">DISCONNECT</button>
+
+  <div id="log"></div>
+
+  <script>
+    let ws = null
+
+    function log(msg, type = '') {
+      const div = document.getElementById('log')
+      const line = document.createElement('div')
+      line.className = 'log-' + type
+      line.textContent = new Date().toTimeString().slice(0,8) + ' ' + msg
+      div.appendChild(line)
+      div.scrollTop = div.scrollHeight
+    }
+
+    function setStatus(text, cls) {
+      const el = document.getElementById('status')
+      el.textContent = text
+      el.className = cls
+    }
+
+    function connect() {
+      const url = document.getElementById('url').value.trim()
+      ws = new WebSocket(url)
+
+      ws.onopen = () => {
+        setStatus('✅ CONNECTED — ' + url, 'connected')
+        document.getElementById('connectBtn').style.display = 'none'
+        document.getElementById('disconnectBtn').style.display = 'block'
+        log('Connected to ' + url, 'ok')
+        // แจ้ง plugin code ว่า ws connected
+        parent.postMessage({ pluginMessage: { type: 'ws-connected' } }, '*')
+      }
+
+      ws.onmessage = (event) => {
+        try {
+          const cmd = JSON.parse(event.data)
+          log('CMD: ' + cmd.action, 'cmd')
+          // ส่ง command ไปให้ plugin code (sandbox) execute
+          parent.postMessage({ pluginMessage: { type: 'execute', command: cmd } }, '*')
+        } catch (e) {
+          log('Parse error: ' + e.message, 'err')
+        }
+      }
+
+      ws.onclose = () => {
+        setStatus('⏳ DISCONNECTED', 'waiting')
+        document.getElementById('connectBtn').style.display = 'block'
+        document.getElementById('disconnectBtn').style.display = 'none'
+        log('Disconnected', 'err')
+        parent.postMessage({ pluginMessage: { type: 'ws-disconnected' } }, '*')
+      }
+
+      ws.onerror = (e) => {
+        log('Error: ' + e.message, 'err')
+      }
+    }
+
+    function disconnect() {
+      if (ws) ws.close()
+    }
+
+    // รับผล execution จาก plugin code
+    window.onmessage = (event) => {
+      const msg = event.data.pluginMessage
+      if (!msg) return
+      if (msg.type === 'result') {
+        if (ws && ws.readyState === 1) {
+          ws.send(JSON.stringify({ id: msg.id, ok: msg.ok, result: msg.result, error: msg.error }))
+        }
+        if (msg.ok) log('OK: ' + (msg.result?.summary ?? JSON.stringify(msg.result).slice(0,60)), 'ok')
+        else log('ERR: ' + msg.error, 'err')
+      }
+    }
+  </script>
+</body>
+</html>
