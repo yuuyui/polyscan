@@ -525,3 +525,115 @@ npm run dev
 | `src/utils/calculator.ts` | Gap logic |
 | `src/hooks/useScan.ts` | Scan state |
 | `src/components/SignalCard.tsx` | V2 card component |
+
+---
+
+## Phase 11: Figma Design System Integration
+
+### 11.1 Figma MCP Setup
+
+**Prompt:**
+> "เปิด claude covert design to figma โดยใช้ Figma mcp (connected)"
+
+**วิธีที่ได้ผล:** Claude Code + Figma MCP (ไม่ใช่ REST API หรือ local plugin)
+```bash
+# เช็ค Figma MCP status
+claude --permission-mode bypassPermissions --print 'Call Figma:whoami'
+# → Kanokwan Panyakool, Crown Labs Pro
+```
+
+**Lesson learned:** 
+- REST API ไม่มี write endpoints (ไม่ได้ create file, ไม่ได้ create nodes)
+- Local plugin bridge ต้องการ clone repo บนเครื่อง — ไม่สะดวก
+- **วิธีที่ใช้ได้จริง:** `claude --print` + Figma MCP ที่ configured ใน `~/.claude/settings.json`
+
+---
+
+### 11.2 สร้าง Design System ใน Figma
+
+**Prompt:**
+> "สร้าง Design System จาก polyscan ใน Figma"
+
+**ผลลัพธ์:** สร้าง 5 pages ใน file `dIFXfUTocyKaS6khWnu7Ir`:
+- Cover
+- 🎨 Color Tokens (17 swatches)
+- ✍️ Typography (6 type specimens)
+- 🧩 Components (Button, Badge, Card)
+- 📱 Scanner UI
+
+```bash
+claude --permission-mode bypassPermissions --print \
+  'Create Polyscan Design System in Figma file dIFXfUTocyKaS6khWnu7Ir...'
+```
+
+---
+
+### 11.3 Pixel-Perfect Desktop Layout
+
+**Prompt:**
+> "interface ทำไมไม่เหมือนใน interface ใน tunnel"
+> "1440 ทำไมแปลกก เช็คดีๆ"
+
+**ปัญหาที่พบ:**
+1. Frame width ผิด (~340px แทน 1440px)
+2. Nav icons ใช้ Unicode แทน Material Symbols
+3. Active nav border ผิด (ทุกด้านแทน border-r-2)
+4. Letter spacing ผิด
+
+**แก้ด้วย:**
+```bash
+claude --permission-mode bypassPermissions --print \
+  'Fix Desktop frame to 1440x900px. Fix nav border to border-r-2 only...'
+```
+
+**Diff ที่แก้:**
+| Element | ก่อน | หลัง |
+|---------|------|------|
+| Frame width | ~340px | 1440px |
+| Active nav | border ทุกด้าน | border-r-2 เท่านั้น |
+| Signal count | uppercase | lowercase "signals" |
+| Stats font | 26px | 20px |
+| SCAN NOW radius | 2px | 4px |
+
+---
+
+### 11.4 Workflow: Figma → Code
+
+**Prompt:**
+> "ฉันบอกเธอให้อ่าน Figma แล้วเธอต้องแก้ไข code ตาม Figma ให้เหมือน 100%"
+
+**Flow ที่ใช้งานได้:**
+```
+1. แก้ใน Figma (manual หรือสั่ง Claude Code)
+2. claude --print 'Read Figma file X, compare with src/, list differences'
+3. claude --print 'Fix code to match Figma — follow existing rules'
+4. git add → commit → PR → review → merge
+```
+
+**Rules ที่ต้องยึดตลอด:**
+- ใช้ Tailwind tokens เสมอ (ไม่ hardcode hex ใน className)
+- ตัวเลขทุกตัว → `font-mono`
+- สี UNDER/OVER → ใช้ `under-*` / `over-*` tokens
+- Border radius → `rounded-sm` (4px) หรือ `rounded` (6px)
+
+---
+
+### 11.5 Figma OAuth (bonus)
+
+**Prompt:**
+> "งั้นทำยังไงให้ทำได้แบบ claude.ai"
+
+สร้าง OpenClaw plugin สำหรับ Figma OAuth:
+```bash
+# Login
+figma_auth_login → เปิด URL ใน browser
+
+# อ่าน file
+figma_read_file fileKey:dIFXfUTocyKaS6khWnu7Ir
+
+# สร้าง Variables (Pro plan)
+figma_build_design_system fileKey:dIFXfUTocyKaS6khWnu7Ir
+```
+
+**Limitation:** OAuth token ใช้ได้แค่ GET — write nodes ต้องใช้ Figma MCP เท่านั้น
+
