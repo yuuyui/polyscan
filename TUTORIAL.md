@@ -530,110 +530,141 @@ npm run dev
 
 ## Phase 11: Figma Design System Integration
 
-### 11.1 Figma MCP Setup
+### 11.1 พยายามใช้ REST API → ล้มเหลว
 
 **Prompt:**
-> "เปิด claude covert design to figma โดยใช้ Figma mcp (connected)"
+> "สร้าง file ใหม่ใน Figma"
 
-**วิธีที่ได้ผล:** Claude Code + Figma MCP (ไม่ใช่ REST API หรือ local plugin)
+ผล: Figma REST API ไม่มี create file / create node endpoint เลย ทำผ่าน REST ไม่ได้
+
+---
+
+### 11.2 สร้าง Local Plugin Bridge
+
+**Prompt:**
+> "ต้องการใช้แบบ Claude.ai"
+
+สร้าง WebSocket bridge: `figma-bridge-server/` + `figma-plugin/` (PR #19, #20)
+
+```
+OpenClaw → POST /execute → Bridge Server :3333 → WebSocket → Figma Plugin → nodes
+```
+
+ปัญหา: plugin ต้องอยู่บนเครื่อง user → ต้อง clone repo + import manifest เอง
+
+---
+
+### 11.3 สร้าง Figma OAuth Plugin
+
+**Prompt:**
+> "งั้นทำยังไงให้ทำได้แบบ claude.ai"
+> "งั้นทำ Figma OAuth skill"
+
+สร้าง OpenClaw plugin `figma-oauth` (PR #21, #22):
+- OAuth flow ผ่าน cloudflare tunnel
+- Tools: `figma_auth_login`, `figma_read_file`, `figma_build_design_system`
+
+ปัญหา: OAuth token ใช้ได้แค่ GET — write nodes ต้องใช้ Figma Plugin API เท่านั้น
+
+---
+
+### 11.4 วิธีที่ใช้ได้จริง: Claude Code + Figma MCP
+
+**Prompt:**
+> "เปิด project polyscan เปิด claude code ใช้ figma mcp connect ไปที่ https://www.figma.com/design/dIFXfUTocyKaS6khWnu7Ir"
+
 ```bash
-# เช็ค Figma MCP status
+# เช็ค Figma MCP
 claude --permission-mode bypassPermissions --print 'Call Figma:whoami'
-# → Kanokwan Panyakool, Crown Labs Pro
+# → Kanokwan Panyakool, Crown Labs Pro ✅
+
+# สั่งงาน Figma
+claude --permission-mode bypassPermissions --print 'Use Figma:use_figma to...'
 ```
 
-**Lesson learned:** 
-- REST API ไม่มี write endpoints (ไม่ได้ create file, ไม่ได้ create nodes)
-- Local plugin bridge ต้องการ clone repo บนเครื่อง — ไม่สะดวก
-- **วิธีที่ใช้ได้จริง:** `claude --print` + Figma MCP ที่ configured ใน `~/.claude/settings.json`
+Figma MCP tools ที่ใช้ได้: `Figma:whoami`, `Figma:use_figma`, `Figma:get_screenshot`, `Figma:create_new_file`
 
 ---
 
-### 11.2 สร้าง Design System ใน Figma
+### 11.5 สร้าง Design System
 
 **Prompt:**
-> "สร้าง Design System จาก polyscan ใน Figma"
+> "สร้าง Design System จาก codebase นี้"
 
-**ผลลัพธ์:** สร้าง 5 pages ใน file `dIFXfUTocyKaS6khWnu7Ir`:
-- Cover
-- 🎨 Color Tokens (17 swatches)
-- ✍️ Typography (6 type specimens)
-- 🧩 Components (Button, Badge, Card)
-- 📱 Scanner UI
-
-```bash
-claude --permission-mode bypassPermissions --print \
-  'Create Polyscan Design System in Figma file dIFXfUTocyKaS6khWnu7Ir...'
-```
+ผล: 4 pages ใน file `dIFXfUTocyKaS6khWnu7Ir` (ปัจจุบันชื่อ "Polyscan Design System"):
+- **🎨 Design Tokens** — Variables reference sheet
+- **🖥️ Desktop (1440px)** — Full layout
+- **📱 Mobile (375px)** — Full layout
+- **🧩 Components** — SignalCard, StatsBar, FilterBar, Buttons, Badges
 
 ---
 
-### 11.3 Pixel-Perfect Desktop Layout
+### 11.6 Fix Desktop Frame
 
 **Prompt:**
 > "interface ทำไมไม่เหมือนใน interface ใน tunnel"
 > "1440 ทำไมแปลกก เช็คดีๆ"
 
-**ปัญหาที่พบ:**
-1. Frame width ผิด (~340px แทน 1440px)
-2. Nav icons ใช้ Unicode แทน Material Symbols
-3. Active nav border ผิด (ทุกด้านแทน border-r-2)
-4. Letter spacing ผิด
+Claude Code analyze + get_screenshot เทียบกับ code แล้วพบ 8 issues:
 
-**แก้ด้วย:**
-```bash
-claude --permission-mode bypassPermissions --print \
-  'Fix Desktop frame to 1440x900px. Fix nav border to border-r-2 only...'
-```
-
-**Diff ที่แก้:**
-| Element | ก่อน | หลัง |
-|---------|------|------|
-| Frame width | ~340px | 1440px |
-| Active nav | border ทุกด้าน | border-r-2 เท่านั้น |
-| Signal count | uppercase | lowercase "signals" |
-| Stats font | 26px | 20px |
-| SCAN NOW radius | 2px | 4px |
+| # | Issue | ก่อน | หลัง |
+|---|-------|------|------|
+| 1 | Frame width | ~340px | **1440x900px** |
+| 2 | Active nav | border ทุกด้าน | `border-r-2` only |
+| 3 | Signal count | `SIGNALS` | `signals` lowercase |
+| 4 | Stats font | 26px | 20px |
+| 5 | Letter spacing | 2px | 1px (tracking-widest) |
+| 6 | SCAN NOW radius | 2px | 4px |
+| 7 | Values box padding | py-8px | p-2 all sides |
+| 8 | GAP line-height | 44px | leading-none |
 
 ---
 
-### 11.4 Workflow: Figma → Code
+### 11.7 ผูก Figma Variables
+
+**Prompt:**
+> "variables ต้องมีการผูกกัน"
+
+สร้าง Variable Collection "Polyscan Tokens" — 17 tokens จาก `tailwind.config.js`:
+
+| Group | Tokens |
+|-------|--------|
+| Backgrounds | bg-base, bg-card, bg-card-inner, bg-sidebar |
+| Primary | primary, primary-hover, on-primary |
+| Filter | filter-active |
+| Text | text-primary, text-secondary, text-muted |
+| Semantic | under-bg, under-text, over-bg, over-text |
+| Border | border-default, border-subtle |
+
+ทุก node บน Desktop page → fills/strokes reference variable แทน hardcoded hex
+
+---
+
+### 11.8 Workflow Rules (สำคัญ)
 
 **Prompt:**
 > "ฉันบอกเธอให้อ่าน Figma แล้วเธอต้องแก้ไข code ตาม Figma ให้เหมือน 100%"
+> "ตอน code ต้องทำตาม rule ที่มีไว้"
 
-**Flow ที่ใช้งานได้:**
+**Figma → Code flow:**
 ```
 1. แก้ใน Figma (manual หรือสั่ง Claude Code)
-2. claude --print 'Read Figma file X, compare with src/, list differences'
-3. claude --print 'Fix code to match Figma — follow existing rules'
-4. git add → commit → PR → review → merge
+2. claude --print 'Read Figma, compare with src/, list diffs'
+3. claude --print 'Fix code to match Figma, follow rules below'
+4. git add → commit (report ก่อน) → PR → รอ approve → merge
 ```
 
-**Rules ที่ต้องยึดตลอด:**
-- ใช้ Tailwind tokens เสมอ (ไม่ hardcode hex ใน className)
+**Rules ที่ต้องยึดทุกครั้ง:**
+- ใช้ Tailwind tokens เสมอ — ห้าม hardcode hex ใน className
 - ตัวเลขทุกตัว → `font-mono`
-- สี UNDER/OVER → ใช้ `under-*` / `over-*` tokens
+- สี UNDER/OVER → `under-*` / `over-*` tokens
 - Border radius → `rounded-sm` (4px) หรือ `rounded` (6px)
+- ห้าม redesign — clone design ที่มีอยู่เท่านั้น
+- ถ้าแก้ Figma → อัปเดต TUTORIAL.md ด้วยทุกครั้ง
 
----
-
-### 11.5 Figma OAuth (bonus)
-
-**Prompt:**
-> "งั้นทำยังไงให้ทำได้แบบ claude.ai"
-
-สร้าง OpenClaw plugin สำหรับ Figma OAuth:
-```bash
-# Login
-figma_auth_login → เปิด URL ใน browser
-
-# อ่าน file
-figma_read_file fileKey:dIFXfUTocyKaS6khWnu7Ir
-
-# สร้าง Variables (Pro plan)
-figma_build_design_system fileKey:dIFXfUTocyKaS6khWnu7Ir
-```
-
-**Limitation:** OAuth token ใช้ได้แค่ GET — write nodes ต้องใช้ Figma MCP เท่านั้น
+**Lesson learned:**
+- Figma REST API: อ่านได้เท่านั้น — เขียน nodes ไม่ได้
+- Figma Plugin API: เขียนได้ แต่ต้องรันใน Figma app
+- วิธีที่ใช้ได้จริงสำหรับ OpenClaw: `claude --print` + Figma MCP
+- `figma.root.name` เป็น read-only — rename file ต้องทำใน Figma UI เท่านั้น
 
