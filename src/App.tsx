@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { ScannerPage } from "./components/ScannerPage"
+import { HistoryPage } from "./components/HistoryPage"
 import { StatsBar } from "./components/StatsBar"
 import { FilterBar } from "./components/FilterBar"
 import { useScan } from "./hooks/useScan"
@@ -103,7 +104,8 @@ export default function App() {
 
           {/* Page */}
           {active === "terminal" && <ScannerPage results={filtered} error={error} />}
-          {active !== "terminal" && (
+          {active === "history" && <HistoryPage />}
+          {active !== "terminal" && active !== "history" && (
             <div className="flex-1 flex items-center justify-center">
               <span className="font-mono text-text-muted text-sm uppercase">Coming Soon \u2014 {active}</span>
             </div>
