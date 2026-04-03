@@ -14,15 +14,15 @@ export function SignalCard({ result }: Props) {
 
   return (
     <div
-      className="bg-bg-card border border-border-default rounded-sm p-4 cursor-pointer hover:border-border-subtle transition-colors space-y-3"
+      className="bg-bg-card border border-border-default rounded-md p-4 cursor-pointer hover:border-primary transition-colors shadow-elevation-1 space-y-3"
       onClick={() => window.open(`https://polymarket.com/event/${result.slug}`, "_blank")}
     >
       {/* Header: question + direction badge */}
       <div className="flex items-start justify-between gap-2">
-        <p className="text-text-primary text-xs font-body leading-snug line-clamp-2 flex-1">
+        <p className="text-text-primary text-sm font-body leading-snug line-clamp-2 flex-1">
           {result.question}
         </p>
-        <span className={`shrink-0 inline-block px-2 py-0.5 text-[9px] font-mono font-bold uppercase rounded-sm ${
+        <span className={`shrink-0 inline-block px-2.5 py-0.5 text-xs font-mono font-semibold uppercase rounded-full ${
           isUnder
             ? "bg-under-bg text-under-text"
             : result.direction === "OVER"
