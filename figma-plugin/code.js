@@ -31,7 +31,7 @@ const handlers = {
   // สร้าง frame
   async create_frame({ name, x = 0, y = 0, width = 400, height = 300, bg = '#0e0d14', pageId }) {
     const page = pageId
-      ? figma.root.children.find(p => p.id === pageId) ?? figma.currentPage
+      ? figma.root.children.find(function(p){return p.id===pageId})||figma.currentPage
       : figma.currentPage
 
     figma.currentPage = page
@@ -340,7 +340,7 @@ const handlers = {
   // get current file info
   async get_file_info({}) {
     return {
-      fileId: figma.fileKey ?? 'unknown',
+      fileId: figma.fileKey || 'unknown',
       pageName: figma.currentPage.name,
       pageCount: figma.root.children.length,
       pages: figma.root.children.map(p => ({ id: p.id, name: p.name })),
@@ -361,7 +361,7 @@ figma.ui.onmessage = async (msg) => {
     }
 
     try {
-      const result = await handler(command.params ?? {})
+      const result = await handler(command.params || {})
       figma.ui.postMessage({ type: 'result', id: command.id, ok: true, result })
     } catch (e) {
       figma.ui.postMessage({ type: 'result', id: command.id, ok: false, error: e.message })
