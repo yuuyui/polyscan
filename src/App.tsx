@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { ScannerPage } from "./components/ScannerPage"
 import { HistoryPage } from "./components/HistoryPage"
 import { StatsBar } from "./components/StatsBar"
 import { FilterBar } from "./components/FilterBar"
 import { useScan } from "./hooks/useScan"
-import type { FilterDirection } from "./types"
+import { useScanHistory } from "./hooks/useScanHistory"
+import type { FilterDirection, GapResult } from "./types"
 
 type NavItem = "terminal" | "history" | "settings"
 
@@ -18,7 +19,11 @@ export default function App() {
   const [active, setActive] = useState<NavItem>("terminal")
   const [minGap, setMinGap] = useState(0.03)
   const [direction, setDirection] = useState<FilterDirection>("ALL")
-  const { results, isScanning, lastScanAt, totalScanned, error, scan } = useScan(minGap)
+  const { history, addScan, clearAll } = useScanHistory()
+  const onScanComplete = useCallback((results: GapResult[], totalScanned: number) => {
+    addScan(results, totalScanned)
+  }, [addScan])
+  const { results, isScanning, lastScanAt, totalScanned, error, scan } = useScan(minGap, onScanComplete)
   const filtered = results.filter(r => direction === "ALL" ? true : r.direction === direction)
 
   return (
@@ -104,7 +109,7 @@ export default function App() {
 
           {/* Page */}
           {active === "terminal" && <ScannerPage results={filtered} error={error} />}
-          {active === "history" && <HistoryPage />}
+          {active === "history" && <HistoryPage history={history} onClearAll={clearAll} />}
           {active !== "terminal" && active !== "history" && (
             <div className="flex-1 flex items-center justify-center">
               <span className="font-mono text-text-muted text-sm uppercase">Coming Soon \u2014 {active}</span>
@@ -142,7 +147,7 @@ export default function App() {
         {/* Mobile content */}
         <main className="flex-1 pb-16">
           {active === "terminal" && <ScannerPage results={filtered} error={error} />}
-          {active === "history" && <HistoryPage />}
+          {active === "history" && <HistoryPage history={history} onClearAll={clearAll} />}
           {active !== "terminal" && active !== "history" && (
             <div className="flex-1 flex items-center justify-center">
               <span className="font-mono text-text-muted text-sm uppercase">Coming Soon \u2014 {active}</span>

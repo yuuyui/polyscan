@@ -22,6 +22,13 @@ export interface Market {
   active:        boolean
 }
 
+export interface ScanRecord {
+  id: string
+  timestamp: Date
+  totalScanned: number
+  results: GapResult[]
+}
+
 export type FilterDirection = "ALL" | "OVER" | "UNDER"
 
 export type Direction = FilterDirection

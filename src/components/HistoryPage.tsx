@@ -1,44 +1,11 @@
+import { useState } from "react"
 import { ScanHistoryPanel } from "./ScanHistoryPanel"
-import type { GapResult } from "../types"
+import type { GapResult, ScanRecord } from "../types"
 
-const mockSignals: GapResult[] = [
-  {
-    question: "Bitcoin above $100k by March?",
-    slug: "bitcoin-100k-march",
-    yes: 0.542,
-    no: 0.398,
-    sum: 0.940,
-    gap: 0.060,
-    direction: "UNDER",
-  },
-  {
-    question: "ETH flips BTC market cap?",
-    slug: "eth-flips-btc",
-    yes: 0.120,
-    no: 0.845,
-    sum: 0.965,
-    gap: 0.035,
-    direction: "UNDER",
-  },
-  {
-    question: "Fed cuts rates in January?",
-    slug: "fed-cuts-jan",
-    yes: 0.680,
-    no: 0.390,
-    sum: 1.070,
-    gap: 0.070,
-    direction: "OVER",
-  },
-  {
-    question: "Trump wins 2028 election?",
-    slug: "trump-2028",
-    yes: 0.310,
-    no: 0.745,
-    sum: 1.055,
-    gap: 0.055,
-    direction: "OVER",
-  },
-]
+interface Props {
+  history: ScanRecord[]
+  onClearAll: () => void
+}
 
 function SignalHistoryCard({ result }: { result: GapResult }) {
   const isUnder = result.direction === "UNDER"
@@ -56,9 +23,7 @@ function SignalHistoryCard({ result }: { result: GapResult }) {
           {result.question}
         </p>
         <span className={`shrink-0 inline-block px-2 py-0.5 text-[9px] font-mono font-bold uppercase rounded-sm ${
-          isUnder
-            ? "bg-under-bg text-under-text"
-            : "bg-over-bg text-over-text"
+          isUnder ? "bg-under-bg text-under-text" : "bg-over-bg text-over-text"
         }`}>
           {result.direction}
         </span>
@@ -113,32 +78,58 @@ function SignalHistoryCard({ result }: { result: GapResult }) {
   )
 }
 
-export function HistoryPage() {
+export function HistoryPage({ history, onClearAll }: Props) {
+  const [selectedId, setSelectedId] = useState<string | null>(history[0]?.id ?? null)
+
+  const selected = history.find(s => s.id === selectedId) ?? null
+
   return (
     <div className="flex flex-1 min-h-0">
-      {/* History panel — 600px */}
-      <ScanHistoryPanel />
+      <ScanHistoryPanel
+        history={history}
+        selectedId={selectedId}
+        onSelect={setSelectedId}
+        onClearAll={onClearAll}
+      />
 
       {/* Main content — signal cards */}
       <div className="flex-1 overflow-y-auto">
-        {/* Sub-header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border-default">
-          <div>
-            <h3 className="font-mono text-sm text-text-primary uppercase tracking-widest">Scan Details</h3>
-            <p className="text-[9px] font-mono text-text-muted mt-0.5">2025-01-15 14:32:01 UTC &middot; {mockSignals.length} signals</p>
+        {!selected ? (
+          <div className="flex items-center justify-center h-full">
+            <span className="font-mono text-text-muted text-sm uppercase">
+              {history.length === 0 ? "No history yet — run a scan first" : "Select a scan to view signals"}
+            </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[9px] font-mono text-text-muted uppercase">Sort by:</span>
-            <button className="text-[9px] font-mono text-primary uppercase">Gap %</button>
-          </div>
-        </div>
+        ) : (
+          <>
+            {/* Sub-header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border-default">
+              <div>
+                <h3 className="font-mono text-sm text-text-primary uppercase tracking-widest">Scan Details</h3>
+                <p className="text-[9px] font-mono text-text-muted mt-0.5">
+                  {selected.timestamp.toISOString().replace("T", " ").slice(0, 19)} UTC &middot; {selected.results.length} signals
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[9px] font-mono text-text-muted uppercase">Sort by:</span>
+                <button className="text-[9px] font-mono text-primary uppercase">Gap %</button>
+              </div>
+            </div>
 
-        {/* Signal cards grid */}
-        <div className="p-6 grid grid-cols-1 xl:grid-cols-2 gap-4">
-          {mockSignals.map((signal) => (
-            <SignalHistoryCard key={signal.slug} result={signal} />
-          ))}
-        </div>
+            {/* Signal cards grid */}
+            {selected.results.length === 0 ? (
+              <div className="flex items-center justify-center h-40">
+                <span className="font-mono text-text-muted text-sm uppercase">No signals in this scan</span>
+              </div>
+            ) : (
+              <div className="p-6 grid grid-cols-1 xl:grid-cols-2 gap-4">
+                {selected.results.map((signal) => (
+                  <SignalHistoryCard key={signal.slug} result={signal} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   )
