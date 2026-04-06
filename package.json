@@ -1,9 +1,8 @@
 {
-  "name": "vite-project",
+  "name": "polyscan",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "name": "polyscan",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -15,6 +14,7 @@
   "dependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-is": "^19.2.4",
     "recharts": "^3.8.1"
   },
   "devDependencies": {

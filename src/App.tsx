@@ -142,6 +142,12 @@ export default function App() {
         {/* Mobile content */}
         <main className="flex-1 pb-16">
           {active === "terminal" && <ScannerPage results={filtered} error={error} />}
+          {active === "history" && <HistoryPage />}
+          {active !== "terminal" && active !== "history" && (
+            <div className="flex-1 flex items-center justify-center">
+              <span className="font-mono text-text-muted text-sm uppercase">Coming Soon \u2014 {active}</span>
+            </div>
+          )}
         </main>
 
         {/* Mobile bottom nav */}

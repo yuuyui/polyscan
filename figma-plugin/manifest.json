@@ -1,9 +1,9 @@
 {
-  "name": "Polyscan Bridge",
-  "id": "polyscan-bridge",
-  "api": "1.0.0",
-  "main": "code.js",
-  "ui": "ui.html",
-  "editorType": ["figma"],
-  "permissions": ["currentuser"]
+"name": "Polyscan Bridge",
+"id": "polyscan-bridge",
+"api": "1.0.0",
+"main": "code.js",
+"ui": "ui.html",
+"editorType": ["figma", "dev"],
+"permissions": ["currentuser"]
 }
