@@ -8,7 +8,7 @@ export async function fetchAllMarkets(): Promise<Market[]> {
   const all: Market[] = []
 
   do {
-    const url = `${CLOB_HOST}/markets?active=true&next_cursor=${cursor}`
+    const url = `${CLOB_HOST}/sampling-markets?next_cursor=${cursor}`
     const res = await fetch(url)
     if (!res.ok) throw new Error(`fetchAllMarkets failed: ${res.status}`)
     const data = await res.json()
@@ -31,7 +31,7 @@ export async function fetchMidpoints(
     const res = await fetch(`${CLOB_HOST}/midpoints`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ params: batch.map(id => ({ token_id: id })) }),
+      body: JSON.stringify(batch.map(id => ({ token_id: id }))),
     })
     if (!res.ok) throw new Error(`fetchMidpoints failed: ${res.status}`)
     const data = await res.json()

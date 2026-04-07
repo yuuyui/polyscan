@@ -22,7 +22,7 @@ export function useScan(minGap: number, onComplete?: (results: GapResult[], tota
       const filtered = gaps.filter(g => g.gap >= minGap)
       setResults(filtered)
       setLastScanAt(new Date())
-      onComplete?.(gaps, markets.length)
+      onComplete?.(filtered, markets.length)
     } catch (e) {
       setError(e instanceof Error ? e.message : "Scan failed")
     } finally {
@@ -36,7 +36,7 @@ export function useScan(minGap: number, onComplete?: (results: GapResult[], tota
     setTotalScanned(MOCK_RESULTS.length)
     setLastScanAt(new Date())
     setError(null)
-    onComplete?.(MOCK_RESULTS, MOCK_RESULTS.length)
+    onComplete?.(filtered, MOCK_RESULTS.length)
   }, [minGap, onComplete])
 
   return { results, isScanning, lastScanAt, totalScanned, error, scan, loadMock }

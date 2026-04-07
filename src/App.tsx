@@ -20,7 +20,7 @@ export default function App() {
   const [active, setActive] = useState<NavItem>("terminal")
   const [minGap, setMinGap] = useState(0.03)
   const [direction, setDirection] = useState<FilterDirection>("ALL")
-  const { toggleTheme, currentTheme, nextTheme } = useTheme()
+  const { toggleTheme, currentTheme } = useTheme()
   const { history, addScan, clearAll } = useScanHistory()
   const onScanComplete = useCallback((results: GapResult[], totalScanned: number) => {
     addScan(results, totalScanned)

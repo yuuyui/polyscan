@@ -4,10 +4,19 @@ interface Props {
   result: GapResult
 }
 
+function getCssVar(name: string) {
+  return `rgb(${getComputedStyle(document.documentElement).getPropertyValue(name).trim()})`
+}
+
 export function SignalCard({ result }: Props) {
   const isUnder = result.direction === "UNDER"
   const gapPct = (result.gap * 100).toFixed(2)
   const netProfit = (result.gap - 0.04).toFixed(3) // after ~2% fee each side
+
+  const underText  = getCssVar("--color-under-text")
+  const overText   = getCssVar("--color-over-text")
+  const primaryHover = getCssVar("--color-primary-hover")
+  const filterActive = getCssVar("--color-filter-active")
 
   // Sparkline bars — 6 bars with varying heights
   const sparkBars = [0.3, 0.6, 0.45, 0.8, 0.55, 1.0]
@@ -42,8 +51,8 @@ export function SignalCard({ result }: Props) {
             style={{
               height: `${h * 100}%`,
               background: isUnder
-                ? `rgba(0,253,135,${0.3 + h * 0.6})`
-                : `rgba(255,95,82,${0.3 + h * 0.6})`,
+                ? underText.replace("rgb(", "rgba(").replace(")", `,${0.3 + h * 0.6})`)
+                : overText.replace("rgb(", "rgba(").replace(")", `,${0.3 + h * 0.6})`),
             }}
           />
         ))}
@@ -69,7 +78,7 @@ export function SignalCard({ result }: Props) {
           <div className="text-[9px] font-mono text-text-muted uppercase mb-0.5">GAP</div>
           <div
             className="font-mono font-bold leading-none"
-            style={{ fontSize: "44px", color: isUnder ? "#00fd87" : "#ff5f52" }}
+            style={{ fontSize: "44px", color: result.direction === "UNDER" ? "#00fd87" : result.direction === "OVER" ? "#ff5f52" : "rgb(var(--color-text-muted))" }}
           >
             {isUnder ? "-" : "+"}{gapPct}%
           </div>
@@ -89,8 +98,8 @@ export function SignalCard({ result }: Props) {
           style={{
             width: `${Math.min(result.gap * 1000, 100)}%`,
             background: isUnder
-              ? "linear-gradient(90deg, #00fd87, #00ccc9)"
-              : "linear-gradient(90deg, #ff5f52, #e566ff)",
+              ? `linear-gradient(90deg, ${underText}, ${primaryHover})`
+              : `linear-gradient(90deg, ${overText}, ${filterActive})`,
           }}
         />
       </div>
