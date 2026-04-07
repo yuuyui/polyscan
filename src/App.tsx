@@ -1,11 +1,13 @@
 import { useState, useCallback } from "react"
 import { ScannerPage } from "./components/ScannerPage"
 import { HistoryPage } from "./components/HistoryPage"
+import { SettingsPage } from "./components/SettingsPage"
 import { StatsBar } from "./components/StatsBar"
 import { FilterBar } from "./components/FilterBar"
 import { useScan } from "./hooks/useScan"
 import { useScanHistory } from "./hooks/useScanHistory"
 import { useTheme } from "./hooks/useTheme"
+import { useSettings } from "./hooks/useSettings"
 import type { FilterDirection, GapResult } from "./types"
 
 type NavItem = "terminal" | "history" | "settings"
@@ -18,9 +20,10 @@ const navItems = [
 
 export default function App() {
   const [active, setActive] = useState<NavItem>("terminal")
-  const [minGap, setMinGap] = useState(0.03)
-  const [direction, setDirection] = useState<FilterDirection>("ALL")
-  const { toggleTheme, currentTheme } = useTheme()
+  const { settings, update: updateSettings, reset: resetSettings } = useSettings()
+  const [minGap, setMinGap] = useState(settings.minGap)
+  const [direction, setDirection] = useState<FilterDirection>(settings.defaultDirection)
+  const { theme, setTheme, toggleTheme, currentTheme } = useTheme()
   const { history, addScan, clearAll } = useScanHistory()
   const onScanComplete = useCallback((results: GapResult[], totalScanned: number) => {
     addScan(results, totalScanned)
@@ -122,10 +125,12 @@ export default function App() {
           {/* Page */}
           {active === "terminal" && <ScannerPage results={filtered} error={error} />}
           {active === "history" && <HistoryPage history={history} onClearAll={clearAll} />}
-          {active !== "terminal" && active !== "history" && (
-            <div className="flex-1 flex items-center justify-center">
-              <span className="font-mono text-text-muted text-sm uppercase">Coming Soon \u2014 {active}</span>
-            </div>
+          {active === "settings" && (
+            <SettingsPage
+              settings={settings} update={updateSettings} onReset={resetSettings}
+              theme={theme} setTheme={setTheme}
+              history={history} onClearHistory={clearAll}
+            />
           )}
         </main>
       </div>
@@ -179,10 +184,12 @@ export default function App() {
         <main className="flex-1 pb-16">
           {active === "terminal" && <ScannerPage results={filtered} error={error} />}
           {active === "history" && <HistoryPage history={history} onClearAll={clearAll} />}
-          {active !== "terminal" && active !== "history" && (
-            <div className="flex-1 flex items-center justify-center">
-              <span className="font-mono text-text-muted text-sm uppercase">Coming Soon \u2014 {active}</span>
-            </div>
+          {active === "settings" && (
+            <SettingsPage
+              settings={settings} update={updateSettings} onReset={resetSettings}
+              theme={theme} setTheme={setTheme}
+              history={history} onClearHistory={clearAll}
+            />
           )}
         </main>
 
