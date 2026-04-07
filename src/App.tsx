@@ -5,6 +5,7 @@ import { StatsBar } from "./components/StatsBar"
 import { FilterBar } from "./components/FilterBar"
 import { useScan } from "./hooks/useScan"
 import { useScanHistory } from "./hooks/useScanHistory"
+import { useTheme } from "./hooks/useTheme"
 import type { FilterDirection, GapResult } from "./types"
 
 type NavItem = "terminal" | "history" | "settings"
@@ -19,11 +20,12 @@ export default function App() {
   const [active, setActive] = useState<NavItem>("terminal")
   const [minGap, setMinGap] = useState(0.03)
   const [direction, setDirection] = useState<FilterDirection>("ALL")
+  const { toggleTheme, currentTheme, nextTheme } = useTheme()
   const { history, addScan, clearAll } = useScanHistory()
   const onScanComplete = useCallback((results: GapResult[], totalScanned: number) => {
     addScan(results, totalScanned)
   }, [addScan])
-  const { results, isScanning, lastScanAt, totalScanned, error, scan } = useScan(minGap, onScanComplete)
+  const { results, isScanning, lastScanAt, totalScanned, error, scan, loadMock } = useScan(minGap, onScanComplete)
   const filtered = results.filter(r => direction === "ALL" ? true : r.direction === direction)
 
   return (
@@ -62,6 +64,15 @@ export default function App() {
 
           {/* Stats + Filter in sidebar */}
           <div className="px-4 pb-4 space-y-5 border-t border-border-default pt-4">
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-sm border border-border-default hover:border-primary transition-colors group"
+            >
+              <span className="w-2 h-2 rounded-full flex-shrink-0 transition-colors" style={{ background: currentTheme.accent }} />
+              <span className="text-[9px] font-mono uppercase text-text-primary flex-1 text-left">{currentTheme.label}</span>
+              <span className="material-symbols-outlined text-[13px] text-text-muted group-hover:text-primary transition-colors">sync</span>
+            </button>
             <StatsBar
               totalScanned={totalScanned}
               found={filtered.length}
@@ -92,15 +103,16 @@ export default function App() {
                 </span>
               )}
               <button
+                onClick={loadMock}
+                disabled={isScanning}
+                className="px-3 py-1.5 text-xs font-mono font-bold uppercase rounded-sm transition-colors border border-border-default text-text-muted hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                MOCK
+              </button>
+              <button
                 onClick={scan}
                 disabled={isScanning}
-                className="px-4 py-1.5 text-xs font-mono font-bold uppercase rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  background: "#33ff99",
-                  color: "#000",
-                }}
-                onMouseEnter={e => { if (!isScanning) (e.target as HTMLElement).style.background = "#00ccc9" }}
-                onMouseLeave={e => { (e.target as HTMLElement).style.background = "#33ff99" }}
+                className="px-4 py-1.5 text-xs font-mono font-bold uppercase rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-primary text-on-primary hover:bg-primary-hover"
               >
                 {isScanning ? "SCANNING\u2026" : "SCAN NOW"}
               </button>
@@ -126,22 +138,41 @@ export default function App() {
             <span className="material-symbols-outlined text-primary">terminal</span>
             <span className="font-mono font-bold text-primary tracking-widest text-sm uppercase">POLYSCAN</span>
           </div>
-          <button
-            onClick={scan}
-            disabled={isScanning}
-            className="px-3 py-1.5 text-xs font-mono font-bold uppercase rounded-sm disabled:opacity-50"
-            style={{ background: "#33ff99", color: "#000" }}
-          >
-            {isScanning ? "\u2026" : "SCAN"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={loadMock}
+              disabled={isScanning}
+              className="px-2 py-1.5 text-xs font-mono font-bold uppercase rounded-sm border border-border-default text-text-muted disabled:opacity-50"
+            >
+              MOCK
+            </button>
+            <button
+              onClick={scan}
+              disabled={isScanning}
+              className="px-3 py-1.5 text-xs font-mono font-bold uppercase rounded-sm disabled:opacity-50 bg-primary text-on-primary hover:bg-primary-hover"
+            >
+              {isScanning ? "\u2026" : "SCAN"}
+            </button>
+          </div>
         </header>
 
         {/* Mobile stats */}
         <div className="px-4 pt-4 pb-2">
           <StatsBar totalScanned={totalScanned} found={filtered.length} lastScanAt={lastScanAt} isScanning={isScanning} />
         </div>
-        <div className="px-4 pb-4">
+        <div className="px-4 pb-2">
           <FilterBar minGap={minGap} direction={direction} onMinGapChange={setMinGap} onDirectionChange={setDirection} />
+        </div>
+        {/* Mobile theme toggle */}
+        <div className="px-4 pb-4">
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-sm border border-border-default hover:border-primary transition-colors group w-full"
+          >
+            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: currentTheme.accent }} />
+            <span className="text-[9px] font-mono uppercase text-text-primary flex-1 text-left">{currentTheme.label}</span>
+            <span className="material-symbols-outlined text-[13px] text-text-muted group-hover:text-primary transition-colors">sync</span>
+          </button>
         </div>
 
         {/* Mobile content */}
