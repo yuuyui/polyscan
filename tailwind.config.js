@@ -4,50 +4,50 @@ export default {
     extend: {
       colors: {
         /* Backgrounds */
-        "bg-base":        "#0e0d14",
-        "bg-card":        "#22202e",
-        "bg-card-inner":  "#1a1826",
-        "bg-sidebar":     "#13121e",
+        "bg-base":        "rgb(var(--color-bg-base) / <alpha-value>)",
+        "bg-card":        "rgb(var(--color-bg-card) / <alpha-value>)",
+        "bg-card-inner":  "rgb(var(--color-bg-card-inner) / <alpha-value>)",
+        "bg-sidebar":     "rgb(var(--color-bg-sidebar) / <alpha-value>)",
 
         /* Primary */
-        "primary":        "#33ff99",
-        "primary-hover":  "#00ccc9",
-        "on-primary":     "#000000",
+        "primary":        "rgb(var(--color-primary) / <alpha-value>)",
+        "primary-hover":  "rgb(var(--color-primary-hover) / <alpha-value>)",
+        "on-primary":     "rgb(var(--color-on-primary) / <alpha-value>)",
 
         /* Filter active */
-        "filter-active":  "#e566ff",
-        "on-filter":      "#000000",
+        "filter-active":  "rgb(var(--color-filter-active) / <alpha-value>)",
+        "on-filter":      "rgb(var(--color-on-filter) / <alpha-value>)",
 
         /* Text */
-        "text-primary":   "#ffffff",
-        "text-secondary": "#c0c0c0",
-        "text-muted":     "#9999cc", /* Updated: better contrast (4.8:1) */
+        "text-primary":   "rgb(var(--color-text-primary) / <alpha-value>)",
+        "text-secondary": "rgb(var(--color-text-secondary) / <alpha-value>)",
+        "text-muted":     "rgb(var(--color-text-muted) / <alpha-value>)",
 
         /* Badges */
-        "under-bg":       "#0d2218",
-        "under-text":     "#00fd87",
-        "over-bg":        "#2a1212",
-        "over-text":      "#ff5f52",
+        "under-bg":       "rgb(var(--color-under-bg) / <alpha-value>)",
+        "under-text":     "rgb(var(--color-under-text) / <alpha-value>)",
+        "over-bg":        "rgb(var(--color-over-bg) / <alpha-value>)",
+        "over-text":      "rgb(var(--color-over-text) / <alpha-value>)",
 
         /* Borders */
-        "border-default": "#2e2c3e",
-        "border-subtle":  "#3d3b50", /* Updated: darker for hierarchy */
+        "border-default": "rgb(var(--color-border-default) / <alpha-value>)",
+        "border-subtle":  "rgb(var(--color-border-subtle) / <alpha-value>)",
 
         /* Legacy compat */
-        "surface":           "#0e0d14",
-        "surface-dim":       "#13121e",
-        "surface-low":       "#22202e",
-        "surface-container": "#1a1826",
-        "surface-high":      "#2e2c3e",
-        "surface-highest":   "#3a3850",
-        "on-surface":        "#ffffff",
-        "on-surface-variant":"#c0c0c0",
-        "outline":           "#6b6882",
-        "outline-variant":   "#2e2c3e",
-        "primary-fixed":     "#33ff99",
-        "primary-dim":       "#00ccc9",
-        "secondary":         "#ff5f52",
-        "secondary-container":"#2a1212",
+        "surface":           "rgb(var(--color-bg-base) / <alpha-value>)",
+        "surface-dim":       "rgb(var(--color-bg-sidebar) / <alpha-value>)",
+        "surface-low":       "rgb(var(--color-bg-card) / <alpha-value>)",
+        "surface-container": "rgb(var(--color-bg-card-inner) / <alpha-value>)",
+        "surface-high":      "rgb(var(--color-border-default) / <alpha-value>)",
+        "surface-highest":   "rgb(var(--color-border-subtle) / <alpha-value>)",
+        "on-surface":        "rgb(var(--color-text-primary) / <alpha-value>)",
+        "on-surface-variant":"rgb(var(--color-text-secondary) / <alpha-value>)",
+        "outline":           "rgb(var(--color-text-muted) / <alpha-value>)",
+        "outline-variant":   "rgb(var(--color-border-default) / <alpha-value>)",
+        "primary-fixed":     "rgb(var(--color-primary) / <alpha-value>)",
+        "primary-dim":       "rgb(var(--color-primary-hover) / <alpha-value>)",
+        "secondary":         "rgb(var(--color-over-text) / <alpha-value>)",
+        "secondary-container":"rgb(var(--color-over-bg) / <alpha-value>)",
       },
       fontFamily: {
         mono: ['"JetBrains Mono"', 'monospace'],

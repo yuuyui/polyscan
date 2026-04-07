@@ -1,0 +1,34 @@
+import { useState, useEffect } from "react"
+
+export type ThemeId = "default" | "binance"
+
+export const THEMES: { id: ThemeId; label: string; className: string; accent: string }[] = [
+  { id: "default", label: "Default", className: "",             accent: "#33ff99" },
+  { id: "binance", label: "Binance", className: "theme-binance", accent: "#f0b90b" },
+]
+
+const STORAGE_KEY = "polyscan-theme"
+
+export function useTheme() {
+  const [theme, setTheme] = useState<ThemeId>(() => {
+    return (localStorage.getItem(STORAGE_KEY) as ThemeId) ?? "default"
+  })
+
+  useEffect(() => {
+    const root = document.documentElement
+    THEMES.forEach(t => { if (t.className) root.classList.remove(t.className) })
+    const current = THEMES.find(t => t.id === theme)
+    if (current?.className) root.classList.add(current.className)
+    localStorage.setItem(STORAGE_KEY, theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    const idx = THEMES.findIndex(t => t.id === theme)
+    setTheme(THEMES[(idx + 1) % THEMES.length].id)
+  }
+
+  const currentTheme = THEMES.find(t => t.id === theme)!
+  const nextTheme = THEMES[(THEMES.findIndex(t => t.id === theme) + 1) % THEMES.length]
+
+  return { theme, setTheme, toggleTheme, currentTheme, nextTheme, themes: THEMES }
+}

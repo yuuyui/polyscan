@@ -2,10 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Default Theme (RGB channels) ─────────────────────── */
+:root {
+  --color-bg-base:        14 13 20;
+  --color-bg-card:        34 32 46;
+  --color-bg-card-inner:  26 24 38;
+  --color-bg-sidebar:     19 18 30;
+
+  --color-primary:        51 255 153;
+  --color-primary-hover:  0 204 201;
+  --color-on-primary:     0 0 0;
+
+  --color-filter-active:  229 102 255;
+  --color-on-filter:      0 0 0;
+
+  --color-text-primary:   255 255 255;
+  --color-text-secondary: 192 192 192;
+  --color-text-muted:     153 153 204;
+
+  --color-under-bg:       13 34 24;
+  --color-under-text:     0 253 135;
+  --color-over-bg:        42 18 18;
+  --color-over-text:      255 95 82;
+
+  --color-border-default: 46 44 62;
+  --color-border-subtle:  61 59 80;
+}
+
+/* ── Binance Theme (RGB channels) ─────────────────────── */
+.theme-binance {
+  --color-bg-base:        11 14 17;
+  --color-bg-card:        30 32 38;
+  --color-bg-card-inner:  22 26 30;
+  --color-bg-sidebar:     18 21 26;
+
+  --color-primary:        240 185 11;
+  --color-primary-hover:  212 162 0;
+  --color-on-primary:     0 0 0;
+
+  --color-filter-active:  240 185 11;
+  --color-on-filter:      0 0 0;
+
+  --color-text-primary:   234 236 239;
+  --color-text-secondary: 183 189 198;
+  --color-text-muted:     132 142 156;
+
+  --color-under-bg:       10 32 16;
+  --color-under-text:     14 203 129;
+  --color-over-bg:        37 13 13;
+  --color-over-text:      246 70 93;
+
+  --color-border-default: 43 47 54;
+  --color-border-subtle:  54 60 69;
+}
+
 * { box-sizing: border-box; }
 body {
-  background-color: #0e0d14;
-  color: #ffffff;
+  background-color: rgb(var(--color-bg-base));
+  color: rgb(var(--color-text-primary));
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   margin: 0;
@@ -16,5 +70,5 @@ body {
   line-height: 1;
 }
 ::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: #0e0d14; }
-::-webkit-scrollbar-thumb { background: #2e2c3e; }
+::-webkit-scrollbar-track { background: rgb(var(--color-bg-base)); }
+::-webkit-scrollbar-thumb { background: rgb(var(--color-border-default)); }

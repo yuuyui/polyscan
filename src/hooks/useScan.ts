@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react"
 import { fetchAllMarkets, fetchMidpoints } from "../api/polymarket"
 import { calcGaps } from "../utils/calculator"
+import { MOCK_RESULTS } from "../mockData"
 import type { GapResult } from "../types"
 
 export function useScan(minGap: number, onComplete?: (results: GapResult[], totalScanned: number) => void) {
@@ -29,5 +30,14 @@ export function useScan(minGap: number, onComplete?: (results: GapResult[], tota
     }
   }, [minGap, onComplete])
 
-  return { results, isScanning, lastScanAt, totalScanned, error, scan }
+  const loadMock = useCallback(() => {
+    const filtered = MOCK_RESULTS.filter(g => g.gap >= minGap)
+    setResults(filtered)
+    setTotalScanned(MOCK_RESULTS.length)
+    setLastScanAt(new Date())
+    setError(null)
+    onComplete?.(MOCK_RESULTS, MOCK_RESULTS.length)
+  }, [minGap, onComplete])
+
+  return { results, isScanning, lastScanAt, totalScanned, error, scan, loadMock }
 }
