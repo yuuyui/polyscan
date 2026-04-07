@@ -31,9 +31,3 @@ export interface ScanRecord {
 
 export type FilterDirection = "ALL" | "OVER" | "UNDER"
 
-export type Direction = FilterDirection
-
-export interface ScanFilters {
-  minGap:    number
-  direction: Direction
-}

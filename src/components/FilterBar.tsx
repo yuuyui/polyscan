@@ -21,7 +21,7 @@ export function FilterBar({ minGap, direction, onMinGapChange, onDirectionChange
         <input
           type="range" min="1" max="20" value={Math.round(minGap * 100)}
           onChange={e => onMinGapChange(Number(e.target.value) / 100)}
-          className="w-full h-0.5 bg-border-default appearance-none cursor-pointer accent-[#33ff99]"
+          className="w-full h-0.5 bg-border-default appearance-none cursor-pointer accent-primary"
         />
       </div>
 

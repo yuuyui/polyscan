@@ -31,7 +31,7 @@ export function ResultTable({ results }: { results: GapResult[] }) {
               <tr><td colSpan={6} className="px-5 py-8 text-center text-text-muted text-xs">No gaps found \u2014 try lowering the threshold or run a scan</td></tr>
             ) : sorted.map((r, i) => (
               <tr key={i}
-                className={`border-b border-border-subtle hover:bg-surface-high transition-colors cursor-pointer ${i%2===0?"bg-bg-card":"bg-bg-card-inner"}`}
+                className={`border-b border-border-subtle hover:bg-bg-card transition-colors cursor-pointer ${i%2===0?"bg-bg-card":"bg-bg-card-inner"}`}
                 onClick={() => window.open(`https://polymarket.com/event/${r.slug}`,"_blank")}
               >
                 <td className="px-4 py-3 text-text-primary max-w-[200px] lg:max-w-xs truncate">{r.question}</td>

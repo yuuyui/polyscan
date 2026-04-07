@@ -5,9 +5,10 @@ interface Props {
   selectedId: string | null
   onSelect: (id: string) => void
   onClearAll: () => void
+  onExport?: () => void
 }
 
-export function ScanHistoryPanel({ history, selectedId, onSelect, onClearAll }: Props) {
+export function ScanHistoryPanel({ history, selectedId, onSelect, onClearAll, onExport }: Props) {
   return (
     <div className="w-[600px] flex-shrink-0 bg-bg-sidebar border-r border-border-default flex flex-col h-full">
       {/* Header */}
@@ -17,6 +18,14 @@ export function ScanHistoryPanel({ history, selectedId, onSelect, onClearAll }: 
           <p className="text-[9px] font-mono text-text-muted mt-0.5">{history.length} recent scans</p>
         </div>
         <div className="flex items-center gap-2">
+          {onExport && (
+            <button
+              onClick={onExport}
+              className="px-3 py-1.5 text-[9px] font-mono font-bold uppercase rounded-sm border border-primary text-primary transition-colors"
+            >
+              Export
+            </button>
+          )}
           <button
             onClick={onClearAll}
             className="px-3 py-1.5 text-[9px] font-mono font-bold uppercase rounded-sm border border-border-default text-text-muted hover:text-over-text hover:border-over-text transition-colors"
