@@ -12,6 +12,11 @@ export default defineConfig({
         target: 'https://clob.polymarket.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/gamma': {
+        target: 'https://gamma-api.polymarket.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/gamma/, '')
       }
     }
   },
