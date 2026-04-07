@@ -7,19 +7,10 @@ interface Props {
   onClearAll: () => void
 }
 
-function getCssVar(name: string) {
-  return `rgb(${getComputedStyle(document.documentElement).getPropertyValue(name).trim()})`
-}
-
 function SignalHistoryCard({ result }: { result: GapResult }) {
   const isUnder = result.direction === "UNDER"
   const gapPct = (result.gap * 100).toFixed(2)
   const netProfit = (result.gap - 0.04).toFixed(3)
-
-  const underText    = getCssVar("--color-under-text")
-  const overText     = getCssVar("--color-over-text")
-  const primaryHover = getCssVar("--color-primary-hover")
-  const filterActive = getCssVar("--color-filter-active")
 
   return (
     <div
@@ -56,10 +47,7 @@ function SignalHistoryCard({ result }: { result: GapResult }) {
       <div className="flex items-end justify-between">
         <div>
           <div className="text-[9px] font-mono text-text-muted uppercase mb-0.5">GAP</div>
-          <div
-            className="font-mono font-bold text-2xl leading-none"
-            style={{ color: isUnder ? underText : overText }}
-          >
+          <div className={`font-mono font-bold text-2xl leading-none ${isUnder ? "text-under-text" : "text-over-text"}`}>
             {isUnder ? "-" : "+"}{gapPct}%
           </div>
         </div>
@@ -74,13 +62,8 @@ function SignalHistoryCard({ result }: { result: GapResult }) {
       {/* Gap bar */}
       <div className="h-1 w-full bg-border-default rounded-full overflow-hidden">
         <div
-          className="h-full rounded-full"
-          style={{
-            width: `${Math.min(result.gap * 1000, 100)}%`,
-            background: isUnder
-              ? `linear-gradient(90deg, ${underText}, ${primaryHover})`
-              : `linear-gradient(90deg, ${overText}, ${filterActive})`,
-          }}
+          className={`h-full rounded-full ${isUnder ? "bg-under-text" : "bg-over-text"}`}
+          style={{ width: `${Math.min(result.gap * 1000, 100)}%` }}
         />
       </div>
     </div>

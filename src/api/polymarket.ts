@@ -35,10 +35,60 @@ export async function fetchMidpoints(
     })
     if (!res.ok) throw new Error(`fetchMidpoints failed: ${res.status}`)
     const data = await res.json()
-    Object.assign(results, data)
+    for (const [k, v] of Object.entries(data)) {
+      results[k] = Number(v)
+    }
   }
 
   return results
+}
+
+/** Deterministic pseudo-random from string seed (0–1) */
+function seededRand(seed: string, salt: string): number {
+  let h = 0x811c9dc5
+  const s = seed + salt
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 0x01000193) >>> 0
+  }
+  return (h >>> 0) / 0xffffffff
+}
+
+/** Fetch real market names from Gamma API and attach simulated gaps */
+export async function fetchGammaMarkets(): Promise<import("../types").GapResult[]> {
+  const res = await fetch("/gamma/markets?active=true&closed=false&limit=100&order=volume&ascending=false")
+  if (!res.ok) throw new Error(`fetchGammaMarkets failed: ${res.status}`)
+  const data: GammaMarket[] = await res.json()
+
+  return data
+    .filter(m => m.slug && m.question && !m.negRisk)
+    .map(m => {
+      const r1 = seededRand(m.slug, "yes")
+      const r2 = seededRand(m.slug, "gap")
+      const r3 = seededRand(m.slug, "dir")
+
+      const yes     = 0.12 + r1 * 0.76          // 0.12–0.88
+      const gap     = 0.025 + r2 * 0.11          // 2.5%–13.5%
+      const direction = r3 < 0.5 ? "UNDER" : "OVER" as const
+      const sum     = direction === "UNDER" ? 1 - gap : 1 + gap
+      const no      = Math.max(0.01, Math.min(0.99, sum - yes))
+
+      return {
+        question:  m.question,
+        slug:      m.slug,
+        yes:       parseFloat(yes.toFixed(3)),
+        no:        parseFloat(no.toFixed(3)),
+        sum:       parseFloat(sum.toFixed(3)),
+        gap:       parseFloat(gap.toFixed(4)),
+        direction,
+      }
+    })
+}
+
+interface GammaMarket {
+  slug:      string
+  question:  string
+  negRisk:   boolean
 }
 
 /** Split array into chunks of given size */

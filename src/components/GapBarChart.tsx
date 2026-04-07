@@ -32,8 +32,8 @@ export function GapBarChart({ results }: Props) {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-[9px] font-mono text-text-muted uppercase tracking-widest">Gap Distribution</h3>
         <div className="flex gap-3 text-[8px] font-mono">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 inline-block rounded-none" style={{background:underColor}}></span>UNDER</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 inline-block rounded-none" style={{background:overColor}}></span>OVER</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 inline-block rounded-none bg-under-text"></span>UNDER</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 inline-block rounded-none bg-over-text"></span>OVER</span>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={140}>
@@ -50,7 +50,7 @@ export function GapBarChart({ results }: Props) {
           />
           <Bar dataKey="gap" radius={[2,2,0,0]}>
             {data.map((entry, i) => (
-              <Cell key={i} fill={entry.direction === "UNDER" ? underColor : overColor} opacity={0.85} />
+              <Cell key={i} fill={entry.direction === "UNDER" ? underColor : overColor} />
             ))}
           </Bar>
         </BarChart>
