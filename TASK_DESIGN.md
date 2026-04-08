@@ -28,7 +28,7 @@
 - [ ] **รายงานสถานะปัจจุบัน** ก่อนเสนอแผน
 - [ ] **เสนอแผน + รอ approve**
 
----
+--
 
 ## During Design
 
@@ -51,6 +51,22 @@
 - Frame: `Row: <name>`, `Card: <name>`, `Section: <name>`
 - ห้ามทิ้ง name เป็น `Frame` (default)
 - Component variant: `State=active/inactive`, `Type=toggle/text/segment`, `Variant=default/danger`
+
+### Layer Naming Audit (บังคับ)
+- ห้ามทิ้ง generic names: `Frame`, `Rectangle`, `Ellipse`, `Group`
+- ต้อง rename ทุก node ให้สื่อ semantic role (e.g. `Status Dot`, `Slider Track`, `Color Block`)
+- `Vector` ใน icon components ยกเว้นได้ (SVG paths)
+- ต้อง scan ทุก page ก่อนรายงาน "เสร็จ"
+
+### Component Property Parity (Desktop ↔ Mobile)
+- Desktop ↔ Mobile component ที่ทำหน้าที่เดียวกันต้องมี property เหมือนกัน
+- เช่น NavItem ต้องมี `Tab` property เหมือน MobileNavItem
+- ถ้าเพิ่ม variant ฝั่งหนึ่ง ต้องเพิ่มอีกฝั่งด้วย
+- Screen naming ต้อง match: `Desktop — X` ↔ `Mobile — X`
+
+### Data Consistency Check (Desktop ↔ Mobile)
+- ข้อมูลใน Desktop ต้องตรงกับ Mobile (ชื่อ, ตัวเลข, badge, variant type)
+- ถ้า swap variant ต้องเช็คว่า data ข้างในตรงกับ variant ที่เลือก
 
 ---
 
@@ -154,6 +170,9 @@
 - ❌ ใช้ `setProperties` กับ text property แล้วไม่ verify ว่าเปลี่ยนจริง (ใช้ direct text node update แทน)
 - ❌ Resize ก่อน set sizing modes (resize reset เป็น FIXED)
 - ❌ Set `layoutSizingHorizontal/Vertical = 'FILL'` ก่อน append child
+- ❌ ทิ้ง leftover instance (e.g. MockButton) ไว้ในไฟล์ — ต้อง cleanup ทุกครั้งที่เจอ
+- ❌ สร้าง component variant โดยไม่มี property ที่จำเป็น (e.g. hardcode icon ใน state variant แทนที่จะมี Tab property)
+- ❌ แก้ overlap / resize section แล้วไม่เช็ค section-to-section overlap ที่อาจเกิดจาก bounds เปลี่ยน
 
 ---
 
