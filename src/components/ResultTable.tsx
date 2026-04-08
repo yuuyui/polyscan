@@ -20,7 +20,10 @@ export function ResultTable({ results }: { results: GapResult[] }) {
             <tr className="bg-bg-card-inner border-b border-border-default">
               <th className={th + " text-left"}>Market / Question</th>
               {(["yes","no","sum","gap"] as SortKey[]).map(k => (
-                <th key={k} className={th + " text-right"} onClick={() => toggle(k)}>
+                <th key={k} className={th + " text-right"} onClick={() => toggle(k)}
+                  role="button" tabIndex={0} aria-label={`Sort by ${k.toUpperCase()}`}
+                  onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(k) } }}
+                >
                   {k.toUpperCase()} {sortKey===k ? (sortAsc?"\u2191":"\u2193") : ""}
                 </th>
               ))}
@@ -29,7 +32,10 @@ export function ResultTable({ results }: { results: GapResult[] }) {
           </thead>
           <tbody>
             {sorted.length === 0 ? (
-              <tr><td colSpan={6} className="px-5 py-8 text-center text-text-muted text-xs">No gaps found \u2014 try lowering the threshold or run a scan</td></tr>
+              <tr><td colSpan={6} className="px-5 py-8 text-center">
+                <span className="material-symbols-outlined text-2xl text-text-muted block mb-1">search_off</span>
+                <span className="text-text-muted text-xs font-mono">No gaps found — try lowering the threshold or run a scan</span>
+              </td></tr>
             ) : sorted.map((r, i) => (
               <tr key={i}
                 className={`border-b border-border-subtle hover:bg-bg-card transition-colors cursor-pointer ${i%2===0?"bg-bg-card":"bg-bg-card-inner"}`}

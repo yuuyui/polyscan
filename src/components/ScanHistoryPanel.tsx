@@ -38,8 +38,10 @@ export function ScanHistoryPanel({ history, selectedId, onSelect, onClearAll, on
       {/* Scan list */}
       <div className="flex-1 overflow-y-auto">
         {history.length === 0 ? (
-          <div className="flex items-center justify-center h-32">
-            <span className="text-[11px] font-mono text-text-muted uppercase">No scans yet — run a scan first</span>
+          <div className="flex flex-col items-center justify-center h-32 space-y-2">
+            <span className="material-symbols-outlined text-2xl text-text-muted">history_toggle_off</span>
+            <span className="text-[11px] font-mono text-text-muted uppercase">No scans yet</span>
+            <span className="text-[9px] font-mono text-text-muted">Run a scan to start tracking history</span>
           </div>
         ) : (
           history.map((scan) => {
@@ -48,13 +50,15 @@ export function ScanHistoryPanel({ history, selectedId, onSelect, onClearAll, on
             return (
               <div
                 key={scan.id}
+                role="button" tabIndex={0} aria-selected={scan.id === selectedId}
                 onClick={() => onSelect(scan.id)}
-                className={`flex items-center justify-between px-5 py-3 border-b border-border-default cursor-pointer transition-colors hover:bg-bg-card ${
+                onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(scan.id) } }}
+                className={`flex items-center justify-between px-5 py-3 border-b border-border-default cursor-pointer transition-colors hover:bg-bg-card focus:outline-none focus:ring-2 focus:ring-primary ${
                   scan.id === selectedId ? "bg-bg-card" : ""
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-base text-text-muted">schedule</span>
+                  <span className="material-symbols-outlined text-base text-text-muted" aria-hidden="true">schedule</span>
                   <div>
                     <div className="text-[11px] font-mono text-text-primary">{dateStr} {timeStr} UTC</div>
                     <div className="text-[9px] font-mono text-text-muted mt-0.5">ID: {scan.id}</div>

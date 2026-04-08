@@ -1,13 +1,13 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts"
 import type { GapResult } from "../types"
 
-interface Props { results: GapResult[] }
+interface Props { results: GapResult[]; isScanning?: boolean }
 
 function getCssVar(name: string) {
   return `rgb(${getComputedStyle(document.documentElement).getPropertyValue(name).trim()})`
 }
 
-export function GapBarChart({ results }: Props) {
+export function GapBarChart({ results, isScanning = false }: Props) {
   const underColor = getCssVar("--color-under-text")
   const overColor  = getCssVar("--color-over-text")
   const mutedColor = getCssVar("--color-text-muted")
@@ -20,6 +20,17 @@ export function GapBarChart({ results }: Props) {
     gap: parseFloat((r.gap * 100).toFixed(2)),
     direction: r.direction,
   }))
+
+  if (isScanning) return (
+    <div className="bg-bg-card border border-border-default rounded-sm p-4 animate-pulse">
+      <div className="h-3 bg-border-default rounded w-24 mb-4" />
+      <div className="flex items-end gap-2 h-[140px]">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div key={i} className="flex-1 bg-border-default rounded-t-sm" style={{ height: `${20 + Math.random() * 60}%` }} />
+        ))}
+      </div>
+    </div>
+  )
 
   if (data.length === 0) return (
     <div className="bg-bg-card border border-border-default rounded-sm p-6 flex items-center justify-center h-40">

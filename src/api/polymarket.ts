@@ -34,9 +34,12 @@ export async function fetchMidpoints(
       body: JSON.stringify(batch.map(id => ({ token_id: id }))),
     })
     if (!res.ok) throw new Error(`fetchMidpoints failed: ${res.status}`)
-    const data = await res.json()
+    const data: Record<string, string | number> = await res.json()
     for (const [k, v] of Object.entries(data)) {
-      results[k] = Number(v)
+      const num = Number(v)
+      if (!Number.isNaN(num)) {
+        results[k] = num
+      }
     }
   }
 

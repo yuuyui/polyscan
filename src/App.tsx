@@ -50,15 +50,16 @@ export default function App() {
           </div>
 
           {/* Nav */}
-          <nav className="py-2">
+          <nav className="py-2" aria-label="Main navigation">
             {navItems.map(item => (
               <button key={item.id} onClick={() => setActive(item.id)}
+                aria-current={active === item.id ? "page" : undefined}
                 className={`w-full flex items-center gap-3 px-5 py-2.5 text-xs font-mono uppercase transition-colors ${
                   active === item.id
                     ? "text-primary border-r-2 border-primary bg-bg-card"
                     : "text-text-muted hover:text-text-primary"
                 }`}>
-                <span className="material-symbols-outlined text-base">{item.icon}</span>
+                <span className="material-symbols-outlined text-base" aria-hidden="true">{item.icon}</span>
                 {item.label}
               </button>
             ))}
@@ -124,7 +125,7 @@ export default function App() {
           </header>
 
           {/* Page */}
-          {active === "terminal" && <ErrorBoundary><ScannerPage results={filtered} error={error} /></ErrorBoundary>}
+          {active === "terminal" && <ErrorBoundary><ScannerPage results={filtered} error={error} isScanning={isScanning} /></ErrorBoundary>}
           {active === "history" && <ErrorBoundary><HistoryPage history={history} onClearAll={clearAll} /></ErrorBoundary>}
           {active === "settings" && (
             <ErrorBoundary><SettingsPage
@@ -183,7 +184,7 @@ export default function App() {
 
         {/* Mobile content */}
         <main className="flex-1 pb-16">
-          {active === "terminal" && <ErrorBoundary><ScannerPage results={filtered} error={error} /></ErrorBoundary>}
+          {active === "terminal" && <ErrorBoundary><ScannerPage results={filtered} error={error} isScanning={isScanning} /></ErrorBoundary>}
           {active === "history" && <ErrorBoundary><HistoryPage history={history} onClearAll={clearAll} /></ErrorBoundary>}
           {active === "settings" && (
             <ErrorBoundary><SettingsPage
@@ -195,13 +196,14 @@ export default function App() {
         </main>
 
         {/* Mobile bottom nav */}
-        <nav className="fixed bottom-0 left-0 right-0 flex bg-bg-sidebar border-t border-border-default z-40">
+        <nav className="fixed bottom-0 left-0 right-0 flex bg-bg-sidebar border-t border-border-default z-40" aria-label="Mobile navigation">
           {navItems.map(item => (
             <button key={item.id} onClick={() => setActive(item.id)}
+              aria-current={active === item.id ? "page" : undefined}
               className={`flex-1 flex flex-col items-center justify-center py-3 transition-colors ${
                 active === item.id ? "text-primary" : "text-text-muted hover:text-text-primary"
               }`}>
-              <span className="material-symbols-outlined text-xl">{item.icon}</span>
+              <span className="material-symbols-outlined text-xl" aria-hidden="true">{item.icon}</span>
               <span className="font-mono text-[8px] uppercase mt-0.5">{item.label}</span>
             </button>
           ))}
