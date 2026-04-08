@@ -1,4 +1,4 @@
-import { CLOB_HOST, BATCH_SIZE } from '../config'
+import { CLOB_HOST, GAMMA_HOST, BATCH_SIZE } from '../config'
 import type { Market } from '../types'
 export type { Market } from '../types'
 
@@ -56,7 +56,7 @@ function seededRand(seed: string, salt: string): number {
 
 /** Fetch real market names from Gamma API and attach simulated gaps */
 export async function fetchGammaMarkets(): Promise<import("../types").GapResult[]> {
-  const res = await fetch("/gamma/markets?active=true&closed=false&limit=100&order=volume&ascending=false")
+  const res = await fetch(`${GAMMA_HOST}/markets?active=true&closed=false&limit=100&order=volume&ascending=false`)
   if (!res.ok) throw new Error(`fetchGammaMarkets failed: ${res.status}`)
   const data: GammaMarket[] = await res.json()
 
