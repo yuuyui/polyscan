@@ -15,8 +15,10 @@ export function SignalCard({ result }: Props) {
 
   return (
     <div
-      className="bg-bg-card border border-border-default rounded-md p-4 cursor-pointer hover:border-primary transition-colors shadow-elevation-1 space-y-3"
+      className="bg-bg-card border border-border-default rounded-md p-4 cursor-pointer hover:border-primary transition-colors shadow-elevation-1 space-y-3 focus:outline-none focus:ring-2 focus:ring-primary"
+      role="button" tabIndex={0} aria-label={`View ${result.question}`}
       onClick={() => openPolymarketEvent(result.slug)}
+      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPolymarketEvent(result.slug) } }}
     >
       {/* Header: question + direction badge */}
       <div className="flex items-start justify-between gap-2">

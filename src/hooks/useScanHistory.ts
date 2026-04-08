@@ -8,8 +8,21 @@ function loadFromStorage(): ScanRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
-    const parsed = JSON.parse(raw) as Array<Omit<ScanRecord, "timestamp"> & { timestamp: string }>
-    return parsed.map(r => ({ ...r, timestamp: new Date(r.timestamp) }))
+    const parsed: unknown = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return parsed
+      .filter((r): r is Record<string, unknown> =>
+        r != null && typeof r === "object" &&
+        typeof (r as Record<string, unknown>).id === "string" &&
+        typeof (r as Record<string, unknown>).timestamp === "string" &&
+        Array.isArray((r as Record<string, unknown>).results)
+      )
+      .map(r => ({
+        id: r.id as string,
+        timestamp: new Date(r.timestamp as string),
+        totalScanned: typeof r.totalScanned === "number" ? r.totalScanned : 0,
+        results: (r.results as GapResult[]),
+      }))
   } catch {
     return []
   }

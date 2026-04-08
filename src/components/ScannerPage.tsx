@@ -7,9 +7,10 @@ import type { GapResult } from "../types"
 interface Props {
   results: GapResult[]
   error: string | null
+  isScanning?: boolean
 }
 
-export function ScannerPage({ results, error }: Props) {
+export function ScannerPage({ results, error, isScanning = false }: Props) {
   const [view, setView] = useState<"cards" | "table">("cards")
 
   return (
@@ -21,7 +22,7 @@ export function ScannerPage({ results, error }: Props) {
       )}
 
       {/* Chart */}
-      <GapBarChart results={results} />
+      <GapBarChart results={results} isScanning={isScanning} />
 
       {/* View toggle + count */}
       <div className="flex items-center justify-between">
@@ -45,10 +46,31 @@ export function ScannerPage({ results, error }: Props) {
       </div>
 
       {/* Content */}
-      {view === "cards" ? (
+      {isScanning ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bg-bg-card border border-border-default rounded-md p-4 space-y-3 animate-pulse">
+              <div className="h-4 bg-border-default rounded w-3/4" />
+              <div className="flex items-end gap-0.5 h-6">
+                {[0.3, 0.6, 0.45, 0.8, 0.55, 1.0].map((h, j) => (
+                  <div key={j} className="flex-1 bg-border-default rounded-none" style={{ height: `${h * 100}%` }} />
+                ))}
+              </div>
+              <div className="grid grid-cols-3 gap-1">
+                {[1, 2, 3].map(j => (
+                  <div key={j} className="bg-bg-card-inner border border-border-subtle rounded-sm p-2 h-10" />
+                ))}
+              </div>
+              <div className="h-6 bg-border-default rounded w-1/3" />
+            </div>
+          ))}
+        </div>
+      ) : view === "cards" ? (
         results.length === 0 ? (
-          <div className="bg-bg-card border border-border-default rounded-sm p-8 text-center">
-            <p className="text-text-muted font-mono text-xs uppercase">No signals found {"\u2014"} try lowering threshold or run a scan</p>
+          <div className="bg-bg-card border border-border-default rounded-sm p-8 text-center space-y-2">
+            <span className="material-symbols-outlined text-3xl text-text-muted">search_off</span>
+            <p className="text-text-muted font-mono text-xs uppercase">No signals found</p>
+            <p className="text-text-muted font-mono text-[10px]">Try lowering the threshold or run a new scan</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">

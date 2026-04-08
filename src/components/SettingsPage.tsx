@@ -42,11 +42,11 @@ function SegGroup({ options, value, onChange }: {
   )
 }
 
-function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label?: string }) {
   return (
     <div className="flex items-center gap-1.5">
       <span className="text-[9px] font-mono text-text-muted uppercase">{checked ? "ON" : "OFF"}</span>
-      <button onClick={() => onChange(!checked)} aria-pressed={checked}
+      <button onClick={() => onChange(!checked)} aria-pressed={checked} aria-label={label ?? (checked ? "Disable" : "Enable")}
         className={`relative w-9 h-5 rounded-full transition-colors ${checked ? "bg-primary" : "bg-bg-card-inner border border-border-default"}`}
       >
         <span className={`absolute top-[3px] w-3.5 h-3.5 rounded-full bg-text-primary transition-transform ${
@@ -137,7 +137,11 @@ export function SettingsPage({ settings, update, onReset, theme, setTheme, histo
         <div className="flex items-center gap-3">
           <input
             type="range" min="1" max="20" value={Math.round(settings.minGap * 100)}
-            onChange={e => update({ minGap: Number(e.target.value) / 100 })}
+            onChange={e => {
+              const val = Number(e.target.value)
+              if (Number.isNaN(val)) return
+              update({ minGap: Math.max(0.01, Math.min(0.20, val / 100)) })
+            }}
             className="w-28 h-0.5 bg-border-default appearance-none cursor-pointer accent-primary"
           />
           <span className="text-[9px] font-mono text-primary w-6 text-right">
@@ -170,7 +174,7 @@ export function SettingsPage({ settings, update, onReset, theme, setTheme, histo
   const autoScan = (
     <SectionCard label="AUTO-SCAN">
       <Row label="Auto-Scan">
-        <Toggle checked={settings.autoScan} onChange={v => update({ autoScan: v })} />
+        <Toggle checked={settings.autoScan} onChange={v => update({ autoScan: v })} label="Toggle auto-scan" />
       </Row>
       <Row label="Interval">
         <SegGroup
@@ -180,7 +184,7 @@ export function SettingsPage({ settings, update, onReset, theme, setTheme, histo
         />
       </Row>
       <Row label="Notify on Signals">
-        <Toggle checked={settings.notifyOnSignals} onChange={v => update({ notifyOnSignals: v })} />
+        <Toggle checked={settings.notifyOnSignals} onChange={v => update({ notifyOnSignals: v })} label="Toggle signal notifications" />
       </Row>
       <Row label="Min Signals to Notify">
         <SegGroup

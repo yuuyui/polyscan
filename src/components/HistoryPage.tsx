@@ -158,9 +158,13 @@ export function HistoryPage({ history, onClearAll }: Props) {
         <div className="flex-1 overflow-y-auto">
           {!selected ? (
             <div className="flex items-center justify-center h-full">
-              <span className="font-mono text-text-muted text-sm uppercase">
-                {history.length === 0 ? "No history yet — run a scan first" : "Select a scan to view signals"}
-              </span>
+              <div className="text-center space-y-2">
+                <span className="material-symbols-outlined text-3xl text-text-muted">{history.length === 0 ? "history_toggle_off" : "touch_app"}</span>
+                <p className="font-mono text-text-muted text-sm uppercase">
+                  {history.length === 0 ? "No history yet" : "Select a scan to view signals"}
+                </p>
+                {history.length === 0 && <p className="font-mono text-text-muted text-[10px]">Run a scan to start tracking history</p>}
+              </div>
             </div>
           ) : (
             <DetailContent selected={selected} sortAsc={sortAsc} onToggleSort={() => setSortAsc(p => !p)} />
@@ -198,8 +202,9 @@ export function HistoryPage({ history, onClearAll }: Props) {
 
           {/* List items */}
           {history.length === 0 ? (
-            <div className="flex items-center justify-center h-24">
-              <span className="text-[11px] font-mono text-text-muted uppercase">No scans yet — run a scan first</span>
+            <div className="flex flex-col items-center justify-center h-24 space-y-1">
+              <span className="material-symbols-outlined text-2xl text-text-muted">history_toggle_off</span>
+              <span className="text-[11px] font-mono text-text-muted uppercase">No scans yet</span>
             </div>
           ) : (
             history.map((scan) => {
@@ -208,13 +213,15 @@ export function HistoryPage({ history, onClearAll }: Props) {
               return (
                 <div
                   key={scan.id}
+                  role="button" tabIndex={0} aria-selected={scan.id === selectedId}
                   onClick={() => setSelectedId(scan.id)}
-                  className={`flex items-center justify-between px-5 py-3 border-b border-border-default cursor-pointer transition-colors ${
+                  onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedId(scan.id) } }}
+                  className={`flex items-center justify-between px-5 py-3 border-b border-border-default cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${
                     scan.id === selectedId ? "bg-bg-card" : "hover:bg-bg-card"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-base text-text-muted">schedule</span>
+                    <span className="material-symbols-outlined text-base text-text-muted" aria-hidden="true">schedule</span>
                     <div>
                       <div className="text-[11px] font-mono text-text-primary">{dateStr} {timeStr} UTC</div>
                       <div className="text-[9px] font-mono text-text-muted mt-0.5">ID: {scan.id}</div>
