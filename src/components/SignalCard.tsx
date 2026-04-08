@@ -1,4 +1,5 @@
 import type { GapResult } from "../types"
+import { openPolymarketEvent } from "../utils/safe-open"
 
 interface Props {
   result: GapResult
@@ -15,7 +16,7 @@ export function SignalCard({ result }: Props) {
   return (
     <div
       className="bg-bg-card border border-border-default rounded-md p-4 cursor-pointer hover:border-primary transition-colors shadow-elevation-1 space-y-3"
-      onClick={() => window.open(`https://polymarket.com/event/${result.slug}`, "_blank")}
+      onClick={() => openPolymarketEvent(result.slug)}
     >
       {/* Header: question + direction badge */}
       <div className="flex items-start justify-between gap-2">

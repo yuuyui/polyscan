@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react"
+import { ErrorBoundary } from "./components/ErrorBoundary"
 import { ScannerPage } from "./components/ScannerPage"
 import { HistoryPage } from "./components/HistoryPage"
 import { SettingsPage } from "./components/SettingsPage"
@@ -123,14 +124,14 @@ export default function App() {
           </header>
 
           {/* Page */}
-          {active === "terminal" && <ScannerPage results={filtered} error={error} />}
-          {active === "history" && <HistoryPage history={history} onClearAll={clearAll} />}
+          {active === "terminal" && <ErrorBoundary><ScannerPage results={filtered} error={error} /></ErrorBoundary>}
+          {active === "history" && <ErrorBoundary><HistoryPage history={history} onClearAll={clearAll} /></ErrorBoundary>}
           {active === "settings" && (
-            <SettingsPage
+            <ErrorBoundary><SettingsPage
               settings={settings} update={updateSettings} onReset={resetSettings}
               theme={theme} setTheme={setTheme}
               history={history} onClearHistory={clearAll}
-            />
+            /></ErrorBoundary>
           )}
         </main>
       </div>
@@ -182,14 +183,14 @@ export default function App() {
 
         {/* Mobile content */}
         <main className="flex-1 pb-16">
-          {active === "terminal" && <ScannerPage results={filtered} error={error} />}
-          {active === "history" && <HistoryPage history={history} onClearAll={clearAll} />}
+          {active === "terminal" && <ErrorBoundary><ScannerPage results={filtered} error={error} /></ErrorBoundary>}
+          {active === "history" && <ErrorBoundary><HistoryPage history={history} onClearAll={clearAll} /></ErrorBoundary>}
           {active === "settings" && (
-            <SettingsPage
+            <ErrorBoundary><SettingsPage
               settings={settings} update={updateSettings} onReset={resetSettings}
               theme={theme} setTheme={setTheme}
               history={history} onClearHistory={clearAll}
-            />
+            /></ErrorBoundary>
           )}
         </main>
 

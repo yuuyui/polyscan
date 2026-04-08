@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { GapResult } from "../types"
+import { openPolymarketEvent } from "../utils/safe-open"
 type SortKey = keyof Pick<GapResult, "gap"|"yes"|"no"|"sum">
 export function ResultTable({ results }: { results: GapResult[] }) {
   const [sortKey, setSortKey] = useState<SortKey>("gap")
@@ -32,7 +33,7 @@ export function ResultTable({ results }: { results: GapResult[] }) {
             ) : sorted.map((r, i) => (
               <tr key={i}
                 className={`border-b border-border-subtle hover:bg-bg-card transition-colors cursor-pointer ${i%2===0?"bg-bg-card":"bg-bg-card-inner"}`}
-                onClick={() => window.open(`https://polymarket.com/event/${r.slug}`,"_blank")}
+                onClick={() => openPolymarketEvent(r.slug)}
               >
                 <td className="px-4 py-3 text-text-primary max-w-[200px] lg:max-w-xs truncate">{r.question}</td>
                 <td className="px-4 py-3 text-right text-text-secondary">{r.yes.toFixed(3)}</td>

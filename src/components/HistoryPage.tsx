@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { ScanHistoryPanel } from "./ScanHistoryPanel"
 import type { GapResult, ScanRecord } from "../types"
+import { openPolymarketEvent } from "../utils/safe-open"
 
 interface Props {
   history: ScanRecord[]
@@ -15,7 +16,7 @@ function SignalHistoryCard({ result }: { result: GapResult }) {
   return (
     <div
       className="bg-bg-card border border-border-default rounded-sm p-4 cursor-pointer hover:border-primary transition-colors space-y-3"
-      onClick={() => window.open(`https://polymarket.com/event/${result.slug}`, "_blank")}
+      onClick={() => openPolymarketEvent(result.slug)}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
