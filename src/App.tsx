@@ -50,7 +50,7 @@ export default function App() {
               <span className="material-symbols-outlined text-primary text-lg">terminal</span>
               <span className="font-mono font-bold text-primary tracking-widest text-sm uppercase">POLYSCAN</span>
             </div>
-            <div className="text-[9px] font-mono text-text-muted mt-1">v1.0.0 &middot; Arbitrage Scanner</div>
+            <div className="text-[9px] font-mono text-text-muted mt-1">v{__APP_VERSION__} &middot; Arbitrage Scanner</div>
           </div>
 
           {/* Nav */}
