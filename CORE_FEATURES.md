@@ -81,7 +81,7 @@ History open:
 ```
 
 **Interaction Flow:**
-1. User clicks HISTORY in sidebar → panel slides in from left (300ms)
+1. User clicks HISTORY in sidebar → panel slides in from left (200ms ease-out)
 2. Main content shrinks to 50% width
 3. User clicks scan in list → main cards update to that scan's results
 4. User clicks TERMINAL → panel slides out, layout returns
