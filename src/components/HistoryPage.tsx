@@ -160,7 +160,7 @@ export function HistoryPage({ history, onClearAll }: Props) {
                   <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-base text-text-muted" aria-hidden="true">schedule</span>
                     <div>
-                      <div className="text-[11px] font-mono text-text-primary">{dateStr} {timeStr} UTC</div>
+                      <div className="text-[11px] font-mono text-text-primary">{dateStr} {timeStr}</div>
                       <div className="text-[9px] font-mono text-text-muted mt-0.5">ID: {scan.id}</div>
                     </div>
                   </div>
