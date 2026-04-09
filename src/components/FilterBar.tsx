@@ -1,4 +1,5 @@
 import type { FilterDirection } from "../types"
+import { GAP_MIN, GAP_MAX } from "../constants"
 
 interface Props {
   minGap: number
@@ -24,7 +25,7 @@ export function FilterBar({ minGap, direction, onMinGapChange, onDirectionChange
           onChange={e => {
             const val = Number(e.target.value)
             if (Number.isNaN(val)) return
-            onMinGapChange(Math.max(0.01, Math.min(0.20, val / 100)))
+            onMinGapChange(Math.max(GAP_MIN, Math.min(GAP_MAX, val / 100)))
           }}
           className="w-full h-0.5 bg-border-default appearance-none cursor-pointer accent-primary"
         />

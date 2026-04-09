@@ -1,4 +1,5 @@
 import type { ScanRecord } from "../types"
+import { formatTime24h, formatDateISO } from "../utils/format"
 
 interface Props {
   history: ScanRecord[]
@@ -45,8 +46,8 @@ export function ScanHistoryPanel({ history, selectedId, onSelect, onClearAll, on
           </div>
         ) : (
           history.map((scan) => {
-            const timeStr = scan.timestamp.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-            const dateStr = scan.timestamp.toISOString().slice(0, 10)
+            const timeStr = formatTime24h(scan.timestamp)
+            const dateStr = formatDateISO(scan.timestamp)
             return (
               <div
                 key={scan.id}

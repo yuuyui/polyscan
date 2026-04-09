@@ -10,6 +10,7 @@ import { useScanHistory } from "./hooks/useScanHistory"
 import { useTheme } from "./hooks/useTheme"
 import { useSettings } from "./hooks/useSettings"
 import type { FilterDirection, GapResult } from "./types"
+import { formatTimeUTC } from "./utils/format"
 
 type NavItem = "terminal" | "history" | "settings"
 
@@ -104,7 +105,7 @@ export default function App() {
             <div className="flex items-center gap-3">
               {lastScanAt && (
                 <span className="text-[9px] font-mono text-text-muted">
-                  {lastScanAt.toUTCString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")} UTC
+                  {formatTimeUTC(lastScanAt)}
                 </span>
               )}
               <button

@@ -1,4 +1,5 @@
 import { CLOB_HOST, GAMMA_HOST, BATCH_SIZE } from '../config'
+import { SEED_RANGES } from '../constants'
 import type { Market } from '../types'
 export type { Market } from '../types'
 
@@ -58,8 +59,8 @@ function seededRand(seed: string, salt: string): number {
 }
 
 /** Fetch real market names from Gamma API and attach simulated gaps */
-export async function fetchGammaMarkets(): Promise<import("../types").GapResult[]> {
-  const res = await fetch(`${GAMMA_HOST}/markets?active=true&closed=false&limit=100&order=volume&ascending=false`)
+export async function fetchGammaMarkets(limit = 100): Promise<import("../types").GapResult[]> {
+  const res = await fetch(`${GAMMA_HOST}/markets?active=true&closed=false&limit=${limit}&order=volume&ascending=false`)
   if (!res.ok) throw new Error(`fetchGammaMarkets failed: ${res.status}`)
   const data: GammaMarket[] = await res.json()
 
@@ -70,11 +71,11 @@ export async function fetchGammaMarkets(): Promise<import("../types").GapResult[
       const r2 = seededRand(m.slug, "gap")
       const r3 = seededRand(m.slug, "dir")
 
-      const yes     = 0.12 + r1 * 0.76          // 0.12–0.88
-      const gap     = 0.025 + r2 * 0.11          // 2.5%–13.5%
-      const direction = r3 < 0.5 ? "UNDER" : "OVER" as const
+      const yes     = SEED_RANGES.yesMin + r1 * SEED_RANGES.yesSpan
+      const gap     = SEED_RANGES.gapMin + r2 * SEED_RANGES.gapSpan
+      const direction = r3 < SEED_RANGES.directionThreshold ? "UNDER" : "OVER" as const
       const sum     = direction === "UNDER" ? 1 - gap : 1 + gap
-      const no      = Math.max(0.01, Math.min(0.99, sum - yes))
+      const no      = Math.max(SEED_RANGES.noMin, Math.min(SEED_RANGES.noMax, sum - yes))
 
       return {
         question:  m.question,

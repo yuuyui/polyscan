@@ -1,74 +1,13 @@
 import { useState, useEffect } from "react"
 import { ScanHistoryPanel } from "./ScanHistoryPanel"
-import type { GapResult, ScanRecord } from "../types"
-import { openPolymarketEvent } from "../utils/safe-open"
+import { SignalCard } from "./SignalCard"
+import type { ScanRecord } from "../types"
+import { formatDateTimeUTC, formatDateISO, formatTime24h } from "../utils/format"
+import { downloadBlob } from "../utils/download"
 
 interface Props {
   history: ScanRecord[]
   onClearAll: () => void
-}
-
-function SignalHistoryCard({ result }: { result: GapResult }) {
-  const isUnder = result.direction === "UNDER"
-  const gapPct = (result.gap * 100).toFixed(2)
-  const netProfit = (result.gap - 0.04).toFixed(3)
-
-  return (
-    <div
-      className="bg-bg-card border border-border-default rounded-sm p-4 cursor-pointer hover:border-primary transition-colors space-y-3"
-      onClick={() => openPolymarketEvent(result.slug)}
-    >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-text-primary text-xs font-body leading-snug line-clamp-2 flex-1">
-          {result.question}
-        </p>
-        <span className={`shrink-0 inline-block px-2 py-0.5 text-[9px] font-mono font-bold uppercase rounded-sm ${
-          isUnder ? "bg-under-bg text-under-text" : "bg-over-bg text-over-text"
-        }`}>
-          {result.direction}
-        </span>
-      </div>
-
-      {/* YES / NO / SUM */}
-      <div className="grid grid-cols-3 gap-1">
-        {[
-          { label: "YES", value: result.yes.toFixed(3) },
-          { label: "NO",  value: result.no.toFixed(3) },
-          { label: "SUM", value: result.sum.toFixed(3) },
-        ].map(({ label, value }) => (
-          <div key={label} className="bg-bg-card-inner border border-border-subtle rounded-sm p-2 text-center">
-            <div className="text-[9px] font-mono text-text-muted uppercase mb-0.5">{label}</div>
-            <div className="text-xs font-mono text-text-primary">{value}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Gap + Net Profit */}
-      <div className="flex items-end justify-between">
-        <div>
-          <div className="text-[9px] font-mono text-text-muted uppercase mb-0.5">GAP</div>
-          <div className={`font-mono font-bold text-2xl leading-none ${isUnder ? "text-under-text" : "text-over-text"}`}>
-            {isUnder ? "-" : "+"}{gapPct}%
-          </div>
-        </div>
-        <div className="text-right">
-          <div className="text-[9px] font-mono text-text-muted uppercase mb-0.5">NET PROFIT</div>
-          <div className={`text-sm font-mono font-bold ${Number(netProfit) > 0 ? "text-under-text" : "text-over-text"}`}>
-            {Number(netProfit) > 0 ? "+" : ""}{netProfit}
-          </div>
-        </div>
-      </div>
-
-      {/* Gap bar */}
-      <div className="h-1 w-full bg-border-default rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full ${isUnder ? "bg-under-text" : "bg-over-text"}`}
-          style={{ width: `${Math.min(result.gap * 1000, 100)}%` }}
-        />
-      </div>
-    </div>
-  )
 }
 
 function DetailContent({
@@ -93,7 +32,7 @@ function DetailContent({
         <div>
           <h3 className="font-mono text-sm text-text-primary uppercase tracking-widest">Scan Details</h3>
           <p className="text-[9px] font-mono text-text-muted mt-0.5">
-            {selected.timestamp.toISOString().replace("T", " ").slice(0, 19)} UTC &middot; {selected.results.length} signals
+            {formatDateTimeUTC(selected.timestamp)} &middot; {selected.results.length} signals
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -115,7 +54,7 @@ function DetailContent({
       ) : (
         <div className="p-4 lg:p-6 grid grid-cols-1 xl:grid-cols-2 gap-3 lg:gap-4">
           {sortedResults.map((signal) => (
-            <SignalHistoryCard key={signal.slug} result={signal} />
+            <SignalCard key={signal.slug} result={signal} variant="history" />
           ))}
         </div>
       )}
@@ -128,7 +67,10 @@ export function HistoryPage({ history, onClearAll }: Props) {
   const [sortAsc, setSortAsc] = useState(false)
 
   useEffect(() => {
-    setSelectedId(prev => prev ?? history[0]?.id ?? null)
+    setSelectedId(prev => {
+      if (prev && history.some(s => s.id === prev)) return prev
+      return history[0]?.id ?? null
+    })
   }, [history])
 
   const selected = history.find(s => s.id === selectedId) ?? null
@@ -136,12 +78,7 @@ export function HistoryPage({ history, onClearAll }: Props) {
   const handleExport = () => {
     if (!selected) return
     const blob = new Blob([JSON.stringify(selected, null, 2)], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `polyscan-${selected.id}.json`
-    a.click()
-    URL.revokeObjectURL(url)
+    downloadBlob(blob, `polyscan-${selected.id}.json`)
   }
 
   return (
@@ -208,8 +145,8 @@ export function HistoryPage({ history, onClearAll }: Props) {
             </div>
           ) : (
             history.map((scan) => {
-              const timeStr = scan.timestamp.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
-              const dateStr = scan.timestamp.toISOString().slice(0, 10)
+              const timeStr = formatTime24h(scan.timestamp)
+              const dateStr = formatDateISO(scan.timestamp)
               return (
                 <div
                   key={scan.id}

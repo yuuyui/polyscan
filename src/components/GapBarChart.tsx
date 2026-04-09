@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts"
 import type { GapResult } from "../types"
+import { truncateText } from "../utils/format"
+import { CHART_DISPLAY_LIMIT, CHART_LABEL_MAX_LEN } from "../constants"
 
 interface Props { results: GapResult[]; isScanning?: boolean }
 
@@ -7,16 +10,29 @@ function getCssVar(name: string) {
   return `rgb(${getComputedStyle(document.documentElement).getPropertyValue(name).trim()})`
 }
 
-export function GapBarChart({ results, isScanning = false }: Props) {
-  const underColor = getCssVar("--color-under-text")
-  const overColor  = getCssVar("--color-over-text")
-  const mutedColor = getCssVar("--color-text-muted")
-  const cardColor  = getCssVar("--color-bg-card")
-  const borderColor = getCssVar("--color-border-default")
-  const secondaryColor = getCssVar("--color-text-secondary")
+function readThemeColors() {
+  return {
+    under: getCssVar("--color-under-text"),
+    over: getCssVar("--color-over-text"),
+    muted: getCssVar("--color-text-muted"),
+    card: getCssVar("--color-bg-card"),
+    border: getCssVar("--color-border-default"),
+    secondary: getCssVar("--color-text-secondary"),
+  }
+}
 
-  const data = results.slice(0, 20).map(r => ({
-    name: r.question.slice(0, 18) + "\u2026",
+export function GapBarChart({ results, isScanning = false }: Props) {
+  const [colors, setColors] = useState(readThemeColors)
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => setColors(readThemeColors()))
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
+    return () => observer.disconnect()
+  }, [])
+
+  const data = results.slice(0, CHART_DISPLAY_LIMIT).map(r => ({
+    name: truncateText(r.question, CHART_LABEL_MAX_LEN),
+    slug: r.slug,
     gap: parseFloat((r.gap * 100).toFixed(2)),
     direction: r.direction,
   }))
@@ -26,7 +42,7 @@ export function GapBarChart({ results, isScanning = false }: Props) {
       <div className="h-3 bg-border-default rounded w-24 mb-4" />
       <div className="flex items-end gap-2 h-[140px]">
         {Array.from({ length: 12 }).map((_, i) => (
-          <div key={i} className="flex-1 bg-border-default rounded-t-sm" style={{ height: `${20 + Math.random() * 60}%` }} />
+          <div key={`chart-skel-${i}`} className="flex-1 bg-border-default rounded-t-sm" style={{ height: `${20 + ((i * 37 + 13) % 60)}%` }} />
         ))}
       </div>
     </div>
@@ -51,17 +67,17 @@ export function GapBarChart({ results, isScanning = false }: Props) {
         <BarChart data={data} barCategoryGap="20%">
           <XAxis dataKey="name" tick={false} axisLine={false} tickLine={false} />
           <YAxis
-            tick={{ fill:mutedColor, fontSize:9, fontFamily:"JetBrains Mono" }}
+            tick={{ fill:colors.muted, fontSize:9, fontFamily:"JetBrains Mono" }}
             axisLine={false} tickLine={false} unit="\u00a2"
           />
           <Tooltip
-            contentStyle={{ background:cardColor, border:`1px solid ${borderColor}`, borderRadius:"6px", fontSize:10, fontFamily:"JetBrains Mono" }}
-            labelStyle={{ color:secondaryColor }}
+            contentStyle={{ background:colors.card, border:`1px solid ${colors.border}`, borderRadius:"6px", fontSize:10, fontFamily:"JetBrains Mono" }}
+            labelStyle={{ color:colors.secondary }}
             formatter={(v) => [`${v}\u00a2`, "Gap"]}
           />
           <Bar dataKey="gap" radius={[2,2,0,0]}>
-            {data.map((entry, i) => (
-              <Cell key={i} fill={entry.direction === "UNDER" ? underColor : overColor} />
+            {data.map((entry) => (
+              <Cell key={entry.slug} fill={entry.direction === "UNDER" ? colors.under : colors.over} />
             ))}
           </Bar>
         </BarChart>

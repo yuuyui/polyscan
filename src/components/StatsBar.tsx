@@ -1,3 +1,5 @@
+import { formatTimeUTC } from "../utils/format"
+
 interface Props {
   totalScanned: number
   found: number
@@ -6,9 +8,7 @@ interface Props {
 }
 
 export function StatsBar({ totalScanned, found, lastScanAt, isScanning }: Props) {
-  const timeStr = lastScanAt
-    ? lastScanAt.toUTCString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1") + " UTC"
-    : "\u2014"
+  const timeStr = lastScanAt ? formatTimeUTC(lastScanAt) : "\u2014"
 
   return (
     <div className="space-y-2">

@@ -3,6 +3,7 @@ import { GapBarChart } from "./GapBarChart"
 import { ResultTable } from "./ResultTable"
 import { SignalCard } from "./SignalCard"
 import type { GapResult } from "../types"
+import { SPARKLINE_BARS } from "../constants"
 
 interface Props {
   results: GapResult[]
@@ -49,16 +50,16 @@ export function ScannerPage({ results, error, isScanning = false }: Props) {
       {isScanning ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-bg-card border border-border-default rounded-md p-4 space-y-3 animate-pulse">
+            <div key={`skeleton-${i}`} className="bg-bg-card border border-border-default rounded-md p-4 space-y-3 animate-pulse">
               <div className="h-4 bg-border-default rounded w-3/4" />
               <div className="flex items-end gap-0.5 h-6">
-                {[0.3, 0.6, 0.45, 0.8, 0.55, 1.0].map((h, j) => (
-                  <div key={j} className="flex-1 bg-border-default rounded-none" style={{ height: `${h * 100}%` }} />
+                {SPARKLINE_BARS.map((h, j) => (
+                  <div key={`skel-bar-${j}`} className="flex-1 bg-border-default rounded-none" style={{ height: `${h * 100}%` }} />
                 ))}
               </div>
               <div className="grid grid-cols-3 gap-1">
-                {[1, 2, 3].map(j => (
-                  <div key={j} className="bg-bg-card-inner border border-border-subtle rounded-sm p-2 h-10" />
+                {(["yes", "no", "sum"] as const).map(label => (
+                  <div key={label} className="bg-bg-card-inner border border-border-subtle rounded-sm p-2 h-10" />
                 ))}
               </div>
               <div className="h-6 bg-border-default rounded w-1/3" />
