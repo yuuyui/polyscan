@@ -103,7 +103,7 @@ test.describe("Settings page", () => {
   })
 
   test("version info is displayed", async ({ page }) => {
-    await expect(page.locator("text=v1.0.0").first()).toBeVisible()
+    await expect(page.getByText(/^v\d+\.\d+\.\d+/).first()).toBeVisible()
     await expect(page.locator("text=Gamma API").first()).toBeVisible()
   })
 })
