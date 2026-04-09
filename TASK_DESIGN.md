@@ -9,11 +9,29 @@
 1. **กำหนด scope ชัดเจน** — ระบุว่ากำลังออกแบบ page/feature อะไร
 2. **Analysis ก่อนออกแบบ** — วิเคราะห์ละเอียดว่าควรมีอะไรบ้าง (UX flows, states, edge cases, data model)
 3. **Reuse design system** — ต้องใช้ components/variables ที่มีอยู่แล้วให้ได้มากที่สุด
-4. **Approve ก่อนทุกการเปลี่ยนแปลงใหญ่** — ห้ามทำเองโดยไม่ขอ
+4. **Approve ก่อนทุกการเปลี่ยนแปลงใหญ่** — ห้ามทำเองโดยไม่ขอ (นิยาม "ใหญ่" = เปลี่ยน layout หลัก / เพิ่ม component ใหม่ / เปลี่ยน flow)
 5. **UX/UI หลักการที่ถูกต้อง** — เข้าใจพฤติกรรมผู้ใช้และผู้พัฒนา
 6. **Sync code ↔ Figma เสมอ** — ถ้าฝั่งใดฝั่งหนึ่งเปลี่ยน อีกฝั่งต้องตามทันที
 7. **Recheck ก่อนเริ่มทุกครั้ง** — ทำ full audit ก่อนเริ่มงานเสมอ ห้ามเชื่อรายงานเก่า
 8. **ก่อน implement ต้องถาม** — แล้วทำตาม dev workflow (Issue → branch → PR)
+
+---
+
+## Project Type Flows
+
+### 🆕 New Project
+1. สร้าง Figma file + ตั้ง design system (variables/tokens) ก่อนเสมอ
+2. กำหนด variables ก่อน design component แรก — ห้าม hardcode
+3. Design → Review → Approve → แล้วค่อย dev
+4. ห้าม dev ล้ำหน้า approved design
+
+### 🔄 Redesign (มี code อยู่แล้ว)
+1. Audit UI ที่มีอยู่ก่อน — screenshot + catalog components ทั้งหมด
+2. สร้าง frame `[AS-IS] YYYY-MM-DD` ใน Figma จาก current state
+3. ออกแบบ `[TO-BE]` แยก frame ไว้ในไฟล์เดียวกัน
+4. ทำ Diff — ระบุชัดว่าอะไรเปลี่ยน / อะไรคงเดิม
+5. Approve TO-BE ก่อนเสมอ → Issue → Branch → PR
+6. ห้ามแก้ code โดยไม่มี approved TO-BE frame
 
 ---
 
@@ -67,6 +85,10 @@
 ### Data Consistency Check (Desktop ↔ Mobile)
 - ข้อมูลใน Desktop ต้องตรงกับ Mobile (ชื่อ, ตัวเลข, badge, variant type)
 - ถ้า swap variant ต้องเช็คว่า data ข้างในตรงกับ variant ที่เลือก
+
+### State Coverage (บังคับ)
+- ทุก feature/component ต้องมี frame ครบทุก state: `empty`, `loading`, `error`, `success`, `edge case`
+- State เหล่านี้จะถูกใช้เป็น reference สำหรับ E2E test
 
 ---
 
@@ -159,6 +181,18 @@
 
 ---
 
+## E2E Integration
+
+ต้องคิดตั้งแต่ design phase — ไม่ใช่ทำทีหลัง:
+
+- **Naming convention ร่วมกัน** — component name ใน Figma ต้อง map กับ `data-testid` ใน code เพื่อให้ QA เขียน test ได้โดยไม่ต้องเดา
+- **State coverage** — ทุก state ที่ E2E ต้อง test ต้องมี frame ใน Figma ก่อน (empty, loading, error, success, edge case)
+- **Flow annotation** — annotate happy path + critical paths ใน Figma ให้ชัด
+- **Design Lock** — ต้อง approve และ lock design ก่อน QA เริ่มเขียน E2E test
+- ห้ามเปลี่ยน design หลัง design lock โดยไม่แจ้ง QA และ update test ด้วย
+
+---
+
 ## Anti-Patterns (ห้ามทำ)
 
 - ❌ Audit ด้วย page name ผิด (ลืม emoji prefix) แล้วเชื่อผลลัพธ์
@@ -173,6 +207,8 @@
 - ❌ ทิ้ง leftover instance (e.g. MockButton) ไว้ในไฟล์ — ต้อง cleanup ทุกครั้งที่เจอ
 - ❌ สร้าง component variant โดยไม่มี property ที่จำเป็น (e.g. hardcode icon ใน state variant แทนที่จะมี Tab property)
 - ❌ แก้ overlap / resize section แล้วไม่เช็ค section-to-section overlap ที่อาจเกิดจาก bounds เปลี่ยน
+- ❌ แก้ code โดยไม่มี approved TO-BE frame ใน Figma
+- ❌ เปลี่ยน design หลัง design lock โดยไม่แจ้ง QA และ update E2E test
 
 ---
 
@@ -181,19 +217,23 @@
 ```
 1. อ่าน rules + memory ที่เกี่ยวข้อง
    ↓
-2. Recheck current state (Figma + code) — full audit
+2. ระบุ project type — New Project / Redesign
    ↓
-3. รายงานสถานะ + เสนอแผน
+3. Recheck current state (Figma + code) — full audit
    ↓
-4. รอ approve
+4. รายงานสถานะ + เสนอแผน
    ↓
-5. Archive nodes ที่จะแก้
+5. รอ approve
    ↓
-6. ทำงานเป็น step ย่อย — verify ทุก step
+6. Archive nodes ที่จะแก้
    ↓
-7. Final audit + screenshot ทุก frame ที่เกี่ยวข้อง
+7. ทำงานเป็น step ย่อย — verify ทุก step
    ↓
-8. รายงานผลลัพธ์ + frame ที่ owner ต้องตรวจ
+8. Final audit + screenshot ทุก frame ที่เกี่ยวข้อง
    ↓
-9. ถ้าจะ implement code → ขออนุญาต → ทำตาม dev workflow (Issue → branch → PR)
+9. รายงานผลลัพธ์ + frame ที่ owner ต้องตรวจ
+   ↓
+10. ถ้าจะ implement code → ขออนุญาต → ทำตาม dev workflow (Issue → branch → PR)
+    ↓
+11. ถ้ามี E2E → ตรวจ design lock + naming convention ก่อน QA เริ่มเขียน test
 ```
