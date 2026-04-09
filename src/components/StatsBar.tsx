@@ -32,7 +32,6 @@ export function StatsBar({ totalScanned, found, lastScanAt, isScanning }: Props)
             {isScanning ? "SCANNING" : lastScanAt ? "LAST: " + timeStr : "IDLE"}
           </span>
         </div>
-        <span className="text-[9px] font-mono text-primary">14MS</span>
       </div>
     </div>
   )

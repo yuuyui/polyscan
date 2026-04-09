@@ -223,7 +223,7 @@ export function SettingsPage({ settings, update, onReset, theme, setTheme, histo
 
   const about = (
     <SectionCard label="ABOUT">
-      <Row label="Version"><span className="text-sm font-mono text-text-muted">v1.0.0</span></Row>
+      <Row label="Version"><span className="text-sm font-mono text-text-muted">v{__APP_VERSION__}</span></Row>
       <Row label="Data Source"><span className="text-sm font-body text-text-secondary">Gamma API</span></Row>
       <div className="px-4 py-3">
         <button onClick={onReset}
