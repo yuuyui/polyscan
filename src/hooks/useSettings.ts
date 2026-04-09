@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react"
 import type { FilterDirection } from "../types"
+import { STORAGE_KEYS } from "../constants"
 
 export interface Settings {
   defaultView: "CARDS" | "TABLE"
@@ -15,7 +16,6 @@ export interface Settings {
   exportFormat: "JSON" | "CSV"
 }
 
-import { STORAGE_KEYS } from "../constants"
 const STORAGE_KEY = STORAGE_KEYS.settings
 
 export const SETTINGS_DEFAULTS: Settings = {

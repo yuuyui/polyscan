@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react"
 import type { GapResult, ScanRecord } from "../types"
-
 import { STORAGE_KEYS } from "../constants"
+
 const STORAGE_KEY = STORAGE_KEYS.history
 const MAX_RECORDS = 50
 

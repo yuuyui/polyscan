@@ -6,19 +6,21 @@ import { CHART_DISPLAY_LIMIT, CHART_LABEL_MAX_LEN } from "../constants"
 
 interface Props { results: GapResult[]; isScanning?: boolean }
 
-function getCssVar(name: string) {
-  return `rgb(${getComputedStyle(document.documentElement).getPropertyValue(name).trim()})`
-}
+const CSS_VAR_NAMES = [
+  "--color-under-text",
+  "--color-over-text",
+  "--color-text-muted",
+  "--color-bg-card",
+  "--color-border-default",
+  "--color-text-secondary",
+] as const
 
 function readThemeColors() {
-  return {
-    under: getCssVar("--color-under-text"),
-    over: getCssVar("--color-over-text"),
-    muted: getCssVar("--color-text-muted"),
-    card: getCssVar("--color-bg-card"),
-    border: getCssVar("--color-border-default"),
-    secondary: getCssVar("--color-text-secondary"),
-  }
+  const style = getComputedStyle(document.documentElement)
+  const [under, over, muted, card, border, secondary] = CSS_VAR_NAMES.map(
+    name => `rgb(${style.getPropertyValue(name).trim()})`
+  )
+  return { under, over, muted, card, border, secondary }
 }
 
 export function GapBarChart({ results, isScanning = false }: Props) {
