@@ -33,25 +33,11 @@ export default {
         "border-default": "rgb(var(--color-border-default) / <alpha-value>)",
         "border-subtle":  "rgb(var(--color-border-subtle) / <alpha-value>)",
 
-        /* Legacy compat */
-        "surface":           "rgb(var(--color-bg-base) / <alpha-value>)",
-        "surface-dim":       "rgb(var(--color-bg-sidebar) / <alpha-value>)",
-        "surface-low":       "rgb(var(--color-bg-card) / <alpha-value>)",
-        "surface-container": "rgb(var(--color-bg-card-inner) / <alpha-value>)",
+        /* Used by direction badge "FAIR" */
         "surface-high":      "rgb(var(--color-border-default) / <alpha-value>)",
-        "surface-highest":   "rgb(var(--color-border-subtle) / <alpha-value>)",
-        "on-surface":        "rgb(var(--color-text-primary) / <alpha-value>)",
-        "on-surface-variant":"rgb(var(--color-text-secondary) / <alpha-value>)",
-        "outline":           "rgb(var(--color-text-muted) / <alpha-value>)",
-        "outline-variant":   "rgb(var(--color-border-default) / <alpha-value>)",
-        "primary-fixed":     "rgb(var(--color-primary) / <alpha-value>)",
-        "primary-dim":       "rgb(var(--color-primary-hover) / <alpha-value>)",
-        "secondary":         "rgb(var(--color-over-text) / <alpha-value>)",
-        "secondary-container":"rgb(var(--color-over-bg) / <alpha-value>)",
       },
       fontFamily: {
         mono: ['"JetBrains Mono"', 'monospace'],
-        sg:   ['"Space Grotesk"', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
       },
       borderRadius: {
