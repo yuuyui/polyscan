@@ -8,20 +8,6 @@ export interface GapResult {
   direction: "OVER" | "UNDER" | "FAIR"
 }
 
-export interface MarketToken {
-  token_id: string
-  outcome:  string
-}
-
-export interface Market {
-  condition_id?: string
-  question_id?:  string
-  market_slug:   string
-  question:      string
-  tokens:        MarketToken[]
-  active:        boolean
-}
-
 export interface ScanRecord {
   id: string
   timestamp: Date

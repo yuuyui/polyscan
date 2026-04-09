@@ -13,14 +13,15 @@ const CSS_VAR_NAMES = [
   "--color-bg-card",
   "--color-border-default",
   "--color-text-secondary",
+  "--color-text-primary",
 ] as const
 
 function readThemeColors() {
   const style = getComputedStyle(document.documentElement)
-  const [under, over, muted, card, border, secondary] = CSS_VAR_NAMES.map(
+  const [under, over, muted, card, border, secondary, primary] = CSS_VAR_NAMES.map(
     name => `rgb(${style.getPropertyValue(name).trim()})`
   )
-  return { under, over, muted, card, border, secondary }
+  return { under, over, muted, card, border, secondary, primary }
 }
 
 export function GapBarChart({ results, isScanning = false }: Props) {
@@ -73,8 +74,9 @@ export function GapBarChart({ results, isScanning = false }: Props) {
             axisLine={false} tickLine={false} unit="\u00a2"
           />
           <Tooltip
-            contentStyle={{ background:colors.card, border:`1px solid ${colors.border}`, borderRadius:"6px", fontSize:10, fontFamily:"JetBrains Mono" }}
-            labelStyle={{ color:colors.secondary }}
+            contentStyle={{ background:colors.card, border:`1px solid ${colors.border}`, borderRadius:"6px", fontSize:12, fontFamily:"JetBrains Mono", padding:"8px 12px" }}
+            labelStyle={{ color:colors.primary, fontWeight:600, marginBottom:2 }}
+            itemStyle={{ color:colors.secondary }}
             formatter={(v) => [`${v}\u00a2`, "Gap"]}
           />
           <Bar dataKey="gap" radius={[2,2,0,0]}>
