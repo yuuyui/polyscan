@@ -29,16 +29,15 @@ _Extracted from tailwind.config.js_
 
 ## Typography
 
-| Name | Font | Size | Weight | Usage |
-|------|------|------|--------|-------|
-| Display / Price | JetBrains Mono | 44px | 700 | Gap %, large numbers |
-| Heading / Stat | JetBrains Mono | 24px | 700 | Stat card values |
-| Label / Section | JetBrains Mono | 10px | 700 | Section headers UPPERCASE |
-| Body / Question | Inter | 12px | 400 | Market question text |
-| Mono / Number | JetBrains Mono | 11px | 400 | Table numbers |
-| Badge / Tag | JetBrains Mono | 9px | 700 | UNDER/OVER badges |
-| Nav / Item | JetBrains Mono | 12px | 700 | Sidebar nav items |
-| Caption / Meta | JetBrains Mono | 9px | 400 | Timestamps, latency |
+| Name | Font | Size | Weight | Tailwind Class | Usage |
+|------|------|------|--------|---------------|-------|
+| H1 | JetBrains Mono | 28px | 600 | `text-3xl` | Page headings |
+| H2 | JetBrains Mono | 20px | 600 | `text-2xl` | Section headings |
+| H3 | JetBrains Mono | 16px | 500 | `text-xl` | Sub-headings |
+| Meta | JetBrains Mono | 14px | 500 | `text-lg` | Stat values, meta |
+| Body | Inter | 13px | 400 | `text-base` | Market question text |
+| Label | JetBrains Mono | 11px | 500 | `text-sm` | Labels, nav items |
+| Caption | JetBrains Mono | 9px | 400 | `text-xs` | Timestamps, badges |
 
 > **Note:** Space Grotesk (`font-sg`) ถูกลบออกจาก tailwind.config แล้ว (PR #61) — ปัจจุบันใช้ Inter + JetBrains Mono เท่านั้น
 
