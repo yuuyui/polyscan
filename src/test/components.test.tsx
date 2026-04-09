@@ -55,7 +55,6 @@ describe("SignalCard", () => {
     render(<SignalCard result={mockResult} />)
     const card = screen.getByRole("button", { name: /View Will BTC hit \$100k\?/ })
     expect(card).toBeInTheDocument()
-    expect(card).toHaveAttribute("tabindex", "0")
   })
 
   it("renders sparkline in card variant", () => {

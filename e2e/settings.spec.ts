@@ -38,7 +38,6 @@ test.describe("Settings page", () => {
   test("direction filter defaults and toggles", async ({ page }) => {
     const allBtn = page.getByRole("button", { name: "ALL" }).nth(0)
     const overBtn = page.getByRole("button", { name: "OVER" }).nth(0)
-    const underBtn = page.getByRole("button", { name: "UNDER" }).nth(0)
 
     await expect(allBtn).toHaveClass(/bg-filter-active/)
 
@@ -48,7 +47,6 @@ test.describe("Settings page", () => {
   })
 
   test("market limit toggle works", async ({ page }) => {
-    const btn50 = page.getByRole("button", { name: "50" }).first()
     const btn100 = page.getByRole("button", { name: "100" }).first()
     const btn200 = page.getByRole("button", { name: "200" }).first()
 

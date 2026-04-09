@@ -17,13 +17,13 @@ export function SignalCard({ result, variant = "card" }: Props) {
   const isCard = variant === "card"
 
   return (
-    <div
-      className={`bg-bg-card border border-border-default p-4 cursor-pointer hover:border-primary transition-colors space-y-3 focus:outline-none focus:ring-2 focus:ring-primary ${
+    <button
+      type="button"
+      className={`bg-bg-card border border-border-default p-4 cursor-pointer hover:border-primary transition-colors space-y-3 focus:outline-none focus:ring-2 focus:ring-primary text-left w-full ${
         isCard ? "rounded-md shadow-elevation-1" : "rounded-sm"
       }`}
-      role="button" tabIndex={0} aria-label={`View ${result.question}`}
+      aria-label={`View ${result.question}`}
       onClick={() => openPolymarketEvent(result.slug)}
-      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPolymarketEvent(result.slug) } }}
     >
       {/* Header: question + direction badge */}
       <div className="flex items-start justify-between gap-2">
@@ -87,6 +87,6 @@ export function SignalCard({ result, variant = "card" }: Props) {
           style={{ width: `${Math.min(result.gap * 1000, 100)}%` }}
         />
       </div>
-    </div>
+    </button>
   )
 }
