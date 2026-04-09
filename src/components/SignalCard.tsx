@@ -1,51 +1,54 @@
 import type { GapResult } from "../types"
 import { openPolymarketEvent } from "../utils/safe-open"
+import { directionBadgeClass } from "../utils/direction-badge"
+import { FEE_RATE } from "../config"
+import { SPARKLINE_BARS } from "../constants"
 
 interface Props {
   result: GapResult
+  variant?: "card" | "history"
 }
 
-export function SignalCard({ result }: Props) {
+export function SignalCard({ result, variant = "card" }: Props) {
   const isUnder = result.direction === "UNDER"
   const gapPct = (result.gap * 100).toFixed(2)
-  const netProfit = (result.gap - 0.04).toFixed(3) // after ~2% fee each side
+  const netProfit = (result.gap - FEE_RATE * 2).toFixed(3)
 
-  // Sparkline bars — 6 bars with varying heights
-  const sparkBars = [0.3, 0.6, 0.45, 0.8, 0.55, 1.0]
+  const isCard = variant === "card"
 
   return (
     <div
-      className="bg-bg-card border border-border-default rounded-md p-4 cursor-pointer hover:border-primary transition-colors shadow-elevation-1 space-y-3 focus:outline-none focus:ring-2 focus:ring-primary"
+      className={`bg-bg-card border border-border-default p-4 cursor-pointer hover:border-primary transition-colors space-y-3 ${
+        isCard ? "rounded-md shadow-elevation-1 focus:outline-none focus:ring-2 focus:ring-primary" : "rounded-sm"
+      }`}
       role="button" tabIndex={0} aria-label={`View ${result.question}`}
       onClick={() => openPolymarketEvent(result.slug)}
       onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPolymarketEvent(result.slug) } }}
     >
       {/* Header: question + direction badge */}
       <div className="flex items-start justify-between gap-2">
-        <p className="text-text-primary text-sm font-body leading-snug line-clamp-2 flex-1">
+        <p className={`text-text-primary font-body leading-snug line-clamp-2 flex-1 ${isCard ? "text-sm" : "text-xs"}`}>
           {result.question}
         </p>
-        <span className={`shrink-0 inline-block px-2.5 py-0.5 text-xs font-mono font-semibold uppercase rounded-full ${
-          isUnder
-            ? "bg-under-bg text-under-text"
-            : result.direction === "OVER"
-            ? "bg-over-bg text-over-text"
-            : "bg-surface-high text-text-muted"
-        }`}>
+        <span className={`shrink-0 inline-block px-2.5 py-0.5 font-mono font-semibold uppercase ${
+          isCard ? "text-xs rounded-full" : "text-[9px] font-bold rounded-sm"
+        } ${directionBadgeClass(result.direction)}`}>
           {result.direction}
         </span>
       </div>
 
-      {/* Sparkline */}
-      <div className="flex items-end gap-0.5 h-6">
-        {sparkBars.map((h, i) => (
-          <div
-            key={i}
-            className={`flex-1 rounded-none ${isUnder ? "bg-under-text" : "bg-over-text"}`}
-            style={{ height: `${h * 100}%` }}
-          />
-        ))}
-      </div>
+      {/* Sparkline (card variant only) */}
+      {isCard && (
+        <div className="flex items-end gap-0.5 h-6">
+          {SPARKLINE_BARS.map((h, barIdx) => (
+            <div
+              key={`spark-${barIdx}`}
+              className={`flex-1 rounded-none ${isUnder ? "bg-under-text" : "bg-over-text"}`}
+              style={{ height: `${h * 100}%` }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* YES / NO / SUM boxes */}
       <div className="grid grid-cols-3 gap-1">
@@ -65,7 +68,7 @@ export function SignalCard({ result }: Props) {
       <div className="flex items-end justify-between">
         <div>
           <div className="text-[9px] font-mono text-text-muted uppercase mb-0.5">GAP</div>
-          <div className={`font-mono font-bold leading-none ${isUnder ? "text-under-text" : "text-over-text"}`}>
+          <div className={`font-mono font-bold ${isCard ? "leading-none" : "text-2xl leading-none"} ${isUnder ? "text-under-text" : "text-over-text"}`}>
             {isUnder ? "-" : "+"}{gapPct}%
           </div>
         </div>

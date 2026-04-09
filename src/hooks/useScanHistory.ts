@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react"
 import type { GapResult, ScanRecord } from "../types"
 
-const STORAGE_KEY = "polyscan_history"
+import { STORAGE_KEYS } from "../constants"
+const STORAGE_KEY = STORAGE_KEYS.history
 const MAX_RECORDS = 50
 
 function loadFromStorage(): ScanRecord[] {
@@ -23,7 +24,8 @@ function loadFromStorage(): ScanRecord[] {
         totalScanned: typeof r.totalScanned === "number" ? r.totalScanned : 0,
         results: (r.results as GapResult[]),
       }))
-  } catch {
+  } catch (err) {
+    console.warn("[polyscan] Failed to load scan history from storage:", err)
     return []
   }
 }
@@ -31,8 +33,8 @@ function loadFromStorage(): ScanRecord[] {
 function saveToStorage(records: ScanRecord[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(records))
-  } catch {
-    // storage full — fail silently
+  } catch (err) {
+    console.warn("[polyscan] Failed to save scan history:", err)
   }
 }
 

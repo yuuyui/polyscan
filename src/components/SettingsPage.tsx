@@ -1,6 +1,8 @@
 import type { ScanRecord } from "../types"
 import type { ThemeId } from "../hooks/useTheme"
 import type { Settings } from "../hooks/useSettings"
+import { GAP_MIN, GAP_MAX } from "../constants"
+import { downloadBlob } from "../utils/download"
 
 // ─── Internal helpers ────────────────────────────────────────────────────────
 
@@ -92,15 +94,7 @@ export function SettingsPage({ settings, update, onReset, theme, setTheme, histo
       mime = "application/json"
       ext = "json"
     }
-    const blob = new Blob([content], { type: mime })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `polyscan_history.${ext}`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    downloadBlob(new Blob([content], { type: mime }), `polyscan_history.${ext}`)
   }
 
   const appearance = (
@@ -140,7 +134,7 @@ export function SettingsPage({ settings, update, onReset, theme, setTheme, histo
             onChange={e => {
               const val = Number(e.target.value)
               if (Number.isNaN(val)) return
-              update({ minGap: Math.max(0.01, Math.min(0.20, val / 100)) })
+              update({ minGap: Math.max(GAP_MIN, Math.min(GAP_MAX, val / 100)) })
             }}
             className="w-28 h-0.5 bg-border-default appearance-none cursor-pointer accent-primary"
           />

@@ -7,7 +7,8 @@ export const THEMES: { id: ThemeId; label: string; className: string; accent: st
   { id: "binance", label: "Binance", className: "theme-binance", accent: "#f0b90b" },
 ]
 
-const STORAGE_KEY = "polyscan-theme"
+import { STORAGE_KEYS } from "../constants"
+const STORAGE_KEY = STORAGE_KEYS.theme
 
 export function useTheme() {
   const [theme, setTheme] = useState<ThemeId>(() => {

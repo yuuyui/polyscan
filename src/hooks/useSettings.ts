@@ -15,7 +15,8 @@ export interface Settings {
   exportFormat: "JSON" | "CSV"
 }
 
-const STORAGE_KEY = "polyscan_settings"
+import { STORAGE_KEYS } from "../constants"
+const STORAGE_KEY = STORAGE_KEYS.settings
 
 export const SETTINGS_DEFAULTS: Settings = {
   defaultView: "CARDS",
@@ -36,7 +37,8 @@ function load(): Settings {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return SETTINGS_DEFAULTS
     return { ...SETTINGS_DEFAULTS, ...JSON.parse(raw) }
-  } catch {
+  } catch (err) {
+    console.warn("[polyscan] Failed to load settings:", err)
     return SETTINGS_DEFAULTS
   }
 }
@@ -47,13 +49,13 @@ export function useSettings() {
   const update = useCallback((patch: Partial<Settings>) => {
     setSettings(prev => {
       const next = { ...prev, ...patch }
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch {}
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch (err) { console.warn("[polyscan] Failed to save settings:", err) }
       return next
     })
   }, [])
 
   const reset = useCallback(() => {
-    try { localStorage.removeItem(STORAGE_KEY) } catch {}
+    try { localStorage.removeItem(STORAGE_KEY) } catch (err) { console.warn("[polyscan] Failed to remove settings:", err) }
     setSettings(SETTINGS_DEFAULTS)
   }, [])
 
