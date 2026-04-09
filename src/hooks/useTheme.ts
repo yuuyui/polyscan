@@ -27,7 +27,10 @@ export function useTheme() {
   const currentTheme = THEMES[idx >= 0 ? idx : 0]
   const nextTheme = THEMES[(idx + 1) % THEMES.length]
 
-  const toggleTheme = () => setTheme(nextTheme.id)
+  const toggleTheme = () => {
+    const currentIdx = THEMES.findIndex(t => t.id === theme)
+    setTheme(THEMES[(currentIdx + 1) % THEMES.length].id)
+  }
 
   return { theme, setTheme, toggleTheme, currentTheme, nextTheme, themes: THEMES }
 }

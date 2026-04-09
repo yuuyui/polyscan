@@ -21,10 +21,12 @@ describe("formatDateTimeUTC", () => {
 })
 
 describe("formatTime24h", () => {
-  it("returns a HH:MM:SS formatted string", () => {
-    const result = formatTime24h(new Date("2026-03-15T09:05:03Z"))
-    // locale-dependent so just check format
-    expect(result).toMatch(/^\d{2}:\d{2}:\d{2}$/)
+  it("formats to 24h time in UTC", () => {
+    expect(formatTime24h(new Date("2026-03-15T09:05:03Z"))).toBe("09:05:03")
+  })
+
+  it("handles midnight", () => {
+    expect(formatTime24h(new Date("2026-01-01T00:00:00Z"))).toBe("00:00:00")
   })
 })
 

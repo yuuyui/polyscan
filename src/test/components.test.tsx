@@ -88,17 +88,17 @@ describe("ResultTable", () => {
 
   it("sorts by column on click", () => {
     render(<ResultTable results={[mockResult, mockResultUnder]} />)
-    const yesHeader = screen.getByText("YES")
+    const yesHeader = screen.getByRole("columnheader", { name: /Sort by YES/ })
     fireEvent.click(yesHeader)
-    expect(yesHeader.closest("th")).toHaveAttribute("aria-sort", "descending")
+    expect(yesHeader).toHaveAttribute("aria-sort", "descending")
   })
 
   it("toggles sort direction on same column click", () => {
     render(<ResultTable results={[mockResult]} />)
-    const gapHeader = screen.getByText(/^GAP/)
+    const gapHeader = screen.getByRole("columnheader", { name: /Sort by GAP/ })
     // GAP is default sort key (descending), first click toggles to ascending
     fireEvent.click(gapHeader)
-    expect(gapHeader.closest("th")).toHaveAttribute("aria-sort", "ascending")
+    expect(gapHeader).toHaveAttribute("aria-sort", "ascending")
   })
 })
 
@@ -140,6 +140,6 @@ describe("FilterBar", () => {
   it("shows min gap value via aria-label", () => {
     render(<FilterBar minGap={0.05} direction="ALL" onMinGapChange={vi.fn()} onDirectionChange={vi.fn()} />)
     expect(screen.getByLabelText(/Minimum gap: 5 cents/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Minimum gap: 5 cents/)).toHaveValue("5")
+    expect(screen.getByLabelText(/Minimum gap: 5 cents/)).toHaveAttribute("value", "5")
   })
 })
