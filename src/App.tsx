@@ -26,7 +26,7 @@ export default function App() {
   const [minGap, setMinGap] = useState(settings.minGap)
   const [direction, setDirection] = useState<FilterDirection>(settings.defaultDirection)
   const { theme, setTheme, toggleTheme, currentTheme } = useTheme()
-  const { history, addScan, clearAll } = useScanHistory()
+  const { history, addScan, clearAll } = useScanHistory(settings.maxSavedScans)
   const onScanComplete = useCallback((results: GapResult[], totalScanned: number) => {
     addScan(results, totalScanned)
   }, [addScan])

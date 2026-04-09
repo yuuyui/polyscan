@@ -3,7 +3,6 @@ import type { GapResult, ScanRecord } from "../types"
 import { STORAGE_KEYS } from "../constants"
 
 const STORAGE_KEY = STORAGE_KEYS.history
-const MAX_RECORDS = 50
 
 function loadFromStorage(): ScanRecord[] {
   try {
@@ -38,7 +37,7 @@ function saveToStorage(records: ScanRecord[]) {
   }
 }
 
-export function useScanHistory() {
+export function useScanHistory(maxSavedScans: number = 50) {
   const [history, setHistory] = useState<ScanRecord[]>(loadFromStorage)
 
   const addScan = useCallback((results: GapResult[], totalScanned: number) => {
@@ -49,11 +48,11 @@ export function useScanHistory() {
       results,
     }
     setHistory(prev => {
-      const next = [record, ...prev].slice(0, MAX_RECORDS)
+      const next = [record, ...prev].slice(0, maxSavedScans)
       saveToStorage(next)
       return next
     })
-  }, [])
+  }, [maxSavedScans])
 
   const clearAll = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
