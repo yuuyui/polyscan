@@ -52,7 +52,7 @@ export function ResultTable({ results }: { results: GapResult[] }) {
                   {r.direction==="UNDER"?"-":"+"}{(r.gap*100).toFixed(2)}%
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <span className={`inline-block px-2 py-0.5 text-[9px] font-bold uppercase rounded-sm ${directionBadgeClass(r.direction)}`}>
+                  <span data-direction={r.direction} className={`inline-block px-2 py-0.5 text-[9px] font-bold uppercase rounded-sm ${directionBadgeClass(r.direction)}`}>
                     {r.direction}
                   </span>
                 </td>

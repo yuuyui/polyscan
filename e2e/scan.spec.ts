@@ -44,12 +44,12 @@ test.describe("Filter", () => {
 
   test("OVER filter shows only OVER direction signals", async ({ page }) => {
     await page.getByRole("button", { name: "OVER" }).first().click()
-    await expect(page.locator(".bg-under-bg")).toHaveCount(0)
+    await expect(page.locator("[data-direction=UNDER]")).toHaveCount(0)
   })
 
   test("UNDER filter shows only UNDER direction signals", async ({ page }) => {
     await page.getByRole("button", { name: "UNDER" }).first().click()
-    await expect(page.locator(".bg-over-bg")).toHaveCount(0)
+    await expect(page.locator("[data-direction=OVER]")).toHaveCount(0)
   })
 
   test("ALL filter restores all signals", async ({ page }) => {

@@ -33,8 +33,8 @@ export default function App() {
   const { results, isScanning, lastScanAt, totalScanned, error, scan, loadMock } = useScan(minGap, onScanComplete)
   const filtered = results.filter(r => direction === "ALL" ? true : r.direction === direction)
 
-  // Expose loadMock for e2e tests (no UI button)
-  if (typeof window !== "undefined") (window as Record<string, unknown>).__loadMock = loadMock
+  // Expose loadMock for e2e tests only in dev mode
+  if (import.meta.env.DEV && typeof window !== "undefined") (window as Record<string, unknown>).__loadMock = loadMock
 
   return (
     <div className="min-h-screen bg-bg-base text-text-primary flex flex-col">
@@ -194,13 +194,15 @@ function MobileLayout({ active, setActive, scan, isScanning, totalScanned, filte
             <span className="font-mono font-bold text-primary tracking-widest text-sm uppercase">POLYSCAN</span>
           </div>
         </div>
-        <button
-          onClick={scan}
-          disabled={isScanning}
-          className="px-3 py-1.5 text-xs font-mono font-bold uppercase rounded-sm disabled:opacity-50 bg-primary text-on-primary hover:bg-primary-hover"
-        >
-          {isScanning ? "\u2026" : "SCAN"}
-        </button>
+        {active === "terminal" && (
+          <button
+            onClick={scan}
+            disabled={isScanning}
+            className="px-3 py-1.5 text-xs font-mono font-bold uppercase rounded-sm disabled:opacity-50 bg-primary text-on-primary hover:bg-primary-hover"
+          >
+            {isScanning ? "\u2026" : "SCAN"}
+          </button>
+        )}
       </header>
 
       {/* Slide-over menu */}
