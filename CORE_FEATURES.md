@@ -34,7 +34,7 @@ gap = |1.0 - sum|
 ### 3. Signal Cards
 - Market question, YES price, NO price, SUM, Gap % (color-coded)
 - Direction badge: `UNDER` / `OVER`
-- Net profit หลัง fee 2%, Sparkline 5-bar trend
+- Net profit หลัง fee 2%, Sparkline 6-bar trend
 
 ### 4. View Toggle (CARDS ↔ TABLE)
 - **CARDS:** 2-col grid desktop / 1-col mobile — visual-first
