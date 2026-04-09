@@ -41,7 +41,7 @@ gap = |1.0 - sum|
 - **TABLE:** columns Market, YES, NO, SUM, Gap%, Direction — sort by header click
 
 ### 5. Filter Controls
-- **Min Gap slider** (0–10%) — real-time ไม่ต้อง scan ใหม่
+- **Min Gap slider** (1–20%) — real-time ไม่ต้อง scan ใหม่
 - **Direction pills** (ALL / OVER / UNDER) — active = magenta `#e566ff`
 - **Live count** — แสดง filtered results
 
@@ -126,7 +126,7 @@ interface Settings {
 ┌──────────────────────────────────────────┐
 │                React App                 │
 │  ┌───────────────┐  ┌─────────────────┐  │
-│  │  useScanHook  │→ │  GapCalcUtil    │  │
+│  │  useScan      │→ │  polymarket.ts  │  │
 │  └──────┬────────┘  └────────┬────────┘  │
 │         └──────────┬─────────┘           │
 │                    ▼                     │
