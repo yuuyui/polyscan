@@ -22,11 +22,11 @@ describe("formatDateTimeUTC", () => {
 
 describe("formatTime24h", () => {
   it("formats to 24h time in UTC", () => {
-    expect(formatTime24h(new Date("2026-03-15T09:05:03Z"))).toBe("09:05:03")
+    expect(formatTime24h(new Date("2026-03-15T09:05:03Z"))).toBe("09:05:03 UTC")
   })
 
   it("handles midnight", () => {
-    expect(formatTime24h(new Date("2026-01-01T00:00:00Z"))).toBe("00:00:00")
+    expect(formatTime24h(new Date("2026-01-01T00:00:00Z"))).toBe("00:00:00 UTC")
   })
 })
 

@@ -140,6 +140,6 @@ describe("FilterBar", () => {
   it("shows min gap value via aria-label", () => {
     render(<FilterBar minGap={0.05} direction="ALL" onMinGapChange={vi.fn()} onDirectionChange={vi.fn()} />)
     expect(screen.getByLabelText(/Minimum gap: 5 cents/)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Minimum gap: 5 cents/)).toHaveAttribute("value", "5")
+    expect(screen.getByLabelText(/Minimum gap: 5 cents/)).toHaveValue("5")
   })
 })

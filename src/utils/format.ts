@@ -13,9 +13,9 @@ export function formatDateTimeUTC(date: Date): string {
   return date.toISOString().replace("T", " ").slice(0, 19) + " UTC"
 }
 
-/** Format a Date to "HH:MM:SS" in 24h format, using en-GB locale with UTC timezone for consistent output */
+/** Format a Date to "HH:MM:SS UTC" in 24h format, using en-GB locale with UTC timezone for consistent output */
 export function formatTime24h(date: Date): string {
-  return date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: "UTC" })
+  return date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: "UTC" }) + " UTC"
 }
 
 /** Truncate text to maxLen and append ellipsis */
