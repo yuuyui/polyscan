@@ -1,8 +1,5 @@
 import { test, expect } from "@playwright/test"
-
-async function loadMock(page: import("@playwright/test").Page) {
-  await page.evaluate(() => (window as Record<string, unknown>).__loadMock?.())
-}
+import { loadMock } from "./helpers"
 
 test.describe("History page", () => {
   test.beforeEach(async ({ page }) => {
