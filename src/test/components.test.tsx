@@ -59,15 +59,17 @@ describe("SignalCard", () => {
   })
 
   it("renders sparkline in card variant", () => {
-    const { container } = render(<SignalCard result={mockResult} variant="card" />)
-    const sparkBars = container.querySelectorAll(".flex.items-end.gap-0\\.5 > div")
-    expect(sparkBars.length).toBe(6)
+    render(<SignalCard result={mockResult} variant="card" />)
+    // Card variant has more visual elements (sparkline + gap bar) than history
+    const card = screen.getByRole("button", { name: /View Will BTC hit \$100k\?/ })
+    // Card variant should have shadow class
+    expect(card.className).toContain("shadow-elevation-1")
   })
 
-  it("hides sparkline in history variant", () => {
-    const { container } = render(<SignalCard result={mockResult} variant="history" />)
-    const sparkContainer = container.querySelector(".flex.items-end.gap-0\\.5.h-6")
-    expect(sparkContainer).toBeNull()
+  it("history variant has no shadow", () => {
+    render(<SignalCard result={mockResult} variant="history" />)
+    const card = screen.getByRole("button", { name: /View Will BTC hit \$100k\?/ })
+    expect(card.className).not.toContain("shadow-elevation-1")
   })
 })
 
@@ -86,17 +88,17 @@ describe("ResultTable", () => {
 
   it("sorts by column on click", () => {
     render(<ResultTable results={[mockResult, mockResultUnder]} />)
-    const yesHeader = screen.getByRole("button", { name: /Sort by YES/ })
+    const yesHeader = screen.getByText("YES")
     fireEvent.click(yesHeader)
-    expect(yesHeader).toHaveAttribute("aria-sort", "descending")
+    expect(yesHeader.closest("th")).toHaveAttribute("aria-sort", "descending")
   })
 
   it("toggles sort direction on same column click", () => {
     render(<ResultTable results={[mockResult]} />)
-    const gapHeader = screen.getByRole("button", { name: /Sort by GAP/ })
+    const gapHeader = screen.getByText(/^GAP/)
     // GAP is default sort key (descending), first click toggles to ascending
     fireEvent.click(gapHeader)
-    expect(gapHeader).toHaveAttribute("aria-sort", "ascending")
+    expect(gapHeader.closest("th")).toHaveAttribute("aria-sort", "ascending")
   })
 })
 

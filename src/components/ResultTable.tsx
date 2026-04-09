@@ -22,9 +22,8 @@ export function ResultTable({ results }: { results: GapResult[] }) {
               <th className={th + " text-left"}>Market / Question</th>
               {(["yes","no","sum","gap"] as SortKey[]).map(k => (
                 <th key={k} className={th + " text-right"} onClick={() => toggle(k)}
-                  role="button" tabIndex={0}
-                  aria-label={`Sort by ${k.toUpperCase()}${sortKey===k ? (sortAsc ? ", ascending" : ", descending") : ""}`}
-                  aria-sort={sortKey===k ? (sortAsc ? "ascending" : "descending") : undefined}
+                  tabIndex={0}
+                  aria-sort={sortKey===k ? (sortAsc ? "ascending" : "descending") : "none"}
                   onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(k) } }}
                 >
                   {k.toUpperCase()} {sortKey===k ? (sortAsc?"\u2191":"\u2193") : ""}
