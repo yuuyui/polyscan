@@ -76,3 +76,6 @@ body {
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: rgb(var(--color-bg-base)); }
 ::-webkit-scrollbar-thumb { background: rgb(var(--color-border-default)); }
+
+@keyframes slide-in { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.animate-slide-in { animation: slide-in 0.2s ease-out; }

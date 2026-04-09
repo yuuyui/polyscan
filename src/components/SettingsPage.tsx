@@ -49,10 +49,10 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
     <div className="flex items-center gap-1.5">
       <span className="text-[9px] font-mono text-text-muted uppercase">{checked ? "ON" : "OFF"}</span>
       <button onClick={() => onChange(!checked)} aria-pressed={checked} aria-label={label ?? (checked ? "Disable" : "Enable")}
-        className={`relative w-9 h-5 rounded-full transition-colors ${checked ? "bg-primary" : "bg-bg-card-inner border border-border-default"}`}
+        className={`relative w-9 h-5 rounded-full overflow-hidden transition-colors ${checked ? "bg-primary" : "bg-bg-card-inner border border-border-default"}`}
       >
-        <span className={`absolute top-[3px] w-3.5 h-3.5 rounded-full bg-text-primary transition-transform ${
-          checked ? "translate-x-[18px]" : "translate-x-[3px]"
+        <span className={`absolute top-[3px] left-0 w-3.5 h-3.5 rounded-full bg-text-primary transition-transform ${
+          checked ? "translate-x-[19px]" : "translate-x-[3px]"
         }`} />
       </button>
     </div>
@@ -238,7 +238,7 @@ export function SettingsPage({ settings, update, onReset, theme, setTheme, histo
   return (
     <div className="flex-1 overflow-y-auto p-6">
       {/* Desktop: 2-column */}
-      <div className="hidden lg:grid grid-cols-2 gap-6 max-w-5xl">
+      <div className="hidden lg:grid grid-cols-2 gap-6">
         <div className="space-y-6">
           {appearance}
           {scanDefaults}

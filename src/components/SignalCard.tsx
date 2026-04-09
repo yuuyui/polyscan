@@ -30,7 +30,7 @@ export function SignalCard({ result, variant = "card" }: Props) {
         <p className={`text-text-primary font-body leading-snug line-clamp-2 flex-1 ${isCard ? "text-sm" : "text-xs"}`}>
           {result.question}
         </p>
-        <span className={`shrink-0 inline-block px-2.5 py-0.5 font-mono font-semibold uppercase ${
+        <span data-direction={result.direction} className={`shrink-0 inline-block px-2.5 py-0.5 font-mono font-semibold uppercase ${
           isCard ? "text-xs rounded-full" : "text-[9px] font-bold rounded-sm"
         } ${directionBadgeClass(result.direction)}`}>
           {result.direction}

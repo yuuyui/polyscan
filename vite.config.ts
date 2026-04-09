@@ -8,11 +8,6 @@ export default defineConfig({
     port: 5173,
     allowedHosts: true,
     proxy: {
-      '/api': {
-        target: 'https://clob.polymarket.com',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      },
       '/gamma': {
         target: 'https://gamma-api.polymarket.com',
         changeOrigin: true,
@@ -24,5 +19,6 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    exclude: ['**/node_modules/**', '**/e2e/**'],
   },
 })
