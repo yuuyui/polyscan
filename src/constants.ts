@@ -15,7 +15,7 @@ export const CHART_LABEL_MAX_LEN = 18
 export const STORAGE_KEYS = {
   settings: "polyscan_settings",
   history: "polyscan_history",
-  theme: "polyscan_theme",
+  theme: "polyscan-theme",
 } as const
 
 /** Simulated price generation ranges for Gamma API */

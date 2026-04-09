@@ -18,8 +18,8 @@ export function SignalCard({ result, variant = "card" }: Props) {
 
   return (
     <div
-      className={`bg-bg-card border border-border-default p-4 cursor-pointer hover:border-primary transition-colors space-y-3 ${
-        isCard ? "rounded-md shadow-elevation-1 focus:outline-none focus:ring-2 focus:ring-primary" : "rounded-sm"
+      className={`bg-bg-card border border-border-default p-4 cursor-pointer hover:border-primary transition-colors space-y-3 focus:outline-none focus:ring-2 focus:ring-primary ${
+        isCard ? "rounded-md shadow-elevation-1" : "rounded-sm"
       }`}
       role="button" tabIndex={0} aria-label={`View ${result.question}`}
       onClick={() => openPolymarketEvent(result.slug)}

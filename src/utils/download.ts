@@ -4,7 +4,8 @@ export function downloadBlob(blob: Blob, filename: string): void {
   const a = document.createElement("a")
   a.href = url
   a.download = filename
+  document.body.appendChild(a)
   a.click()
-  // Schedule cleanup on next microtask to ensure click is processed
-  queueMicrotask(() => URL.revokeObjectURL(url))
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }

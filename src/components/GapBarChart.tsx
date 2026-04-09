@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useEffect, useState } from "react"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts"
 import type { GapResult } from "../types"
 import { truncateText } from "../utils/format"
@@ -22,7 +22,13 @@ function readThemeColors() {
 }
 
 export function GapBarChart({ results, isScanning = false }: Props) {
-  const colors = useMemo(readThemeColors, [results, isScanning])
+  const [colors, setColors] = useState(readThemeColors)
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => setColors(readThemeColors()))
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
+    return () => observer.disconnect()
+  }, [])
 
   const data = results.slice(0, CHART_DISPLAY_LIMIT).map(r => ({
     name: truncateText(r.question, CHART_LABEL_MAX_LEN),
