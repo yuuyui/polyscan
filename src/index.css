@@ -27,6 +27,8 @@
 
   --color-border-default: 46 44 62;
   --color-border-subtle:  61 59 80;
+
+  --color-surface-high:   61 59 80;
 }
 
 /* ── Binance Theme (RGB channels) ─────────────────────── */
@@ -54,6 +56,8 @@
 
   --color-border-default: 43 47 54;
   --color-border-subtle:  54 60 69;
+
+  --color-surface-high:   54 60 69;
 }
 
 * { box-sizing: border-box; }

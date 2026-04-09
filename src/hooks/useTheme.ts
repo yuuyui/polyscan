@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { STORAGE_KEYS } from "../constants"
 
 export type ThemeId = "default" | "binance"
 
@@ -7,7 +8,6 @@ export const THEMES: { id: ThemeId; label: string; className: string; accent: st
   { id: "binance", label: "Binance", className: "theme-binance", accent: "#f0b90b" },
 ]
 
-import { STORAGE_KEYS } from "../constants"
 const STORAGE_KEY = STORAGE_KEYS.theme
 
 export function useTheme() {
@@ -23,13 +23,14 @@ export function useTheme() {
     localStorage.setItem(STORAGE_KEY, theme)
   }, [theme])
 
-  const toggleTheme = () => {
-    const idx = THEMES.findIndex(t => t.id === theme)
-    setTheme(THEMES[(idx + 1) % THEMES.length].id)
-  }
+  const idx = THEMES.findIndex(t => t.id === theme)
+  const currentTheme = THEMES[idx >= 0 ? idx : 0]
+  const nextTheme = THEMES[(idx + 1) % THEMES.length]
 
-  const currentTheme = THEMES.find(t => t.id === theme)!
-  const nextTheme = THEMES[(THEMES.findIndex(t => t.id === theme) + 1) % THEMES.length]
+  const toggleTheme = () => {
+    const currentIdx = THEMES.findIndex(t => t.id === theme)
+    setTheme(THEMES[(currentIdx + 1) % THEMES.length].id)
+  }
 
   return { theme, setTheme, toggleTheme, currentTheme, nextTheme, themes: THEMES }
 }
