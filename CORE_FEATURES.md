@@ -23,7 +23,7 @@ gap = |1.0 - sum|
 ## Main Features
 
 ### 1. Real-time Arbitrage Scanner
-- **API:** Polymarket CLOB — fetch all markets → calculate gap
+- **API:** Gamma API — `fetchGammaMarkets(limit=100)` → calculate gap
 - **Filter:** min gap threshold (%) + direction (UNDER/OVER/ALL)
 - **Trigger:** SCAN NOW button → fetch latest + calculate
 
@@ -58,7 +58,7 @@ gap = |1.0 - sum|
 - **Mobile <1024px:** bottom tab bar (Terminal/History/Settings), full-width, 1-col card grid
 
 ### 9. Scan History
-- บันทึกผล scan ทุกครั้งลง localStorage (สูงสุด 10 scans, purge oldest)
+- บันทึกผล scan ทุกครั้งลง localStorage (สูงสุด 50 scans, purge oldest)
 - History panel แสดงรายการ scan ย้อนหลัง — timestamp, signal count, UNDER/OVER count
 - คลิก scan → main content โหลดผล scan นั้น
 - Sort by gap %, Export JSON, Delete scan, Clear all
@@ -101,11 +101,22 @@ History open:
 | Modal | 40 | Future detail modal |
 | Toast | 50 | Notifications |
 
-### 10. Settings
-- **Theme** — สลับ dark/light mode
-- **Gap Threshold** — ตั้งค่า default min gap %
-- **Scan Timeout** — กำหนด timeout สำหรับ API calls
-- **App Version** — แสดง version จาก package.json (dynamic)
+### 10. Settings (`useSettings` hook — persisted to localStorage)
+```typescript
+interface Settings {
+  defaultView:        "CARDS" | "TABLE"         // default: "CARDS"
+  minGap:             number                    // default: 0.03
+  defaultDirection:   FilterDirection           // default: "ALL"
+  marketLimit:        50 | 100 | 200            // default: 100
+  feeRate:            number                    // default: 0.02
+  autoScan:           boolean                   // default: false
+  scanInterval:       "30s" | "1m" | "5m" | "10m"  // default: "1m"
+  notifyOnSignals:    boolean                   // default: false
+  minSignalsToNotify: 1 | 3 | 5                // default: 1
+  maxSavedScans:      25 | 50 | 100            // default: 50
+  exportFormat:       "JSON" | "CSV"            // default: "JSON"
+}
+```
 
 ---
 
@@ -135,7 +146,7 @@ History open:
 | UI | React 19 + TypeScript |
 | Styling | Tailwind CSS |
 | Charts | Recharts |
-| HTTP | Fetch API (via Vite proxy → Polymarket CLOB) |
+| HTTP | Fetch API (via Vite proxy → Gamma API) |
 | Testing | Vitest + Playwright (Chromium, Firefox, WebKit) |
 | Build | Vite |
 | Deploy | Cloudflare Tunnel |
@@ -160,9 +171,9 @@ History open:
 | `over-text` | `#ff5f52` | OVER badge text |
 | `text-primary` | `#ffffff` | Primary text |
 | `text-secondary` | `#c0c0c0` | Secondary text |
-| `text-muted` | `#6b6882` | Muted text (lavender-gray) |
+| `text-muted` | `#9999CC` | Muted text (lavender-gray) |
 | `border-default` | `#2e2c3e` | Default border |
-| `border-subtle` | `#1e1d2b` | Subtle border |
+| `border-subtle` | `#3D3B50` | Subtle border |
 
 > รายการ token ครบถ้วน (23 tokens รวม surface, primary/on, filter/on) ดูได้ที่ `FIGMA_STYLE.md`
 
@@ -180,31 +191,23 @@ History open:
 
 ```typescript
 interface GapResult {
-  id: string
-  question: string
-  yesPrice: number        // YES side price (0–1)
-  noPrice: number         // NO side price (0–1)
-  gap: number             // gap % decimal (e.g. 0.05 = 5%)
-  direction: "UNDER" | "OVER" | "FAIR"
-  netProfit: number       // gap − 2% fee
-  sparkline?: number[]    // 5-bar price history
+  question:  string                    // market question text
+  slug:      string                    // market slug (unique ID)
+  yes:       number                    // YES side price (0–1)
+  no:        number                    // NO side price (0–1)
+  sum:       number                    // YES + NO
+  gap:       number                    // gap % decimal (e.g. 0.05 = 5%)
+  direction: "OVER" | "UNDER" | "FAIR"
 }
 
-interface Filter {
-  minGap: number              // e.g. 0.03 = 3%
-  direction: "ALL" | "UNDER" | "OVER"
-}
+type FilterDirection = "ALL" | "OVER" | "UNDER"
+// ไม่มี Filter interface — ใช้ state variables แยก: minGap (number) + direction (FilterDirection)
 
-interface ScanHistory {
-  id: string                  // unique scan ID
-  timestamp: Date             // when scan ran
-  totalScanned: number        // markets checked
-  signalsFound: number        // passed minGap filter
-  underCount: number          // UNDER opportunities
-  overCount: number           // OVER opportunities
-  minGap: number              // threshold used
-  direction: FilterDirection  // ALL/UNDER/OVER
-  results: GapResult[]        // snapshot of results
+interface ScanRecord {
+  id:            string        // unique scan ID (e.g. "scan-1712345678")
+  timestamp:     Date          // when scan ran
+  totalScanned:  number        // markets checked
+  results:       GapResult[]   // snapshot of filtered results
 }
 ```
 
@@ -216,8 +219,8 @@ interface ScanHistory {
 src/
 ├── App.tsx                    # Main layout (sidebar + scanner)
 ├── main.tsx                   # React entry point
-├── config.ts                  # MIN_GAP, BATCH_SIZE, FEE_RATE
-├── constants.ts               # App-wide constants
+├── config.ts                  # GAMMA_HOST, FEE_RATE
+├── constants.ts               # GAP_MIN, GAP_MAX, SPARKLINE_BARS, STORAGE_KEYS, SEED_RANGES
 ├── types.ts                   # TypeScript interfaces
 ├── globals.d.ts               # Global type declarations (__APP_VERSION__)
 ├── mockData.ts                # Mock data for development
@@ -233,7 +236,7 @@ src/
 │   ├── SettingsPage.tsx       # App settings (theme, threshold, timeout)
 │   └── ErrorBoundary.tsx      # Error boundary wrapper
 ├── api/
-│   └── polymarket.ts          # fetchAllMarkets (paginated), fetchMidpoints (batch 500)
+│   └── polymarket.ts          # fetchGammaMarkets(limit=100) — Gamma API client
 ├── hooks/
 │   ├── useScan.ts             # Scan state + orchestration
 │   ├── useScanHistory.ts      # Scan history persistence (localStorage)
@@ -252,8 +255,8 @@ src/
 
 ### Scan
 1. User clicks SCAN NOW → `useScan()` triggers fetch
-2. `fetchAllMarkets()` (paginated) → `fetchMidpoints()` (batch 500)
-3. `calcGaps()` → filter by minGap → update results + timestamp
+2. `fetchGammaMarkets(limit=100)` → Gamma API
+3. Filter by minGap → update results + timestamp
 
 ### Filter
 1. User adjusts slider or direction pill → filter state updates
