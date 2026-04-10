@@ -76,7 +76,7 @@ Closes #5
 
 ---
 
-> **สำคัญ:** Jasmine ต้องปฏิบัติตาม workflow นี้ทุก task
+> **สำคัญ:** Dev ทุกคน ต้องปฏิบัติตาม workflow นี้ทุก task
 > ไม่มีข้อยกเว้น — แม้แต่ fix เล็กน้อย
 
 ---
@@ -144,12 +144,31 @@ npm run build
 # → ต้องไม่มี TypeScript error
 ```
 
-**4.3 Manual / Integration Test**
+**4.3 E2E Test (Playwright)**
+
+ก่อนรัน E2E ต้องตรวจ:
+- [ ] Design lock confirmed — design ไม่มีการเปลี่ยนแปลงหลัง approved
+- [ ] `data-testid` ใน code ตรงกับ component name ใน Figma
+- [ ] ทุก state ที่ test ครอบคลุม (empty, loading, error, success) มี frame ใน Figma
+
+```bash
+npx playwright test
+# → ต้องผ่านทุก test ที่ครอบคลุม happy path + critical paths
+```
+
+รายงาน E2E:
+```
+E2E: happy path scan → ✅ Pass
+E2E: empty state (no results) → ✅ Pass
+E2E: error state (network fail) → ✅ Pass
+```
+
+**4.4 Manual / Integration Test**
 - เปิด dev server: `npm run dev`
 - ทดสอบตาม acceptance criteria ของแต่ละ epic ทีละข้อ
 - บันทึกผล pass/fail
 
-**4.4 รายงานผล**
+**4.5 รายงานผล**
 
 ```
 ## Test Report — Epic: core-scan
@@ -178,7 +197,7 @@ Result: 5/5 Pass ✅
               ↓
 [Dev]    สร้าง Pull Request
               ↓
-[Tester] ดู Issues → Group Epic → Analyze AC → Test → รายงานผล
+[Tester] ดู Issues → Group Epic → Analyze AC → Unit Test → E2E → Manual → รายงานผล
               ↓
 [Owner]  Review PR + Test Report → Merge
 ```

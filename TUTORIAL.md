@@ -501,7 +501,7 @@ cd polyscan
 npm install
 
 # Test
-npm run test    # ✅ 12/12
+npm run test    # ✅ 33 unit tests (Vitest) + 93 e2e tests (Playwright)
 
 # Dev
 npm run dev
