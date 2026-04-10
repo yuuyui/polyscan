@@ -513,18 +513,7 @@ npm run dev
 
 ## Files Reference
 
-| File | หน้าที่ |
-|------|--------|
-| `design.md` | Architecture spec |
-| `WORKFLOW.md` | Git workflow rules |
-| `TUTORIAL.md` | คู่มือนี้ |
-| `stitch/design-system.html` | Design tokens + components |
-| `stitch/scanner-main.html` | Mobile mockup |
-| `stitch/scanner-desktop.html` | Desktop mockup |
-| `src/api/polymarket.ts` | Polymarket API |
-| `src/utils/calculator.ts` | Gap logic |
-| `src/hooks/useScan.ts` | Scan state |
-| `src/components/SignalCard.tsx` | V2 card component |
+ดูรายการไฟล์ทั้งหมดได้ที่ [README.md](./README.md)
 
 ---
 
