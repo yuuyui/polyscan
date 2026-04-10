@@ -511,23 +511,6 @@ npm run dev
 
 ---
 
-## Files Reference
-
-| File | หน้าที่ |
-|------|--------|
-| `design.md` | Architecture spec |
-| `WORKFLOW.md` | Git workflow rules |
-| `TUTORIAL.md` | คู่มือนี้ |
-| `stitch/design-system.html` | Design tokens + components |
-| `stitch/scanner-main.html` | Mobile mockup |
-| `stitch/scanner-desktop.html` | Desktop mockup |
-| `src/api/polymarket.ts` | Polymarket API |
-| `src/utils/calculator.ts` | Gap logic |
-| `src/hooks/useScan.ts` | Scan state |
-| `src/components/SignalCard.tsx` | V2 card component |
-
----
-
 ## Phase 11: Figma Design System Integration
 
 ### 11.1 พยายามใช้ REST API → ล้มเหลว
@@ -571,7 +554,7 @@ OpenClaw → POST /execute → Bridge Server :3333 → WebSocket → Figma Plugi
 ### 11.4 วิธีที่ใช้ได้จริง: Claude Code + Figma MCP
 
 **Prompt:**
-> "เปิด project polyscan เปิด claude code ใช้ figma mcp connect ไปที่ https://www.figma.com/design/dIFXfUTocyKaS6khWnu7Ir"
+> "เปิด project polyscan เปิด claude code ใช้ figma mcp connect ไปที่ <figma-file-url>"
 
 ```bash
 # เช็ค Figma MCP
@@ -591,7 +574,7 @@ Figma MCP tools ที่ใช้ได้: `Figma:whoami`, `Figma:use_figma`, 
 **Prompt:**
 > "สร้าง Design System จาก codebase นี้"
 
-ผล: 4 pages ใน file `dIFXfUTocyKaS6khWnu7Ir` (ปัจจุบันชื่อ "Polyscan Design System"):
+ผล: 4 pages ใน Figma file "Polyscan Design System":
 - **🎨 Design Tokens** — Variables reference sheet
 - **🖥️ Desktop (1440px)** — Full layout
 - **📱 Mobile (375px)** — Full layout
