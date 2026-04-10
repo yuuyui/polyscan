@@ -27,8 +27,8 @@ describe("downloadBlob", () => {
       return node
     })
     downloadBlob(new Blob(["x"]), "export.json")
-    expect(anchor?.href).toBe(mockUrl)
-    expect(anchor?.download).toBe("export.json")
+    expect(anchor!.href).toBe(mockUrl)
+    expect(anchor!.download).toBe("export.json")
   })
 
   it("appends anchor to document.body before click", () => {

@@ -55,8 +55,7 @@ test.describe("Mobile burger menu", () => {
     await page.getByRole("button", { name: "Toggle menu" }).click()
     const nav = page.getByRole("navigation", { name: "Mobile navigation" })
     await expect(nav).toBeVisible()
-    // click the overlay (fixed inset div — click at edge of screen)
-    await page.mouse.click(380, 400)
+    await page.getByTestId("mobile-menu-backdrop").click()
     await expect(nav).not.toBeVisible()
   })
 

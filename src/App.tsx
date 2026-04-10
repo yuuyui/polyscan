@@ -34,7 +34,7 @@ export default function App() {
   const filtered = results.filter(r => direction === "ALL" ? true : r.direction === direction)
 
   // Expose loadMock for e2e tests only in dev mode
-  if (import.meta.env.DEV && typeof window !== "undefined") (window as Record<string, unknown>).__loadMock = loadMock
+  if (import.meta.env.DEV && typeof window !== "undefined") (window as unknown as Record<string, unknown>).__loadMock = loadMock
 
   return (
     <div className="min-h-screen bg-bg-base text-text-primary flex flex-col">
@@ -208,7 +208,7 @@ function MobileLayout({ active, setActive, scan, isScanning, totalScanned, filte
       {/* Slide-over menu */}
       {menuOpen && (
         <>
-          <div className="fixed inset-0 top-12 bg-black/50 z-40" onClick={() => setMenuOpen(false)} />
+          <div data-testid="mobile-menu-backdrop" className="fixed inset-0 top-12 bg-black/50 z-40" onClick={() => setMenuOpen(false)} />
           <nav
             className="fixed top-12 left-0 bottom-0 w-64 bg-bg-sidebar border-r border-border-default z-50 flex flex-col animate-slide-in"
             aria-label="Mobile navigation"

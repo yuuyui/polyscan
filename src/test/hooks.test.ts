@@ -147,13 +147,16 @@ describe("useScanHistory", () => {
 
   it("addScan generates unique id per scan", () => {
     vi.useFakeTimers()
-    const { result } = renderHook(() => useScanHistory())
-    act(() => { result.current.addScan([], 5) })
-    vi.advanceTimersByTime(1)
-    act(() => { result.current.addScan([], 5) })
-    const ids = result.current.history.map(r => r.id)
-    expect(new Set(ids).size).toBe(2)
-    vi.useRealTimers()
+    try {
+      const { result } = renderHook(() => useScanHistory())
+      act(() => { result.current.addScan([], 5) })
+      vi.advanceTimersByTime(1)
+      act(() => { result.current.addScan([], 5) })
+      const ids = result.current.history.map(r => r.id)
+      expect(new Set(ids).size).toBe(2)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("respects maxSavedScans limit", () => {
