@@ -25,7 +25,6 @@ _Extracted from tailwind.config.js_
 | `over/text` | `#ff5f52` | ![](https://via.placeholder.com/16/ff5f52/ff5f52) |
 | `border/default` | `#2e2c3e` | ![](https://via.placeholder.com/16/2e2c3e/2e2c3e) |
 | `border/subtle` | `#3D3B50` | ![](https://via.placeholder.com/16/3D3B50/3D3B50) |
-| `surface/high` | `#2E2C3E` | ![](https://via.placeholder.com/16/2E2C3E/2E2C3E) |
 
 ## Typography
 
