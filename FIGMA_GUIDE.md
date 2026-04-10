@@ -22,7 +22,7 @@
 
 ## 1. File Structure
 
-**File:** `dIFXfUTocyKaS6khWnu7Ir` — Polyscan Design System
+**File:** Polyscan Design System (contact team lead for access link)
 
 | Page | ใช้ทำอะไร |
 |---|---|

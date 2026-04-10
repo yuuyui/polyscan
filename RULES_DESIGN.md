@@ -1,6 +1,8 @@
-# task-design — Design Workflow Rules
+# RULES_DESIGN — Design Workflow Rules
 
-กฎการทำงานออกแบบ (Figma) สำหรับ Polyscan project — ห้ามข้ามขั้นตอน
+กฎการทำงานออกแบบ (Figma) — ใช้ได้กับทุก project — ห้ามข้ามขั้นตอน
+
+> **ดูขั้นตอน Figma workflow โดยละเอียด (archive, sync, audit, error recovery) ได้ที่ `FIGMA_GUIDE.md`**
 
 ---
 
@@ -37,8 +39,8 @@
 
 ## Pre-Flight Checklist (ก่อนเริ่มทุก design task)
 
-- [ ] **อ่าน TASK_DESIGN.md และ feedback memory ที่เกี่ยวข้อง**
-- [ ] **Recheck Figma state**: ทำ audit ทุก page (Desktop, Mobile, Components)
+- [ ] **อ่าน RULES_DESIGN.md และ project-specific notes ที่เกี่ยวข้อง**
+- [ ] **Recheck Figma state**: ทำ audit ทุก page ใน project
   - นับ unbound fills/strokes
   - ตรวจ component coverage (raw frame ไหนควรเป็น instance)
   - ตรวจ instance overrides
@@ -46,22 +48,22 @@
 - [ ] **รายงานสถานะปัจจุบัน** ก่อนเสนอแผน
 - [ ] **เสนอแผน + รอ approve**
 
---
+---
 
 ## During Design
 
 ### Archive ก่อนแก้ทุกครั้ง
-- Duplicate node ที่จะแก้ → ย้ายไป `_archive` page
+- Duplicate node ที่จะแก้ → ย้ายไป page ที่ตั้งชื่อว่า `_archive` (สร้างถ้ายังไม่มี)
 - ตั้งชื่อ `[BEFORE] <name> · YYYY-MM-DD`
 - Position ต่อท้าย (maxX/maxY + 80px) — ห้ามทับ
 
 ### Variable binding (บังคับ)
-- ทุก fill/stroke ต้อง bind variable จาก "Polyscan Tokens" collection
+- ทุก fill/stroke ต้อง bind variable จาก design token collection ของ project
 - ห้าม hardcode rgb ใน production frames
-- ยกเว้น: 🎨 Design Tokens page (intentional reference)
+- ยกเว้น: หน้า/frame ที่เป็น design reference โดยเจตนา (เช่น หน้า Design Tokens หรือ Reference)
 
 ### Component reuse
-- ก่อนสร้าง component ใหม่ ต้องเช็คว่ามี component คล้ายกันใน 🧩 Components page หรือยัง
+- ก่อนสร้าง component ใหม่ ต้องเช็คว่ามี component คล้ายกันใน component library ของ project หรือยัง
 - Component property ต้องครบ (variant, text property, instance swap ตามจำเป็น)
 - ทุก raw frame ที่เป็น UI pattern ซ้ำ → ต้องเป็น component instance
 
@@ -78,9 +80,8 @@
 
 ### Component Property Parity (Desktop ↔ Mobile)
 - Desktop ↔ Mobile component ที่ทำหน้าที่เดียวกันต้องมี property เหมือนกัน
-- เช่น NavItem ต้องมี `Tab` property เหมือน MobileNavItem
 - ถ้าเพิ่ม variant ฝั่งหนึ่ง ต้องเพิ่มอีกฝั่งด้วย
-- Screen naming ต้อง match: `Desktop — X` ↔ `Mobile — X`
+- Screen naming ต้อง match กันทั้ง 2 platform
 
 ### Data Consistency Check (Desktop ↔ Mobile)
 - ข้อมูลใน Desktop ต้องตรงกับ Mobile (ชื่อ, ตัวเลข, badge, variant type)
@@ -113,7 +114,7 @@
   - สีไม่ตรงกับ variable ที่คาดหวัง
 
 **ขั้น 3 — Variable binding audit**
-- [ ] Run audit script ที่ scope ทุก page (ใช้ emoji prefix ให้ถูก)
+- [ ] Run audit script ที่ scope ทุก page ของ project (ระบุ page name ให้ถูกต้อง)
 - [ ] นับ unbound fills + strokes ของแต่ละ page
 - [ ] ถ้าตัวเลข > 0 → ดู sample → ตัดสินว่า intentional หรือต้องแก้
 - [ ] เทียบกับตัวเลขก่อนเริ่ม task — ต้องลดลงหรือเท่าเดิม (ห้ามเพิ่ม)
@@ -128,26 +129,26 @@
 - [ ] หาทุก frame ที่ใช้ component ที่แก้ — list ครบไหม
 - [ ] Screenshot ทุก frame เหล่านั้น
 - [ ] Verify ว่า render ถูก ไม่มีกรณี broken inheritance
-- [ ] เทียบ structural consistency ระหว่าง 2 frame (เช่น Desktop Sidebar vs Desktop with History Sidebar — ต้องใช้ component เดียวกัน)
+- [ ] เทียบ structural consistency ระหว่าง frames ที่ควร match กัน
 
 **ขั้น 6 — Code↔Figma sync check**
-- [ ] หา code file ที่ implement component นี้ (เช่น `src/components/<Name>.tsx`)
+- [ ] หา code file ที่ implement component นี้ (e.g. `src/components/<Name>.tsx`)
 - [ ] Verify props/state ของ code ตรงกับ component properties ใน Figma
 - [ ] Verify class/style ของ code ใช้ token ตรงกับ Figma variable
 - [ ] ถ้ามี gap → บันทึกใน report
 
 **ขั้น 7 — Re-audit (last gate)**
-- [ ] Run pre-flight audit script อีกรอบ
+- [ ] Run audit script อีกรอบ
 - [ ] เทียบกับตัวเลขก่อนเริ่ม
 - [ ] ห้าม report "เสร็จ" ถ้ายังมี unbound เพิ่มขึ้นจากเดิม
-- [ ] ห้าม report "0 issues" ถ้ายังไม่ run audit script ที่ใช้ page name ถูก
+- [ ] ห้าม report "0 issues" ถ้ายังไม่ run audit script ด้วย page name ที่ถูกต้อง
 
 ---
 
 ### Verification Anti-Cheats (ห้ามทำ)
 
 - ❌ เชื่อว่า `setProperties` ใช้ได้ผลโดยไม่ verify text จริงของ instance
-- ❌ Run audit ด้วย page name ที่ไม่มี emoji prefix แล้วได้ 0 → claim "เสร็จ"
+- ❌ Run audit ด้วย page name ผิดแล้วได้ 0 → claim "เสร็จ"
 - ❌ Screenshot แค่ frame ที่แก้ โดยไม่ดู cross-frame impact
 - ❌ Verify โดยอ่านแค่ค่า return จาก script ที่ผ่านมา (script อาจ crash กลางทาง)
 - ❌ Skip "ขั้น 7 re-audit" เพราะ "ก็เพิ่งทำไป"
@@ -195,7 +196,7 @@
 
 ## Anti-Patterns (ห้ามทำ)
 
-- ❌ Audit ด้วย page name ผิด (ลืม emoji prefix) แล้วเชื่อผลลัพธ์
+- ❌ Audit ด้วย page name ผิดแล้วเชื่อผลลัพธ์
 - ❌ รายงาน "0 unbound" หรือ "เสร็จแล้ว" โดยไม่ verify
 - ❌ Detach instance เพื่อแก้ปัญหาเฉพาะหน้า (ทำให้ไม่ sync)
 - ❌ สร้าง component ใหม่ทั้งที่มี component คล้ายกันอยู่แล้ว
@@ -204,8 +205,8 @@
 - ❌ ใช้ `setProperties` กับ text property แล้วไม่ verify ว่าเปลี่ยนจริง (ใช้ direct text node update แทน)
 - ❌ Resize ก่อน set sizing modes (resize reset เป็น FIXED)
 - ❌ Set `layoutSizingHorizontal/Vertical = 'FILL'` ก่อน append child
-- ❌ ทิ้ง leftover instance (e.g. MockButton) ไว้ในไฟล์ — ต้อง cleanup ทุกครั้งที่เจอ
-- ❌ สร้าง component variant โดยไม่มี property ที่จำเป็น (e.g. hardcode icon ใน state variant แทนที่จะมี Tab property)
+- ❌ ทิ้ง leftover instance (e.g. temp/mock nodes) ไว้ในไฟล์ — ต้อง cleanup ทุกครั้งที่เจอ
+- ❌ สร้าง component variant โดยไม่มี property ที่จำเป็น
 - ❌ แก้ overlap / resize section แล้วไม่เช็ค section-to-section overlap ที่อาจเกิดจาก bounds เปลี่ยน
 - ❌ แก้ code โดยไม่มี approved TO-BE frame ใน Figma
 - ❌ เปลี่ยน design หลัง design lock โดยไม่แจ้ง QA และ update E2E test
@@ -215,7 +216,7 @@
 ## ขั้นตอนมาตรฐาน (Standard Flow)
 
 ```
-1. อ่าน rules + memory ที่เกี่ยวข้อง
+1. อ่าน RULES_DESIGN.md + project-specific notes ที่เกี่ยวข้อง
    ↓
 2. ระบุ project type — New Project / Redesign
    ↓

@@ -4,7 +4,7 @@ description: Git workflow rules, tutorial phases, and key documentation files fo
 type: project
 ---
 
-## Git Workflow (WORKFLOW.md) — strictly enforced
+## Git Workflow (RULES_DEV.md + RULES_OWNER.md) — strictly enforced
 1. Create GitHub Issue first (every feature/bugfix)
 2. Wait for owner approval before implementing
 3. Work on branch: `feat/issue-<number>-<short-desc>`
@@ -16,11 +16,14 @@ type: project
 **How to apply:** Always create Issue → wait for approval → branch → PR. Never commit to main directly.
 
 ## Key Docs
+- `README.md` — Quick start, features, docs index
+- `CORE_FEATURES.md` — Architecture spec, features, data model, roadmap
 - `TUTORIAL.md` — Full build story Phase 1-11 (research → design → implement → Figma)
-- `TASK.md` — V1 implementation checklist (26 steps)
-- `TASK_V2.md` — V2 Figma UI overhaul (16 steps)
-- `design.md` — Architecture + API spec + component design
-- `figma-design-system.md` — Design tokens extracted from tailwind
+- `FIGMA_GUIDE.md` — Figma workflow: archive, sync, audit, error recovery
+- `FIGMA_STYLE.md` — Design tokens, typography, component specs
+- `RULES_DEV.md` — Git workflow rules (Issue → Branch → PR)
+- `RULES_DESIGN.md` — Design workflow rules (Figma)
+- `RULES_OWNER.md` — Approval gates (issue / design / PR)
 
 ## task-dev Workflow (Phase 5-7 of TUTORIAL)
 Referenced as a skill/workflow that:
