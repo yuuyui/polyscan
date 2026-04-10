@@ -88,8 +88,8 @@ export default {
         "base": ["13px", { lineHeight: "1.4", fontWeight: "400" }], /* Body */
         "lg": ["14px", { lineHeight: "1.5", fontWeight: "500" }],  /* Meta */
         "xl": ["16px", { lineHeight: "1.5", fontWeight: "500" }],  /* H3 */
-        "2xl": ["20px", { lineHeight: "1.6", fontWeight: "600" }], /* H2 */
-        "3xl": ["28px", { lineHeight: "1.2", fontWeight: "600" }], /* H1 */
+        "2xl": ["20px", { lineHeight: "1.6", fontWeight: "700" }], /* H2 */
+        "3xl": ["28px", { lineHeight: "1.2", fontWeight: "700" }], /* H1 */
       },
     },
   },

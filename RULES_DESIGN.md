@@ -54,7 +54,7 @@
 
 ### Archive ก่อนแก้ทุกครั้ง
 - Duplicate node ที่จะแก้ → ย้ายไป page ที่ตั้งชื่อว่า `_archive` (สร้างถ้ายังไม่มี)
-- ตั้งชื่อ `[BEFORE] <name> · YYYY-MM-DD`
+- ตั้งชื่อ `[BEFORE] <name> · YYYY-MM-DD HH:MM AM/PM`
 - Position ต่อท้าย (maxX/maxY + 80px) — ห้ามทับ
 
 ### Variable binding (บังคับ)
