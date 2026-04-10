@@ -55,7 +55,7 @@ gap = |1.0 - sum|
 
 ### 8. Responsive Design
 - **Desktop ≥1024px:** left sidebar 240px + main content area, 2-col card grid
-- **Mobile <1024px:** bottom tab bar (Terminal/History/Settings), full-width, 1-col card grid
+- **Mobile <1024px:** hamburger menu (Terminal/History/Settings), full-width, 1-col card grid
 
 ### 9. Scan History
 - บันทึกผล scan ทุกครั้งลง localStorage (สูงสุด 50 scans, purge oldest)

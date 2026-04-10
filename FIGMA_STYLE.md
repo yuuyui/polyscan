@@ -31,8 +31,8 @@ _Extracted from tailwind.config.js_
 
 | Name | Font | Size | Weight | Tailwind Class | Usage |
 |------|------|------|--------|---------------|-------|
-| H1 | JetBrains Mono | 28px | 600 | `text-3xl` | Page headings |
-| H2 | JetBrains Mono | 20px | 600 | `text-2xl` | Section headings |
+| H1 | JetBrains Mono | 28px | 700 | `text-3xl` | Page headings |
+| H2 | JetBrains Mono | 20px | 700 | `text-2xl` | Section headings |
 | H3 | JetBrains Mono | 16px | 500 | `text-xl` | Sub-headings |
 | Meta | JetBrains Mono | 14px | 500 | `text-lg` | Stat values, meta |
 | Body | Inter | 13px | 400 | `text-base` | Market question text |
@@ -56,7 +56,7 @@ _Extracted from tailwind.config.js_
 - **Badge OVER** — bg `#2a1212`, text `#ff5f52`
 - **Badge FAIR** — bg `#2e2c3e`, text `#9999CC`
 - **Stat Card** — bg `#22202e`, border `#2e2c3e`, radius 6px
-- **Signal Card** — bg `#22202e`, sparkline bars, gap 44px, net profit
+- **Signal Card** — bg `#22202e`, sparkline bars, gap 16px, net profit
 - **Filter Toggle** — active bg `#e566ff`, inactive bg `#0e0d14`
 
 ## Figma File
