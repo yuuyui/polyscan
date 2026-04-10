@@ -16,7 +16,7 @@ sum > 1.0 → OVER  (ขายทั้งคู่ได้กำไร)
 gap = |1.0 - sum|
 ```
 
-> ไม่มี backend — เรียก Polymarket CLOB API โดยตรงจาก browser ผ่าน Vite proxy
+> ไม่มี backend — เรียก Gamma API (`gamma-api.polymarket.com`) จาก browser ผ่าน Vite proxy
 
 ---
 
@@ -103,6 +103,7 @@ History open:
 
 ### 10. Settings (`useSettings` hook — persisted to localStorage)
 ```typescript
+// src/hooks/useSettings.ts
 interface Settings {
   defaultView:        "CARDS" | "TABLE"         // default: "CARDS"
   minGap:             number                    // default: 0.03
@@ -117,6 +118,17 @@ interface Settings {
   exportFormat:       "JSON" | "CSV"            // default: "JSON"
 }
 ```
+
+- **Theme** — สลับ Default / Binance theme
+- **Default View** — เลือกมุมมองเริ่มต้น Cards หรือ Table
+- **Gap Threshold** — ตั้งค่า default min gap %
+- **Market Limit** — จำนวน markets ที่ดึง (50/100/200)
+- **Fee Rate** — ค่า fee สำหรับคำนวณ net profit
+- **Auto Scan** — เปิด/ปิด scan อัตโนมัติ + ตั้ง interval
+- **Notifications** — แจ้งเตือนเมื่อพบ signals ตามจำนวนที่กำหนด
+- **Max Saved Scans** — จำนวน scan history ที่เก็บ (25/50/100)
+- **Export Format** — เลือกรูปแบบ export (JSON/CSV)
+- **App Version** — แสดง version จาก package.json (dynamic)
 
 ---
 
@@ -190,6 +202,7 @@ interface Settings {
 ## Data Model
 
 ```typescript
+// src/types.ts
 interface GapResult {
   question:  string                    // market question text
   slug:      string                    // market slug (unique ID)
@@ -210,6 +223,9 @@ interface ScanRecord {
   results:       GapResult[]   // snapshot of filtered results
 }
 ```
+
+> **Note:** `netProfit` คำนวณตอน render (gap − FEE_RATE × 2) ไม่ได้เก็บใน interface
+> Filter state ใช้ 2 state variables แยก (`minGap`, `direction`) ใน App.tsx ไม่มี Filter interface
 
 ---
 
